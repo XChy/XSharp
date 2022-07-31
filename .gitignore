@@ -1,0 +1,11 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs/XSharp/v17
+/.vs/ProjectSettings.json
+/.vs/XSharp/FileContentIndex
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
+/.vs
+/out/build
