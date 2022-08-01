@@ -28,6 +28,7 @@ namespace XSharp
 		{"protected",true},
 		{"private",true},
 	};
+	bool isKeyword(const XString& keyword);
 
 	std::unordered_map<XString, bool> operators = {
 		{"+",true},
@@ -49,13 +50,17 @@ namespace XSharp
 		{"?",true},
 		{":",true},
 	};
+	bool isOperator(const XString& oper);
+	bool isOperator(XChar oper);
 }
 
-enum class TokenType
+enum TokenType
 {
 	Integer,
 	Decimal,
+	Boolean,
 	String,
+	Null,
 	Operator,
 	Comma,
 	Dot,
@@ -70,10 +75,12 @@ enum class TokenType
 	Keyword
 };
 
-class Token {
+class XSharp_EXPORT Token {
 public:
 	Token() = default;
 	Token(TokenType type, const XString& value);
+
+	XString dump() const;
 
 	TokenType type;
 	XString value;
