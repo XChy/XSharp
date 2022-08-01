@@ -12,16 +12,16 @@ Just use cmake to generate a library and execuation.
 Type "XSharpc [your filename]" to generate a "xar" package.
 Type "XSharp [your filename]" to run the "xar" package.
 
-###Grammar
+### Grammar
 - #### Variable Declaration
  ##### [type name] [variable name] = value. For example:
-     ```
+ ```
  i32 a=2333;
 ```
 
 - #### Function Declaration
  ##### [return type] [type name] [function name] ([type name] param1,[type name] param2,...){[block]}. For example:
-     ```
+ ```
  i32 abs(i32 a){
  	if(a>=0) return a;
 	else return -a;
