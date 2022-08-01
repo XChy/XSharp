@@ -1,5 +1,5 @@
 # XSharp
-A toy OOP language with lexer, parser and runtime 
+A toy OOP language with lexer, parser, compiler and runtime 
 
 ###  Background
 Having learned something about the theory of compiler,a dull coder try to develop something to have fun.

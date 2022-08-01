@@ -21,7 +21,18 @@
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "variables": [
+        {
+          "name": "BUILD_STATIC_LIBRARY",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_SHARED_LIBRARY",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
     }
   ]
 }

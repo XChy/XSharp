@@ -1,3 +1,4 @@
+#pragma once
 #include "XString.h"
 
 StringData::StringData(const StringData& other) {

@@ -17,31 +17,27 @@ std::vector<Token> Lexer::tokenize(const XString& source) const
 				++it;
 				if (*it == 'x' || *it == 'X') {
 					++it;//needn't analyze '0x' part
-					//analyzeHexAndNext(it, value, result);
+					result.push_back(Token(Integer,hex(it)));
 				}
 				else if (*it == 'b' || *it == 'B') {
 					++it;//needn't analyze '0b' part
-					//analyzeBinAndNext(it, value, result);
+					result.push_back(Token(Integer, bin(it)));
 				}
 				else {
 					it = tokenBegin;
-					//analyzeDecAndNext(it, value, result);
+					result.push_back(dec(it));
 				}
 			}
 			else {
-				//analyzeDecAndNext(it, value, result);
+				result.push_back(dec(it));
 			}
 		}
 		else if (XSharp::isOperator(*it)) {
 			XString value;
 			value.append(*it); ++it;
 			while (XSharp::isOperator(*it)) {
-				value.append(*it); ++it;
-				if (!XSharp::isOperator(*it)) {
-					value.remove(value.size() - 1, 1);
-					--it;
-					break;
-				}
+				value.append(*it);
+				++it;
 			}
 			result.push_back(Token(Operator, value));
 		}
@@ -68,6 +64,9 @@ std::vector<Token> Lexer::tokenize(const XString& source) const
 				result.push_back(Token(Identifier, value));
 			}
 		}
+		else if (*it == ';') {
+			result.push_back(Token(SentenceEnd, ";")); ++it;
+		}
 		else if (*it == '(') {
 			result.push_back(Token(OpenParenthesis,"(")); ++it;
 		}
@@ -75,16 +74,16 @@ std::vector<Token> Lexer::tokenize(const XString& source) const
 			result.push_back(Token(CloseParenthesis,")")); ++it;
 		}
 		else if (*it == '[') {
-			result.push_back(Token(OpenBracket, "(")); ++it;
+			result.push_back(Token(OpenBracket, "[")); ++it;
 		}
 		else if (*it == ']') {
-			result.push_back(Token(CloseBracket, ")")); ++it;
+			result.push_back(Token(CloseBracket, "]")); ++it;
 		}
 		else if (*it == '{') {
-			result.push_back(Token(OpenBrace, "(")); ++it;
+			result.push_back(Token(OpenBrace, "{")); ++it;
 		}
 		else if (*it == '}') {
-			result.push_back(Token(CloseBrace, ")")); ++it;
+			result.push_back(Token(CloseBrace, "}")); ++it;
 		}
 		else if (*it == ',') {
 			result.push_back(Token(Comma,",")); ++it;;
@@ -109,5 +108,47 @@ std::vector<Token> Lexer::tokenize(const XString& source) const
 			//throw XSharpError(XString("Unknown char:").append(*it));
 		}
 	}
-    return std::move(result);
+    return result;
+}
+
+XString Lexer::hex(XString::const_iterator& it) const
+{
+	XString result;
+	while (it->isDigit())
+	{
+		result.append(*it);
+		++it;
+	}
+	return XString::fromInterger(result.toInterger<long long>(16),10);
+}
+
+XString Lexer::bin(XString::const_iterator& it) const
+{
+	XString result;
+	while (it->isDigit())
+	{
+		result.append(*it);
+		++it;
+	}
+	return XString::fromInterger(result.toInterger<long long>(2), 10);
+}
+
+Token Lexer::dec(XString::const_iterator& it) const
+{
+	XString result;
+	bool isDecimalFraction=false;
+
+	while (it->isDigit()||*it=='.')
+	{
+		if (*it == '.') {
+			isDecimalFraction = true;
+		}
+		result.append(*it);
+		++it;
+	}
+
+	if (isDecimalFraction)
+		return Token(DecimalFraction, result);
+	else
+		return Token(Integer, result);
 }

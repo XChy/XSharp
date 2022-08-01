@@ -7,14 +7,18 @@ option(BUILD_STATIC_LIBRARY "Set to switch to build static library" OFF)
 
 include_directories(./)
 set(SRC
-XSharp/XSharpEngine.h
 XSharp/XSharpEngine.cpp
+ XSharp/Lexer.cpp  
+ XSharp/Tokens.cpp 
+ XSharp/XString.cpp 
+ XSharp/XSharpUtils.cpp  
+ XSharp/Parser.cpp  
     )
 if (BUILD_SHARED_LIBRARY)
     add_definitions(-DXSharp_SHARED_LIBRARY)
     message(STATUS "Build shared library")
 
-    add_library(XSharp_SHARED SHARED ${SRC} "XSharp/xsharp_global.h" "XSharp/Tokens.h" "XSharp/Lexer.h" "XSharp/Lexer.cpp" "XSharp/Tokens.cpp" "XSharp/XString.h" "XSharp/XString.cpp" "XSharp/XSharpUtils.h" "XSharp/XSharpUtils.cpp" "XSharp/SharedData.h"  "XSharp/Parser.h" "XSharp/Parser.cpp")
+    add_library(XSharp_SHARED SHARED ${SRC} )
     SET_TARGET_PROPERTIES(XSharp_SHARED PROPERTIES OUTPUT_NAME "XSharp")
 endif()
 

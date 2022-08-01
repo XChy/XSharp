@@ -4,7 +4,7 @@
 
 namespace XSharp
 {
-	std::unordered_map<XString, bool> keywords={
+	static std::unordered_map<XString, bool> keywords={
 		{"for",true},
 		{"while",true},
 		{"break",true},
@@ -30,7 +30,7 @@ namespace XSharp
 	};
 	bool isKeyword(const XString& keyword);
 
-	std::unordered_map<XString, bool> operators = {
+	static std::unordered_map<XString, bool> operators = {
 		{"+",true},
 		{"-",true},
 		{"*",true},
@@ -39,8 +39,13 @@ namespace XSharp
 		{"&",true},
 		{"%",true},
 		{"!",true},
+		{"!=",true},
 		{"=",true},
 		{"==",true},
+		{"+=",true},
+		{"-=",true},
+		{"*=",true},
+		{"/=",true},
 		{"++",true},
 		{"--",true},
 		{"<",true},
@@ -57,7 +62,7 @@ namespace XSharp
 enum TokenType
 {
 	Integer,
-	Decimal,
+	DecimalFraction,
 	Boolean,
 	String,
 	Null,

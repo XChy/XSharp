@@ -11,8 +11,8 @@ XString Token::dump() const
     case TokenType::Integer:
         result.append("Integer:");
         break;
-    case TokenType::Decimal:
-        result.append("Decimal:");
+    case TokenType::DecimalFraction:
+        result.append("DecimalFraction:");
         break;
     case TokenType::String:
         result.append("String:");
