@@ -109,7 +109,7 @@ public:
 	static XString fromUtf8(const char* utf8Str);
 
 	template<typename Interger>
-	static XString fromInterger(Interger v, int base);
+	static XString fromInterger(Interger v, int base=10);
 	static XString number(int v, int base = 10);
 	static XString number(long long v, int base = 10);
 	static XString number(double v);
