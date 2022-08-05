@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <string>
 #include <algorithm>
+#include <stack>
 
 typedef unsigned short ushort;
 typedef unsigned char uchar;
