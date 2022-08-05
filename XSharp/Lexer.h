@@ -2,6 +2,7 @@
 
 #include "xsharp_global.h"
 #include "Tokens.h"
+#include "XSharpUtils.h"
 
 namespace XSharp {
 

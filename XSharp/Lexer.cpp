@@ -105,7 +105,7 @@ std::vector<Token> Lexer::tokenize(const XString& source) const
 			++it;
 		}
 		else {
-			//throw XSharpError(XString("Unknown char:").append(*it));
+			throw XSharpError(XString("Unknown char:").append(*it));
 		}
 	}
     return result;

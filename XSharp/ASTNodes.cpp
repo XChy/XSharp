@@ -201,9 +201,56 @@ XString DefinitionsNode::dump() const
 	return XString();
 }
 
+DefinitionsNode::~DefinitionsNode()
+{
+	for (auto p : _variableDeclarations)delete p;
+	for (auto p : _functionDeclarations)delete p;
+	for (auto p : _classDeclarations)delete p;
+}
+
 XString FunctionDeclarationNode::dump() const
 {
 	return XString();
+}
+
+void FunctionDeclarationNode::setName(const XString& name)
+{
+	_name = name;
+}
+
+XString FunctionDeclarationNode::name() const
+{
+	return _name;
+}
+
+void FunctionDeclarationNode::setReturnType(XString returnType)
+{
+	_returnType = returnType;
+}
+
+XString FunctionDeclarationNode::returnType() const
+{
+	return _returnType;
+}
+
+void FunctionDeclarationNode::setParams(std::vector<std::pair<XString, XString>> params)
+{
+	_params = params;
+}
+
+std::vector<std::pair<XString, XString>> FunctionDeclarationNode::params() const
+{
+	return _params;
+}
+
+void FunctionDeclarationNode::setImpl(BlockNode* impl)
+{
+	_impl = impl;
+}
+
+BlockNode* FunctionDeclarationNode::impl() const
+{
+	return _impl;
 }
 
 XString VariableDeclarationNode::dump() const
@@ -214,4 +261,9 @@ XString VariableDeclarationNode::dump() const
 XString BlockNode::dump() const
 {
 	return XString();
+}
+
+BlockNode::~BlockNode()
+{
+	for (auto p : _statements)delete p;
 }

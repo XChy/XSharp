@@ -128,10 +128,23 @@ private:
 class XSharp_EXPORT FunctionDeclarationNode :public ASTNode {
 public:
 	XString dump() const;
+
+	void setName(const XString& name);
+	XString name() const;
+
+	void setReturnType(XString returnType);
+	XString returnType() const;
+
+	void setParams(std::vector<std::pair<XString, XString>> params);
+	std::vector<std::pair<XString, XString>> params() const;
+
+	void setImpl(BlockNode* impl);
+	BlockNode* impl() const;
 private:
 	XString _name;
-	XSharp::Type _returnType;
-	std::vector<std::pair<XSharp::Type, XString>> paramsType;// <type name,param name>
+	XString _returnType;
+	std::vector<std::pair<XString, XString>> _params;// <type name,param name>
+	BlockNode* _impl;
 };
 
 class XSharp_EXPORT ClassDeclarationNode :public ASTNode {
@@ -145,12 +158,15 @@ class XSharp_EXPORT VariableDeclarationNode :public ASTNode {
 public:
 	XString dump() const;
 private:
+	XString _type;
 	XString _name;
 };
 
 class XSharp_EXPORT BlockNode :public ASTNode {
 public:
 	XString dump() const;
+
+	~BlockNode();
 private:
 	std::vector<ASTNode*> _statements;
 };
@@ -158,6 +174,8 @@ private:
 class XSharp_EXPORT DefinitionsNode :public ASTNode {
 public:
 	XString dump() const;
+
+	~DefinitionsNode();
 private:
 	std::vector<ClassDeclarationNode*> _classDeclarations;
 	std::vector<FunctionDeclarationNode*> _functionDeclarations;
