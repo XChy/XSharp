@@ -18,7 +18,7 @@ public:
 		return bool(dynamic_cast<T*>(this));
 	}
 
-	virtual ~ASTNode() = default;//Is set to delete the children
+	virtual ~ASTNode() = default;//The children are managed by the parent
 };
 
 class XSharp_EXPORT IntegerNode:public ASTNode {
@@ -125,6 +125,15 @@ private:
 	ASTNode* _right;
 };
 
+class XSharp_EXPORT BlockNode :public ASTNode {
+public:
+	XString dump() const;
+
+	~BlockNode();
+private:
+	std::vector<ASTNode*> _statements;
+};
+
 class XSharp_EXPORT FunctionDeclarationNode :public ASTNode {
 public:
 	XString dump() const;
@@ -136,10 +145,13 @@ public:
 	XString returnType() const;
 
 	void setParams(std::vector<std::pair<XString, XString>> params);
+	void addParam(const std::pair<XString,XString>& param);
 	std::vector<std::pair<XString, XString>> params() const;
-
-	void setImpl(BlockNode* impl);
+	
 	BlockNode* impl() const;
+	void setImpl(BlockNode* impl);
+	
+	~FunctionDeclarationNode();
 private:
 	XString _name;
 	XString _returnType;
@@ -157,23 +169,34 @@ private:
 class XSharp_EXPORT VariableDeclarationNode :public ASTNode {
 public:
 	XString dump() const;
+
+	void setType(const XString& type);
+	XString type() const;
+
+	void setName(const XString& name);
+	XString name() const;
+
+	void setInitValue(ASTNode* initValue);
+	ASTNode* initValue() const;
 private:
 	XString _type;
 	XString _name;
+	ASTNode* _initValue;
 };
 
-class XSharp_EXPORT BlockNode :public ASTNode {
-public:
-	XString dump() const;
 
-	~BlockNode();
-private:
-	std::vector<ASTNode*> _statements;
-};
 
 class XSharp_EXPORT DefinitionsNode :public ASTNode {
 public:
 	XString dump() const;
+
+	void addClass(ClassDeclarationNode* classDeclaration);
+	void addFunction(FunctionDeclarationNode* functionDeclaration);
+	void addVariable(VariableDeclarationNode* variableDeclaration);
+
+	std::vector<ClassDeclarationNode*> classDeclarations() const;
+	std::vector<FunctionDeclarationNode*> functionDeclarations() const;
+	std::vector<VariableDeclarationNode*> variableDeclarations() const;
 
 	~DefinitionsNode();
 private:

@@ -1,13 +1,17 @@
 #pragma once
 
 #include <XSharp/Lexer.h>
+#include <XSharp/Parser.h>
 #include <iostream>
 
 int main() {
 	Lexer lexer;
-	auto tokens = lexer.tokenize("return(abc+abc)+1+1.23+0b10+0x23*[1,23]");
+	auto tokens = lexer.tokenize("int i;");
 	for (auto token : tokens) {
 		std::cout << token.dump().toStdString()<<"  ";
 	}
+
+	Parser parser;
+	std::cout<<parser.parse(tokens)->dump().toStdString();
 	return 0;
 }

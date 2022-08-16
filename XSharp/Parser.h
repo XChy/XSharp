@@ -10,8 +10,16 @@ public:
 	typedef std::vector<Token>::const_iterator Iterator;
 	ASTNode* parse(const std::vector<Token>& tokenList);//The astnode pointer is managed by caller
 private:
-	ASTNode* definitions();
+	DefinitionsNode* definitions();
+	ClassDeclarationNode* classDeclaration();
+	FunctionDeclarationNode* functionDeclaration();
+	VariableDeclarationNode* variableDeclaration();
+
+	std::vector<ASTNode*> paramsDefinition();
+	ASTNode* expression();
+
 	void forward();
+	void backward();
 	Iterator current;
 	Iterator end;
 };

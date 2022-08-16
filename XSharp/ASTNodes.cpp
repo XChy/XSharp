@@ -65,8 +65,8 @@ XString StringNode::value() const
 
 XString AddNode::dump() const
 {
-	return "Add { left:"+_left->dump()+"\n"
-		"right:"+_right->dump()+"}";
+	return "Add { left:" + _left->dump() + "\n"
+		"right:" + _right->dump() + "}";
 }
 
 void AddNode::setLeft(ASTNode* left)
@@ -193,12 +193,52 @@ DivNode::~DivNode()
 
 XString ClassDeclarationNode::dump() const
 {
-	return "Class{name:"+_name+"\n " + "}";
+	return "Class{name:" + _name + "\n " + "}";
 }
 
 XString DefinitionsNode::dump() const
 {
-	return XString();
+	XString result;
+	for (auto i : _classDeclarations) {
+		result.append(i->dump());
+	}
+	for (auto i : _functionDeclarations) {
+		result.append(i->dump());
+	}
+	for (auto i : _variableDeclarations) {
+		result.append(i->dump());
+	}
+	return result;
+}
+
+void DefinitionsNode::addClass(ClassDeclarationNode* classDeclaration)
+{
+	_classDeclarations.push_back(classDeclaration);
+}
+
+void DefinitionsNode::addFunction(FunctionDeclarationNode* functionDeclaration)
+{
+	_functionDeclarations.push_back(functionDeclaration);
+}
+
+void DefinitionsNode::addVariable(VariableDeclarationNode* variableDeclaration)
+{
+	_variableDeclarations.push_back(variableDeclaration);
+}
+
+std::vector<ClassDeclarationNode*> DefinitionsNode::classDeclarations() const
+{
+	return _classDeclarations;
+}
+
+std::vector<FunctionDeclarationNode*> DefinitionsNode::functionDeclarations() const
+{
+	return _functionDeclarations;
+}
+
+std::vector<VariableDeclarationNode*> DefinitionsNode::variableDeclarations() const
+{
+	return _variableDeclarations;
 }
 
 DefinitionsNode::~DefinitionsNode()
@@ -210,7 +250,11 @@ DefinitionsNode::~DefinitionsNode()
 
 XString FunctionDeclarationNode::dump() const
 {
-	return XString();
+	XString paramsDump;
+	for (std::pair<XString, XString> param : _params) {
+		paramsDump.append(param.first).append(' ').append(param.second);
+	}
+	return "Function{name:" + _name + "\nreturnType:" + _returnType + "\nparams:{" + paramsDump + "}\n";
 }
 
 void FunctionDeclarationNode::setName(const XString& name)
@@ -238,14 +282,14 @@ void FunctionDeclarationNode::setParams(std::vector<std::pair<XString, XString>>
 	_params = params;
 }
 
+void FunctionDeclarationNode::addParam(const std::pair<XString, XString>& param)
+{
+	_params.push_back(param);
+}
+
 std::vector<std::pair<XString, XString>> FunctionDeclarationNode::params() const
 {
 	return _params;
-}
-
-void FunctionDeclarationNode::setImpl(BlockNode* impl)
-{
-	_impl = impl;
 }
 
 BlockNode* FunctionDeclarationNode::impl() const
@@ -253,10 +297,52 @@ BlockNode* FunctionDeclarationNode::impl() const
 	return _impl;
 }
 
+void FunctionDeclarationNode::setImpl(BlockNode* impl)
+{
+	_impl = impl;
+}
+
+FunctionDeclarationNode::~FunctionDeclarationNode()
+{
+	delete _impl;
+}
+
+
 XString VariableDeclarationNode::dump() const
 {
-	return XString();
+	return "Variable{name:"+_name+"\ntype:"+_type + "}\n";
 }
+
+void VariableDeclarationNode::setType(const XString& type)
+{
+	_type = type;
+}
+
+XString VariableDeclarationNode::type() const
+{
+	return _type;
+}
+
+void VariableDeclarationNode::setName(const XString& name)
+{
+	_name = name;
+}
+
+XString VariableDeclarationNode::name() const
+{
+	return _name;
+}
+
+void VariableDeclarationNode::setInitValue(ASTNode* initValue)
+{
+	_initValue = initValue;
+}
+
+ASTNode* VariableDeclarationNode::initValue() const
+{
+	return _initValue;
+}
+
 
 XString BlockNode::dump() const
 {
