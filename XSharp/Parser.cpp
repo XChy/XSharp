@@ -15,9 +15,6 @@ DefinitionsNode* Parser::definitions()
 			if (current->value == "class") {
 				root->addClass(classDeclaration());
 			}
-			/*else if(current->value=="struct") {
-
-			}*/
 		}
 		else if (current->type == Identifier)
 		{
@@ -62,6 +59,7 @@ FunctionDeclarationNode* Parser::functionDeclaration()
 	root->setName(current->value);
 	forward();
 
+	root->setImpl(block());
 
 	return root;
 }
@@ -91,7 +89,49 @@ VariableDeclarationNode* Parser::variableDeclaration()
 
 std::vector<ASTNode*> Parser::paramsDefinition()
 {
+	if (current->type == OpenParenthesis) {
+		forward();
+		while (true){
+
+		}
+	}
 	return std::vector<ASTNode*>();
+}
+
+BlockNode* Parser::block()
+{
+	BlockNode* root = new BlockNode;
+	if (current->type == OpenBrace) {
+		forward();
+		while (current->type!=CloseBrace)
+		{
+			if (current->type == OpenBrace) {
+				//addblock();
+			}
+			else if(current==end){
+				throw XSharpError("No '}' matched");
+			}
+			else {
+				//addstatement();
+			}
+
+		}
+		forward();
+	}
+	return root;
+}
+
+ASTNode* Parser::statement()
+{
+	switch (current->type)
+	{
+	case Keyword:
+
+		break;
+	default:
+		break;
+	}
+	return nullptr;
 }
 
 ASTNode* Parser::expression()

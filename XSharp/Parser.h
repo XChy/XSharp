@@ -16,6 +16,9 @@ private:
 	VariableDeclarationNode* variableDeclaration();
 
 	std::vector<ASTNode*> paramsDefinition();
+
+	BlockNode* block();
+	ASTNode* statement();
 	ASTNode* expression();
 
 	void forward();

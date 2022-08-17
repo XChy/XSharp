@@ -11,6 +11,7 @@ int main() {
 		std::cout << token.dump().toStdString()<<"  ";
 	}
 
+	std::cout << std::endl;
 	Parser parser;
 	std::cout<<parser.parse(tokens)->dump().toStdString();
 	return 0;

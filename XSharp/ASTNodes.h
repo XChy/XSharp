@@ -129,9 +129,14 @@ class XSharp_EXPORT BlockNode :public ASTNode {
 public:
 	XString dump() const;
 
+	void addContent(ASTNode* content);
+
+	void setContents(std::vector<ASTNode*> contents);
+	std::vector<ASTNode*> contents() const;
+
 	~BlockNode();
 private:
-	std::vector<ASTNode*> _statements;
+	std::vector<ASTNode*> _contents;
 };
 
 class XSharp_EXPORT FunctionDeclarationNode :public ASTNode {
@@ -203,4 +208,44 @@ private:
 	std::vector<ClassDeclarationNode*> _classDeclarations;
 	std::vector<FunctionDeclarationNode*> _functionDeclarations;
 	std::vector<VariableDeclarationNode*> _variableDeclarations;
+};
+
+class XSharp_EXPORT FunctionCallNode :public ASTNode {
+public:
+	XString dump() const;
+
+	void setName(const XString& name);
+	XString name() const;
+
+	void setParams(std::vector<ASTNode*> params);
+	void addParam(ASTNode* param);
+	std::vector<ASTNode*> params() const;
+
+	~FunctionCallNode();
+private:
+	XString _name;
+	XString _returnType;
+	std::vector<ASTNode*> _params;
+};
+
+class XSharp_EXPORT MemberFunctionCallNode :public ASTNode {
+public:
+	XString dump() const;
+
+	void setName(const XString& name);
+	XString name() const;
+
+	void setObject(ASTNode* object);
+	ASTNode* object() const;
+
+	void setParams(std::vector<ASTNode*> params);
+	void addParam(ASTNode* param);
+	std::vector<ASTNode*> params() const;
+
+	~MemberFunctionCallNode();
+private:
+	XString _name;
+	XString _returnType;
+	ASTNode* _object;
+	std::vector<ASTNode*> _params;
 };

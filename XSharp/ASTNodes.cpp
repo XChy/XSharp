@@ -254,7 +254,12 @@ XString FunctionDeclarationNode::dump() const
 	for (std::pair<XString, XString> param : _params) {
 		paramsDump.append(param.first).append(' ').append(param.second);
 	}
-	return "Function{name:" + _name + "\nreturnType:" + _returnType + "\nparams:{" + paramsDump + "}\n";
+
+	XString implDump = "no";
+	if (_impl) {
+		implDump = _impl->dump();
+	}
+	return "Function{name:" + _name + "\nreturnType:" + _returnType + "\nparams:{" + paramsDump + "\nblock:" + implDump + "}\n}";
 }
 
 void FunctionDeclarationNode::setName(const XString& name)
@@ -310,7 +315,11 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 XString VariableDeclarationNode::dump() const
 {
-	return "Variable{name:"+_name+"\ntype:"+_type + "}\n";
+	XString initDump = "No";
+	if (_initValue) {
+		initDump = _initValue->dump();
+	}
+	return "Variable{name:" + _name + "\ntype:" + _type + "\ninitValue:" + initDump + "}\n";
 }
 
 void VariableDeclarationNode::setType(const XString& type)
@@ -346,10 +355,118 @@ ASTNode* VariableDeclarationNode::initValue() const
 
 XString BlockNode::dump() const
 {
+	XString result;
+	for (auto i : _contents) {
+		result.append(i->dump()).append("\n");
+	}
 	return XString();
+}
+
+void BlockNode::addContent(ASTNode* content)
+{
+	_contents.push_back(content);
+}
+
+void BlockNode::setContents(std::vector<ASTNode*> contents)
+{
+	_contents = contents;
+}
+
+std::vector<ASTNode*> BlockNode::contents() const
+{
+	return _contents;
 }
 
 BlockNode::~BlockNode()
 {
-	for (auto p : _statements)delete p;
+	for (auto p : _contents)delete p;
+}
+
+XString FunctionCallNode::dump() const
+{
+	XString paramsDump;
+	for (auto param : _params) {
+		paramsDump.append(param->dump());
+	}
+	return "FunctionCall{name:" + _name +  "\nparams:{" + paramsDump+ "}\n}";
+}
+
+void FunctionCallNode::setName(const XString& name)
+{
+	_name = name;
+}
+
+XString FunctionCallNode::name() const
+{
+	return _name;
+}
+
+void FunctionCallNode::setParams(std::vector<ASTNode*> params)
+{
+	_params = params;
+}
+
+void FunctionCallNode::addParam(ASTNode* param)
+{
+	_params.push_back(param);
+}
+
+std::vector<ASTNode*> FunctionCallNode::params() const
+{
+	return _params;
+}
+
+FunctionCallNode::~FunctionCallNode()
+{
+	for (auto i : _params)delete i;
+}
+
+XString MemberFunctionCallNode::dump() const
+{
+	XString paramsDump;
+	for (auto param : _params) {
+		paramsDump.append(param->dump());
+	}
+	return "FunctionCall{name:" + _name +"\nobject:"+ _object->dump() + "\nparams:{" + paramsDump + "}\n}";
+}
+
+void MemberFunctionCallNode::setName(const XString& name)
+{
+	_name = name;
+}
+
+XString MemberFunctionCallNode::name() const
+{
+	return _name;
+}
+
+void MemberFunctionCallNode::setObject(ASTNode* object)
+{
+	_object = object;
+}
+
+ASTNode* MemberFunctionCallNode::object() const
+{
+	return _object;
+}
+
+void MemberFunctionCallNode::setParams(std::vector<ASTNode*> params)
+{
+	_params = params;
+}
+
+void MemberFunctionCallNode::addParam(ASTNode* param)
+{
+	_params.push_back(param);
+}
+
+std::vector<ASTNode*> MemberFunctionCallNode::params() const
+{
+	return _params;
+}
+
+MemberFunctionCallNode::~MemberFunctionCallNode()
+{
+	for (auto i : _params)delete i;
+	delete _object;
 }
