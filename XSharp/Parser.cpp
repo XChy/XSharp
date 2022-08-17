@@ -59,6 +59,8 @@ FunctionDeclarationNode* Parser::functionDeclaration()
 	root->setName(current->value);
 	forward();
 
+	root->setParams(paramsDefinition());
+
 	root->setImpl(block());
 
 	return root;
@@ -77,9 +79,9 @@ VariableDeclarationNode* Parser::variableDeclaration()
 		root->setInitValue(nullptr);
 		forward();
 	}
-	else if(current->value=="=") {
+	else if (current->value == "=") {
 		forward();
-		root->setInitValue(expression());
+		root->setInitValue(expression(current, nextSentenceEnd(current)+1));
 	}
 	else {
 		throw XSharpError("variable defintion error");
@@ -87,15 +89,40 @@ VariableDeclarationNode* Parser::variableDeclaration()
 	return root;
 }
 
-std::vector<ASTNode*> Parser::paramsDefinition()
+std::vector<std::pair<XString, XString>> Parser::paramsDefinition()
 {
+	std::vector<std::pair<XString, XString>> paramsDef;
 	if (current->type == OpenParenthesis) {
 		forward();
-		while (true){
+		while (current->type != CloseParenthesis) {
+			if (current == end) {
+				throw XSharpError("No ')' matched");
+			}
+			else {
+				std::pair<XString, XString> paramDef;
+				if (current->type == Identifier) {
+					paramDef.first = current->value;
+					forward();
+				}
+				else {
+					throw XSharpError("No typename matched");
+				}
 
+				if (current->type == Identifier) {
+					paramDef.second = current->value;
+					forward();
+				}
+				else {
+					throw XSharpError("No paramname matched");
+				}
+
+				paramsDef.push_back(paramDef);
+			}
+			forward();
 		}
+		forward();
 	}
-	return std::vector<ASTNode*>();
+	return paramsDef;
 }
 
 BlockNode* Parser::block()
@@ -103,16 +130,16 @@ BlockNode* Parser::block()
 	BlockNode* root = new BlockNode;
 	if (current->type == OpenBrace) {
 		forward();
-		while (current->type!=CloseBrace)
+		while (current->type != CloseBrace)
 		{
 			if (current->type == OpenBrace) {
-				//addblock();
+				root->addContent(block());
 			}
-			else if(current==end){
+			else if (current == end) {
 				throw XSharpError("No '}' matched");
 			}
 			else {
-				//addstatement();
+				root->addContent(statement());
 			}
 
 		}
@@ -129,14 +156,42 @@ ASTNode* Parser::statement()
 
 		break;
 	default:
-		break;
+		return expression(current,nextSentenceEnd(current)+1);
 	}
+}
+
+ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
+{
+	current = exprEnd;
 	return nullptr;
 }
 
-ASTNode* Parser::expression()
+Parser::Iterator Parser::nextSentenceEnd(Iterator begin) const
 {
-	return nullptr;
+	for(; begin != end; ++begin){
+		if (begin->type == SentenceEnd) {
+			return begin;
+		}
+	}
+	throw XSharpError("';' is missing");
+}
+
+Parser::Iterator Parser::nextCloseParenthesis(Iterator begin) const
+{
+	int numOpenParenthesis = 1;
+	for (auto it = begin; it != end; ++it) {
+		if (it->type == OpenParenthesis) {
+			++numOpenParenthesis;
+		}
+		else if (it->type == CloseParenthesis) {
+			--numOpenParenthesis;
+		}
+		if (!numOpenParenthesis) {
+			return it;
+		}
+	}
+
+	throw XSharpError("')' is missing");
 }
 
 void Parser::forward()

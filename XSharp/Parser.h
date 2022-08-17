@@ -15,11 +15,14 @@ private:
 	FunctionDeclarationNode* functionDeclaration();
 	VariableDeclarationNode* variableDeclaration();
 
-	std::vector<ASTNode*> paramsDefinition();
+	std::vector<std::pair<XString, XString>> paramsDefinition();
 
 	BlockNode* block();
 	ASTNode* statement();
-	ASTNode* expression();
+	ASTNode* expression(Iterator exprBegin,Iterator exprEnd);
+
+	Iterator nextSentenceEnd(Iterator begin) const;
+	Iterator nextCloseParenthesis(Iterator begin) const;
 
 	void forward();
 	void backward();
