@@ -139,7 +139,10 @@ BlockNode* Parser::block()
 				throw XSharpError("No '}' matched");
 			}
 			else {
-				root->addContent(statement());
+				ASTNode* stmt = statement();
+				if (stmt) {
+					root->addContent(stmt);
+				}
 			}
 
 		}
@@ -156,12 +159,16 @@ ASTNode* Parser::statement()
 
 		break;
 	default:
-		return expression(current,nextSentenceEnd(current)+1);
+		ASTNode* expr = expression(current, nextSentenceEnd(current));//current is ";",need to forward to next statement
+		forward();
+		return expr;
 	}
 }
 
 ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 {
+	if (exprBegin == exprEnd) { return nullptr; }
+
 	current = exprEnd;
 	return nullptr;
 }

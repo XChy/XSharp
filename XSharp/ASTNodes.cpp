@@ -63,129 +63,44 @@ XString StringNode::value() const
 	return _value;
 }
 
-XString AddNode::dump() const
+
+XString BinaryOperatorNode::dump() const
 {
-	return "Add { left:" + _left->dump() + "\n"
+	return _operatorStr+" { left:" + _left->dump() + "\n"
 		"right:" + _right->dump() + "}";
 }
 
-void AddNode::setLeft(ASTNode* left)
+void BinaryOperatorNode::setLeft(ASTNode* left)
 {
 	_left = left;
 }
 
-ASTNode* AddNode::left()
+ASTNode* BinaryOperatorNode::left()
 {
 	return _left;
 }
 
-void AddNode::setRight(ASTNode* right)
+void BinaryOperatorNode::setRight(ASTNode* right)
 {
 	_right = right;
 }
 
-ASTNode* AddNode::right()
+ASTNode* BinaryOperatorNode::right()
 {
 	return _right;
 }
 
-AddNode::~AddNode()
+void BinaryOperatorNode::setOperatorStr(const XString& operatorStr)
 {
-	delete _left;
-	delete _right;
+	_operatorStr = operatorStr;
 }
 
-XString SubNode::dump() const
+XString BinaryOperatorNode::operatorStr() const
 {
-	return "Sub { left:" + _left->dump() + "\n"
-		"right:" + _right->dump() + "}";
+	return _operatorStr;
 }
 
-void SubNode::setLeft(ASTNode* left)
-{
-	_left = left;
-}
-
-ASTNode* SubNode::left()
-{
-	return _left;
-}
-
-void SubNode::setRight(ASTNode* right)
-{
-	_right = right;
-}
-
-ASTNode* SubNode::right()
-{
-	return _right;
-}
-
-SubNode::~SubNode()
-{
-	delete _left;
-	delete _right;
-}
-
-XString MulNode::dump() const
-{
-	return "Mul { left:" + _left->dump() + "\n"
-		"right:" + _right->dump() + "}";
-}
-
-void MulNode::setLeft(ASTNode* left)
-{
-	_left = left;
-}
-
-ASTNode* MulNode::left()
-{
-	return _left;
-}
-
-void MulNode::setRight(ASTNode* right)
-{
-	_right = right;
-}
-
-ASTNode* MulNode::right()
-{
-	return _right;
-}
-
-MulNode::~MulNode()
-{
-	delete _left;
-	delete _right;
-}
-
-XString DivNode::dump() const
-{
-	return "Mul { left:" + _left->dump() + "\n"
-		"right:" + _right->dump() + "}";
-}
-
-void DivNode::setLeft(ASTNode* left)
-{
-	_left = left;
-}
-
-ASTNode* DivNode::left()
-{
-	return _left;
-}
-
-void DivNode::setRight(ASTNode* right)
-{
-	_right = right;
-}
-
-ASTNode* DivNode::right()
-{
-	return _right;
-}
-
-DivNode::~DivNode()
+BinaryOperatorNode::~BinaryOperatorNode()
 {
 	delete _left;
 	delete _right;
@@ -469,4 +384,34 @@ MemberFunctionCallNode::~MemberFunctionCallNode()
 {
 	for (auto i : _params)delete i;
 	delete _object;
+}
+
+XString UnaryOperatorNode::dump() const
+{
+	return _operatorStr + " { value:" + _value->dump() + "\n}";
+}
+
+void UnaryOperatorNode::setValue(ASTNode* value)
+{
+	_value = value;
+}
+
+ASTNode* UnaryOperatorNode::value()
+{
+	return _value;
+}
+
+void UnaryOperatorNode::setOperatorStr(const XString& operatorStr)
+{
+	_operatorStr = operatorStr;
+}
+
+XString UnaryOperatorNode::operatorStr() const
+{
+	return _operatorStr;
+}
+
+UnaryOperatorNode::~UnaryOperatorNode()
+{
+	delete _value;
 }

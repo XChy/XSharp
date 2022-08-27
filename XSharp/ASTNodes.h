@@ -61,7 +61,7 @@ private:
 	XString _value;
 };
 
-class XSharp_EXPORT AddNode :public ASTNode {
+class XSharp_EXPORT BinaryOperatorNode :public ASTNode {
 public:
 	XString dump() const;
 
@@ -71,58 +71,30 @@ public:
 	void setRight(ASTNode* right);
 	ASTNode* right();
 
-	~AddNode();
+	void setOperatorStr(const XString& operatorStr);
+	XString operatorStr() const;
+
+	~BinaryOperatorNode();
 private:
 	ASTNode* _left;
 	ASTNode* _right;
+	XString _operatorStr;
 };
 
-class XSharp_EXPORT SubNode :public ASTNode {
+class XSharp_EXPORT UnaryOperatorNode :public ASTNode {
 public:
 	XString dump() const;
 
-	void setLeft(ASTNode* left);
-	ASTNode* left();
+	void setValue(ASTNode* value);
+	ASTNode* value();
 
-	void setRight(ASTNode* right);
-	ASTNode* right();
+	void setOperatorStr(const XString& operatorStr);
+	XString operatorStr() const;
 
-	~SubNode();
+	~UnaryOperatorNode();
 private:
-	ASTNode* _left;
-	ASTNode* _right;
-};
-
-class XSharp_EXPORT MulNode :public ASTNode {
-public:
-	XString dump() const;
-
-	void setLeft(ASTNode* left);
-	ASTNode* left();
-
-	void setRight(ASTNode* right);
-	ASTNode* right();
-
-	~MulNode();
-private:
-	ASTNode* _left;
-	ASTNode* _right;
-};
-
-class XSharp_EXPORT DivNode :public ASTNode {
-public:
-	XString dump() const;
-
-	void setLeft(ASTNode* left);
-	ASTNode* left();
-
-	void setRight(ASTNode* right);
-	ASTNode* right();
-
-	~DivNode();
-private:
-	ASTNode* _left;
-	ASTNode* _right;
+	ASTNode* _value;
+	XString _operatorStr;
 };
 
 class XSharp_EXPORT BlockNode :public ASTNode {
