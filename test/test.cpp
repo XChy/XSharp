@@ -6,7 +6,7 @@
 
 int main() {
 	Lexer lexer;
-	auto tokens = lexer.tokenize("int i;String a;");
+	auto tokens = lexer.tokenize("int main(int a,String b){} int foa(){}");
 	for (auto token : tokens) {
 		std::cout << token.dump().toStdString()<<"  ";
 	}

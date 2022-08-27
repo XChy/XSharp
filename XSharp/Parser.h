@@ -4,6 +4,7 @@
 #include "ASTNodes.h"
 #include "Tokens.h"
 #include "XSharpUtils.h"
+#include "OperInfo.h"
 
 class Parser {
 public:
@@ -20,6 +21,7 @@ private:
 	BlockNode* block();
 	ASTNode* statement();
 	ASTNode* expression(Iterator exprBegin,Iterator exprEnd);
+	ASTNode* factor(Iterator& factorBegin);
 
 	Iterator nextSentenceEnd(Iterator begin) const;
 	Iterator nextCloseParenthesis(Iterator begin) const;

@@ -116,9 +116,15 @@ std::vector<std::pair<XString, XString>> Parser::paramsDefinition()
 					throw XSharpError("No paramname matched");
 				}
 
+				if (current->type == Comma) {
+					forward();
+					if (current->type == CloseParenthesis) {
+						throw XSharpError("A param is missing between ',' and ')'");
+					}
+				}
+
 				paramsDef.push_back(paramDef);
 			}
-			forward();
 		}
 		forward();
 	}
@@ -148,6 +154,9 @@ BlockNode* Parser::block()
 		}
 		forward();
 	}
+	else {
+		throw XSharpError("No '{' matched");
+	}
 	return root;
 }
 
@@ -169,15 +178,51 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 {
 	if (exprBegin == exprEnd) { return nullptr; }
 
+	ASTNode* root = nullptr;
+
+	ASTNode* factor1 = factor(exprBegin);
+	BinaryOperatorNode* oper1 = nullptr;
+	ASTNode* factor2 = nullptr;
+	BinaryOperatorNode* oper2=nullptr;
+	ASTNode* factor3 = nullptr;
+
+	if (exprBegin == exprEnd) {
+		return factor1;
+	}
+
+	while (exprBegin!=exprEnd)
+	{
+		
+	}
+
 	current = exprEnd;
 	return nullptr;
 }
 
-Parser::Iterator Parser::nextSentenceEnd(Iterator begin) const
+ASTNode* Parser::factor(Iterator& factorBegin)
 {
-	for(; begin != end; ++begin){
-		if (begin->type == SentenceEnd) {
-			return begin;
+	ASTNode* root;
+	if (factorBegin->type == Operator) {
+		UnaryOperatorNode* root = new UnaryOperatorNode;
+		root->setOperatorStr(factorBegin->value);
+		factorBegin++;
+		if (factorBegin == end) {
+			throw XSharpError("No factor matched after a unary operator");
+		}
+		root->setValue(factor(factorBegin));
+		return root;
+	}
+	else
+	{
+		return factor(factorBegin);
+	}
+}
+
+Parser::Iterator Parser::nextSentenceEnd(Iterator factorBegin) const
+{
+	for(; factorBegin != end; ++factorBegin){
+		if (factorBegin->type == SentenceEnd) {
+			return factorBegin;
 		}
 	}
 	throw XSharpError("';' is missing");

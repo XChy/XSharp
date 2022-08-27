@@ -71,8 +71,9 @@ bool XSharp::isKeyword(const XString& keyword)
 {
     if (keywords.find(keyword) == keywords.end())
         return false;
-    else
-    return keywords[keyword];
+    else {
+        return keywords[keyword];
+    }
 }
 
 bool XSharp::isOperator(const XString& oper)

@@ -308,7 +308,7 @@ bool XString::operator==(const XString& other) const
 		return true;
 	}
 	else if (size() == other.size()) {
-		return memcmp(data(), other.data(), size()) == 0;
+		return memcmp(data(), other.data(), size()*2) == 0;
 	}
 	else {
 		return false;

@@ -167,14 +167,14 @@ XString FunctionDeclarationNode::dump() const
 {
 	XString paramsDump;
 	for (std::pair<XString, XString> param : _params) {
-		paramsDump.append(param.first).append(' ').append(param.second);
+		paramsDump.append(param.first).append(' ').append(param.second).append("\n");
 	}
 
 	XString implDump = "no";
 	if (_impl) {
 		implDump = _impl->dump();
 	}
-	return "Function{name:" + _name + "\nreturnType:" + _returnType + "\nparams:{" + paramsDump + "\nblock:" + implDump + "}\n}";
+	return "Function{name:" + _name + "\nreturnType:" + _returnType + "\nparams:{" + paramsDump + "}\nblock:{" + implDump + "}\n}";
 }
 
 void FunctionDeclarationNode::setName(const XString& name)
