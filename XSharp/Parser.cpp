@@ -319,7 +319,7 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 	if (factorBegin->type == Operator) {
 		if ((factorBegin + 1)->type != Integer && (factorBegin + 1)->type != DecimalFraction
 			&& (factorBegin + 1)->type != Boolean && (factorBegin + 1)->type != String
-			&& (factorBegin + 1)->type != OpenParenthesis) {
+			&& (factorBegin + 1)->type != OpenParenthesis&& (factorBegin + 1)->type != Identifier) {
 			after = new UnaryOperatorNode;
 			after->setOperatorStr(factorBegin->value);
 			factorBegin++;

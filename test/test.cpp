@@ -5,7 +5,6 @@
 #include <iostream>
 
 int main() {
-	try {
 		Lexer lexer;
 		auto tokens = lexer.tokenize("int main(int a,String b){1+1*3*func;} int foa(){} int a;");
 		for (auto token : tokens) {
@@ -15,9 +14,5 @@ int main() {
 		std::cout << std::endl;
 		Parser parser;
 		std::cout << parser.parse(tokens)->dump().toStdString();
-	}
-	catch (XSharpError error) {
-		std::cout << error.errorInfo.toStdString();
-	}
 	return 0;
 }
