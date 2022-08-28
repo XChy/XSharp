@@ -17,6 +17,7 @@ private:
 	VariableDeclarationNode* variableDeclaration();
 
 	std::vector<std::pair<XString, XString>> paramsDefinition();
+	std::vector<ASTNode*> params(Iterator paramsBegin,Iterator paramsEnd);
 
 	BlockNode* block();
 	ASTNode* statement();
@@ -25,6 +26,7 @@ private:
 
 	Iterator nextSentenceEnd(Iterator begin) const;
 	Iterator nextCloseParenthesis(Iterator begin) const;
+	std::vector<Iterator> findFunctionComma(Iterator begin, Iterator end) const;
 
 	void forward();
 	void backward();

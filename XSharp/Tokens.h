@@ -65,6 +65,8 @@ namespace XSharp
 	};
 	bool isOperator(const XString& oper);
 	bool isOperator(XChar oper);
+
+	bool operatorContains(const XString& part);
 }
 
 enum TokenType

@@ -35,7 +35,7 @@ std::vector<Token> Lexer::tokenize(const XString& source) const
 		else if (XSharp::isOperator(*it)) {
 			XString value;
 			value.append(*it); ++it;
-			while (XSharp::isOperator(*it)) {
+			while (XSharp::isOperator(*it)&&XSharp::operatorContains(value+*it)) {
 				value.append(*it);
 				++it;
 			}
@@ -119,7 +119,7 @@ XString Lexer::hex(XString::const_iterator& it) const
 		result.append(*it);
 		++it;
 	}
-	return XString::fromInterger(result.toInterger<long long>(16),10);
+	return XString::fromInterger(result.toInteger<long long>(16),10);
 }
 
 XString Lexer::bin(XString::const_iterator& it) const
@@ -130,7 +130,7 @@ XString Lexer::bin(XString::const_iterator& it) const
 		result.append(*it);
 		++it;
 	}
-	return XString::fromInterger(result.toInterger<long long>(2), 10);
+	return XString::fromInterger(result.toInteger<long long>(2), 10);
 }
 
 Token Lexer::dec(XString::const_iterator& it) const

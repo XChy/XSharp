@@ -91,3 +91,21 @@ bool XSharp::isOperator(XChar oper)
     }
     return false;
 }
+
+bool XSharp::operatorContains(const XString& part)
+{
+    for (const std::pair<XString, bool>& oper : operators) {
+        if (part.size() <= oper.first.size()) {
+            bool hasContained = true;
+            for (int i = 0; i < part.size() && i < oper.first.size();++i) {
+                if (part[i] != oper.first[i]) {
+                    hasContained = false;
+                }
+            }
+            if (hasContained) {
+                return true;
+            }
+        }
+    }
+    return false;
+}

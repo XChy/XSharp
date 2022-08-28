@@ -23,6 +23,7 @@ public:
 
 class XSharp_EXPORT IntegerNode:public ASTNode {
 public:
+	IntegerNode(int64_t value = 0);
 	XString dump() const;
 
 	void setValue(int64_t value);
@@ -33,6 +34,7 @@ private:
 
 class XSharp_EXPORT DecimalFractionNode :public ASTNode {
 public:
+	DecimalFractionNode(double value = 0);
 	XString dump() const;
 
 	void setValue(double value);
@@ -43,6 +45,7 @@ private:
 
 class XSharp_EXPORT BooleanNode :public ASTNode {
 public:
+	BooleanNode(bool value = 0);
 	XString dump() const;
 
 	void setValue(bool value);
@@ -53,6 +56,7 @@ private:
 
 class XSharp_EXPORT StringNode :public ASTNode {
 public:
+	StringNode(const XString& value);
 	XString dump() const;
 
 	void setValue(XString value);
@@ -113,6 +117,8 @@ private:
 
 class XSharp_EXPORT FunctionDeclarationNode :public ASTNode {
 public:
+	FunctionDeclarationNode();
+
 	XString dump() const;
 
 	void setName(const XString& name);
@@ -145,6 +151,8 @@ private:
 
 class XSharp_EXPORT VariableDeclarationNode :public ASTNode {
 public:
+	VariableDeclarationNode();
+
 	XString dump() const;
 
 	void setType(const XString& type);
@@ -155,6 +163,8 @@ public:
 
 	void setInitValue(ASTNode* initValue);
 	ASTNode* initValue() const;
+
+	~VariableDeclarationNode();
 private:
 	XString _type;
 	XString _name;
@@ -220,4 +230,16 @@ private:
 	XString _returnType;
 	ASTNode* _object;
 	std::vector<ASTNode*> _params;
+};
+
+class XSharp_EXPORT VariableNode :public ASTNode {
+public:
+	VariableNode(const XString name);
+
+	XString dump() const;
+
+	void setName(const XString& name);
+	XString name() const;
+private:
+	XString _name;
 };

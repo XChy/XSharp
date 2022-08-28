@@ -1,5 +1,10 @@
 #include "ASTNodes.h"
 
+IntegerNode::IntegerNode(int64_t value)
+:_value(value)
+{
+}
+
 XString IntegerNode::dump() const
 {
 	return XString::fromInterger(_value);
@@ -15,6 +20,11 @@ int64_t IntegerNode::value() const
 	return _value;
 }
 
+DecimalFractionNode::DecimalFractionNode(double value)
+	:_value(value)
+{
+}
+
 XString DecimalFractionNode::dump() const
 {
 	return XString::number(_value);
@@ -28,6 +38,12 @@ void DecimalFractionNode::setValue(double value)
 double DecimalFractionNode::value() const
 {
 	return _value;
+}
+
+BooleanNode::BooleanNode(bool value)
+	:_value(value)
+{
+
 }
 
 XString BooleanNode::dump() const
@@ -46,6 +62,11 @@ void BooleanNode::setValue(bool value)
 bool BooleanNode::value() const
 {
 	return _value;
+}
+
+StringNode::StringNode(const XString& value)
+:_value(value)
+{
 }
 
 XString StringNode::dump() const
@@ -163,6 +184,11 @@ DefinitionsNode::~DefinitionsNode()
 	for (auto p : _classDeclarations)delete p;
 }
 
+FunctionDeclarationNode::FunctionDeclarationNode()
+	:_impl(nullptr)
+{
+}
+
 XString FunctionDeclarationNode::dump() const
 {
 	XString paramsDump;
@@ -174,7 +200,7 @@ XString FunctionDeclarationNode::dump() const
 	if (_impl) {
 		implDump = _impl->dump();
 	}
-	return "Function{name:" + _name + "\nreturnType:" + _returnType + "\nparams:{" + paramsDump + "}\nblock:{" + implDump + "}\n}";
+	return "Function{name:" + _name + "\nreturnType:" + _returnType + "\nparams:{" + paramsDump + "}\nblock:{" + implDump + "}\n}\n";
 }
 
 void FunctionDeclarationNode::setName(const XString& name)
@@ -228,6 +254,11 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 }
 
 
+VariableDeclarationNode::VariableDeclarationNode()
+:_initValue(nullptr)
+{
+}
+
 XString VariableDeclarationNode::dump() const
 {
 	XString initDump = "No";
@@ -267,12 +298,19 @@ ASTNode* VariableDeclarationNode::initValue() const
 	return _initValue;
 }
 
+VariableDeclarationNode::~VariableDeclarationNode()
+{
+	delete _initValue;
+}
+
 
 XString BlockNode::dump() const
 {
 	XString result;
 	for (auto i : _contents) {
-		result.append(i->dump()).append("\n");
+		if (i) {
+			result.append(i->dump()).append("\n");
+		}
 	}
 	return XString();
 }
@@ -414,4 +452,24 @@ XString UnaryOperatorNode::operatorStr() const
 UnaryOperatorNode::~UnaryOperatorNode()
 {
 	delete _value;
+}
+
+VariableNode::VariableNode(const XString name)
+	:_name(name)
+{
+}
+
+XString VariableNode::dump() const
+{
+	return "Variable{name:"+_name+"}\n";
+}
+
+void VariableNode::setName(const XString& name)
+{
+	_name = name;
+}
+
+XString VariableNode::name() const
+{
+	return _name;
 }

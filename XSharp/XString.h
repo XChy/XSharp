@@ -100,7 +100,7 @@ public:
 	const XChar* unicode() const;
 
 	template<typename Interger>
-	Interger toInterger(int base = 10) const;
+	Interger toInteger(int base = 10) const;
 	int toInt(int base = 10) const;
 	long long toLongLong(int base = 10);
 	double toDouble() const;

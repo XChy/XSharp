@@ -378,7 +378,7 @@ const XChar* XString::unicode() const
 }
 
 template<typename Interger>
-Interger XString::toInterger(int base) const
+Interger XString::toInteger(int base) const
 {
 	Interger result = 0;
 	switch (base) {
@@ -442,12 +442,12 @@ Interger XString::toInterger(int base) const
 
 int XString::toInt(int base) const
 {
-	return toInterger<int>(base);
+	return toInteger<int>(base);
 }
 
 long long XString::toLongLong(int base)
 {
-	return toInterger<long long>(base);
+	return toInteger<long long>(base);
 }
 
 double XString::toDouble() const

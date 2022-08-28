@@ -58,7 +58,7 @@ namespace XSharp {
 		{":",{15,LeftToRight}},
 	};
 
-	static std::unordered_map<XString, UnaryOperatorInfo> UnaryOperatorPriority = {
+	static std::unordered_map<XString, UnaryOperatorInfo> UnaryOperInfo = {
 		{"+",{3,BeforeValue,RightToLeft}},//{operator,{priority,place,associativity}}
 		{"-",{3,BeforeValue,RightToLeft}},
 		{"++",{3,All,RightToLeft}},

@@ -131,6 +131,31 @@ std::vector<std::pair<XString, XString>> Parser::paramsDefinition()
 	return paramsDef;
 }
 
+std::vector<ASTNode*> Parser::params(Iterator paramsBegin, Iterator paramsEnd)
+{
+	return std::vector<ASTNode*>();
+}
+
+std::vector<Parser::Iterator> findFunctionComma(Parser::Iterator begin, Parser::Iterator end) const
+{
+	std::vector<Parser::Iterator> result;
+	int numOpenParentheses = 0;
+	for (auto it = begin; it != end; ++it) {
+		if (it->type == OpenParenthesis) {
+			++numOpenParentheses;
+		}
+		else if (it->type== CloseParenthesis) {
+			--numOpenParentheses;
+		}
+		if (it->type == Comma) {
+			if (!numOpenParentheses) {
+				result.push_back(it);
+			}
+		}
+	}
+	return result;
+}
+
 BlockNode* Parser::block()
 {
 	BlockNode* root = new BlockNode;
@@ -201,20 +226,85 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 
 ASTNode* Parser::factor(Iterator& factorBegin)
 {
-	ASTNode* root;
+	UnaryOperatorNode* before = nullptr;
+	UnaryOperatorNode* after = nullptr;
+	ASTNode* operand=nullptr;
 	if (factorBegin->type == Operator) {
-		UnaryOperatorNode* root = new UnaryOperatorNode;
-		root->setOperatorStr(factorBegin->value);
+		before = new UnaryOperatorNode;
+		before->setOperatorStr(factorBegin->value);
+
 		factorBegin++;
-		if (factorBegin == end) {
-			throw XSharpError("No factor matched after a unary operator");
-		}
-		root->setValue(factor(factorBegin));
-		return root;
 	}
-	else
-	{
-		return factor(factorBegin);
+
+	if (factorBegin->type == Integer) {
+		operand = new IntegerNode(factorBegin->value.toInteger<int64_t>());
+	}
+	else if (factorBegin->type == DecimalFraction) {
+		operand = new DecimalFractionNode(factorBegin->value.toDouble());
+	}
+	else if (factorBegin->type == Boolean) {
+		operand = new BooleanNode(factorBegin->value == "true");
+	}
+	else if (factorBegin->type == String) {
+		operand = new StringNode(factorBegin->value);
+	}
+	else if (factorBegin->type == OpenParenthesis) {
+		auto nextPar = nextCloseParenthesis(factorBegin + 1);
+		operand = expression(factorBegin + 1, nextPar);
+		factorBegin = nextPar;
+	}
+	else if (factorBegin->type == Identifier) {
+		if ((factorBegin + 1)->type == OpenParenthesis) {
+			auto functionEnd = nextCloseParenthesis(factorBegin + 2);
+			FunctionCallNode* temp = new FunctionCallNode;
+			temp->setName(factorBegin->value);
+			temp->setParams(params(factorBegin, functionEnd));
+			operand = temp;
+			factorBegin = functionEnd;
+		}
+		else {
+			operand = new VariableNode(factorBegin->value);
+		}
+	}
+	else {
+		delete before;
+		throw XSharpError("Not a factor");
+	}
+
+	factorBegin++;
+
+	if (factorBegin->type == Operator) {
+		if ((factorBegin + 1)->type != Integer && (factorBegin + 1)->type != DecimalFraction
+			&& (factorBegin + 1)->type != Boolean && (factorBegin + 1)->type != String
+			&& (factorBegin + 1)->type != OpenParenthesis) {
+			after = new UnaryOperatorNode;
+			after->setOperatorStr(factorBegin->value);
+			factorBegin++;
+		}
+	}
+
+	if (!(before || after)) {
+		return operand;
+	}
+	else if(before && !after) {
+		before->setValue(operand);
+		return before;
+	}
+	else if (!before && after) {
+		after->setValue(operand);
+		return after;
+	}else {
+		using XSharp::UnaryOperInfo;
+		if (UnaryOperInfo[before->operatorStr()].priority < UnaryOperInfo[before->operatorStr()].priority) {
+			before->setValue(operand);
+			after->setValue(before);
+			return after;
+		}
+		else {
+			after->setValue(operand);
+			before->setValue(after);
+			return before;
+		}
 	}
 }
 
