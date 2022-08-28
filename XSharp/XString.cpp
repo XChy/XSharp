@@ -24,12 +24,12 @@ void StringData::reallocate(uint allocSize) {
 	char16_t* newData = new char16_t[allocSize];
 	this->allocSize = allocSize;
 	memcpy(newData, str, size * sizeof(char16_t));
-	delete str;
+	delete[] str;
 	str = newData;
 }
 
 StringData::~StringData() {
-	delete str;
+	delete[] str;
 }
 
 bool XChar::isDigit() const

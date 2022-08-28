@@ -312,7 +312,7 @@ XString BlockNode::dump() const
 			result.append(i->dump()).append("\n");
 		}
 	}
-	return XString();
+	return result;
 }
 
 void BlockNode::addContent(ASTNode* content)

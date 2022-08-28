@@ -81,7 +81,7 @@ VariableDeclarationNode* Parser::variableDeclaration()
 	}
 	else if (current->value == "=") {
 		forward();
-		root->setInitValue(expression(current, nextSentenceEnd(current)+1));
+		root->setInitValue(expression(current, nextSentenceEnd(current) + 1));
 	}
 	else {
 		throw XSharpError("variable defintion error");
@@ -133,27 +133,22 @@ std::vector<std::pair<XString, XString>> Parser::paramsDefinition()
 
 std::vector<ASTNode*> Parser::params(Iterator paramsBegin, Iterator paramsEnd)
 {
-	return std::vector<ASTNode*>();
-}
-
-std::vector<Parser::Iterator> findFunctionComma(Parser::Iterator begin, Parser::Iterator end) const
-{
-	std::vector<Parser::Iterator> result;
-	int numOpenParentheses = 0;
-	for (auto it = begin; it != end; ++it) {
-		if (it->type == OpenParenthesis) {
-			++numOpenParentheses;
-		}
-		else if (it->type== CloseParenthesis) {
-			--numOpenParentheses;
-		}
-		if (it->type == Comma) {
-			if (!numOpenParentheses) {
-				result.push_back(it);
-			}
-		}
+	if (paramsBegin == paramsEnd)return std::vector<ASTNode*>();
+	auto commas = findFunctionCommas(paramsBegin, paramsEnd);
+	if (commas.size() == 0) {
+		return { expression(paramsBegin,paramsEnd) };
 	}
-	return result;
+	else {
+		std::vector<ASTNode*> _params(commas.size() + 1);
+		_params.push_back(expression(paramsBegin, commas[0]));
+
+		for (int i = 0; i < commas.size() - 1; ++i) {
+			_params.push_back(expression(commas[i], commas[i + 1]));
+		}
+
+		_params.push_back(expression(commas[commas.size() - 1], paramsEnd));
+	}
+	return std::vector<ASTNode*>();
 }
 
 BlockNode* Parser::block()
@@ -201,34 +196,82 @@ ASTNode* Parser::statement()
 
 ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 {
+	using XSharp::binaryOperatorPriority;
 	if (exprBegin == exprEnd) { return nullptr; }
 
 	ASTNode* root = nullptr;
 
-	ASTNode* factor1 = factor(exprBegin);
+	ASTNode* factor1 = nullptr;
 	BinaryOperatorNode* oper1 = nullptr;
 	ASTNode* factor2 = nullptr;
-	BinaryOperatorNode* oper2=nullptr;
+	BinaryOperatorNode* oper2 = nullptr;
 	ASTNode* factor3 = nullptr;
 
-	if (exprBegin == exprEnd) {
-		return factor1;
+	root = factor1 = operand(exprBegin);
+	if (exprBegin == exprEnd)return root;
+
+	if (exprBegin->type == Operator) {
+		root = oper1 = new BinaryOperatorNode;
+		oper1->setOperatorStr(exprBegin->value);
+		oper1->setLeft(factor1);
+	}
+	else {
+		throw XSharpError("No operator matched after value");
 	}
 
-	while (exprBegin!=exprEnd)
-	{
+	if (++exprBegin == exprEnd)throw XSharpError("No value after operator");
+
+	factor2 = operand(exprBegin);
+	oper1->setRight(factor2);
+
+	while (exprBegin != exprEnd) {
+		oper2 = new BinaryOperatorNode;
+		oper2->setOperatorStr(exprBegin->value);
+		if (++exprBegin == exprEnd)throw XSharpError("No value after operator");
+
+		factor3 = operand(exprBegin);
+
+		if (priority(oper2) > priority(oper1)) {
+			oper2->setLeft(root);
+			oper2->setRight(factor3);
+			root = oper2;
+		}
+		else if (priority(oper2) == priority(oper1)) {
+			if (assoc(oper2) == LeftToRight) {
+				oper2->setLeft(oper1);
+				oper2->setRight(factor3);
+				if (root == oper1) {
+					root = oper2;
+				}
+				else {
+					((BinaryOperatorNode*)root)->setRight(oper2);
+				}
+			}
+			else if (assoc(oper2) == RightToLeft) {
+				oper2->setLeft(factor2);
+				oper2->setRight(factor3);
+				oper1->setRight(oper2);
+			}
+		}
+		else {
+			oper1->setRight(oper2);
+			oper2->setLeft(factor2);
+			oper2->setRight(factor3);
+		}
+		oper1 = oper2;
+		factor2 = factor3;
 		
 	}
 
 	current = exprEnd;
-	return nullptr;
+	return root;
 }
 
-ASTNode* Parser::factor(Iterator& factorBegin)
+ASTNode* Parser::operand(Iterator& factorBegin)
 {
 	UnaryOperatorNode* before = nullptr;
 	UnaryOperatorNode* after = nullptr;
-	ASTNode* operand=nullptr;
+	ASTNode* operand = nullptr;
 	if (factorBegin->type == Operator) {
 		before = new UnaryOperatorNode;
 		before->setOperatorStr(factorBegin->value);
@@ -258,7 +301,7 @@ ASTNode* Parser::factor(Iterator& factorBegin)
 			auto functionEnd = nextCloseParenthesis(factorBegin + 2);
 			FunctionCallNode* temp = new FunctionCallNode;
 			temp->setName(factorBegin->value);
-			temp->setParams(params(factorBegin, functionEnd));
+			temp->setParams(params(factorBegin + 2, functionEnd));
 			operand = temp;
 			factorBegin = functionEnd;
 		}
@@ -268,7 +311,7 @@ ASTNode* Parser::factor(Iterator& factorBegin)
 	}
 	else {
 		delete before;
-		throw XSharpError("Not a factor");
+		throw XSharpError("Not a operand");
 	}
 
 	factorBegin++;
@@ -286,14 +329,15 @@ ASTNode* Parser::factor(Iterator& factorBegin)
 	if (!(before || after)) {
 		return operand;
 	}
-	else if(before && !after) {
+	else if (before && !after) {
 		before->setValue(operand);
 		return before;
 	}
 	else if (!before && after) {
 		after->setValue(operand);
 		return after;
-	}else {
+	}
+	else {
 		using XSharp::UnaryOperInfo;
 		if (UnaryOperInfo[before->operatorStr()].priority < UnaryOperInfo[before->operatorStr()].priority) {
 			before->setValue(operand);
@@ -310,7 +354,7 @@ ASTNode* Parser::factor(Iterator& factorBegin)
 
 Parser::Iterator Parser::nextSentenceEnd(Iterator factorBegin) const
 {
-	for(; factorBegin != end; ++factorBegin){
+	for (; factorBegin != end; ++factorBegin) {
 		if (factorBegin->type == SentenceEnd) {
 			return factorBegin;
 		}
@@ -334,6 +378,51 @@ Parser::Iterator Parser::nextCloseParenthesis(Iterator begin) const
 	}
 
 	throw XSharpError("')' is missing");
+}
+
+std::vector<Parser::Iterator> Parser::findFunctionCommas(Iterator begin, Iterator end)
+{
+	std::vector<Parser::Iterator> result;
+	int numOpenParentheses = 0;
+	int numOpenBrackets = 0;
+	int numOpenBraces = 0;
+
+	for (auto it = begin; it != end; ++it) {
+		if (it->type == OpenParenthesis) {
+			++numOpenParentheses;
+		}
+		else if (it->type == CloseParenthesis) {
+			--numOpenParentheses;
+		}
+		if (it->type == OpenBrace) {
+			++numOpenBraces;
+		}
+		else if (it->type == CloseBrace) {
+			--numOpenBraces;
+		}
+		if (it->type == OpenBracket) {
+			++numOpenBrackets;
+		}
+		else if (it->type == CloseBracket) {
+			--numOpenBrackets;
+		}
+		if (it->type == Comma) {
+			if (!numOpenParentheses && !numOpenBraces && !numOpenBrackets) {
+				result.push_back(it);
+			}
+		}
+	}
+	return result;
+}
+
+int Parser::priority(BinaryOperatorNode* oper)
+{
+	return XSharp::binaryOperatorPriority[oper->operatorStr()].priority;
+}
+
+Assoc Parser::assoc(BinaryOperatorNode* oper)
+{
+	return XSharp::binaryOperatorPriority[oper->operatorStr()].assoc;
 }
 
 void Parser::forward()

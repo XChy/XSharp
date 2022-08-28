@@ -22,11 +22,13 @@ private:
 	BlockNode* block();
 	ASTNode* statement();
 	ASTNode* expression(Iterator exprBegin,Iterator exprEnd);
-	ASTNode* factor(Iterator& factorBegin);
+	ASTNode* operand(Iterator& factorBegin);
 
 	Iterator nextSentenceEnd(Iterator begin) const;
 	Iterator nextCloseParenthesis(Iterator begin) const;
-	std::vector<Iterator> findFunctionComma(Iterator begin, Iterator end) const;
+	static std::vector<Iterator> findFunctionCommas(Iterator begin, Iterator end);
+	static int priority(BinaryOperatorNode* oper);
+	static Assoc assoc(BinaryOperatorNode* oper);
 
 	void forward();
 	void backward();

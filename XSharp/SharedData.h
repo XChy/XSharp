@@ -1,5 +1,6 @@
 #pragma once
 #include "xsharp_global.h"
+#include <atomic>
 
 class XSharp_EXPORT XRefCount {
 public:
@@ -20,7 +21,7 @@ public:
 		return mRefCount;
 	}
 private:
-	int mRefCount;
+	std::atomic<int> mRefCount;
 };
 
 template<typename T>
