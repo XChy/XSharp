@@ -214,16 +214,26 @@ XString& XString::append(const XString& other) {
 
 XString& XString::append(XChar xc)
 {
-	if (!isDetach()) {
-		detach();
+	int totalSize = d.data()->size+1;
+	int oldSize = d.data()->size;
+	if (d.ref->refCount() == 1) {
+		if (d.data()->allocSize < totalSize + 1) {
+			d.data()->reallocate((totalSize + 1) * 2);
+		}
+		d.data()->str[totalSize - 1] = xc.ucs;
+		d.data()->str[totalSize] = '\0';
+		d.data()->size = totalSize;
 	}
-	int totalSize = d.data()->size + 1;
-	if (d.data()->allocSize < totalSize + 1) {
-		d.data()->reallocate((totalSize + 1) * 2);
+	else {
+		char16_t* oldData = d.data()->str;
+		d.ref->unref();
+		d.mData = new StringData((totalSize + 1) * 2);
+		d.data()->size = totalSize;
+		xstrcpy(d.data()->str, oldData, oldSize);
+		d.data()->str[totalSize - 1] = xc.ucs;
+		d.data()->str[totalSize] = '\0';
 	}
-	d.data()->str[totalSize - 1] = xc.ucs;
-	d.data()->str[totalSize] = '\0';
-	d.data()->size = totalSize;
+
 	return *this;
 }
 
@@ -289,6 +299,20 @@ bool XString::contains(XChar xc) const
 		}
 	}
 	return false;
+}
+
+int XString::subStringIndex(const XString& sub) const
+{
+	if (this->size() < sub.size()) {
+		return -1;
+	}
+
+	for (int i = 0; i <= this->size() - sub.size(); ++i) {
+		if (memcmp(data(), sub.data(), sub.size() * 2) == 0) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 void XString::removeAt(int pos) {

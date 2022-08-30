@@ -89,15 +89,15 @@ class XSharp_EXPORT UnaryOperatorNode :public ASTNode {
 public:
 	XString dump() const;
 
-	void setValue(ASTNode* value);
-	ASTNode* value();
+	void setOperand(ASTNode* operand);
+	ASTNode* operand();
 
 	void setOperatorStr(const XString& operatorStr);
 	XString operatorStr() const;
 
 	~UnaryOperatorNode();
 private:
-	ASTNode* _value;
+	ASTNode* _operand;
 	XString _operatorStr;
 };
 

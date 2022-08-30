@@ -86,6 +86,8 @@ public:
 
 	bool contains(XChar xc) const;
 
+	int subStringIndex(const XString& sub) const;//If no such substring exists,return -1
+
 	void removeAt(int pos);
 	void remove(int pos, int len);
 	void removeLast();

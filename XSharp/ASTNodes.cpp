@@ -87,7 +87,7 @@ XString StringNode::value() const
 
 XString BinaryOperatorNode::dump() const
 {
-	return _operatorStr+" { left:" + _left->dump() + "\n"
+	return _operatorStr+"{ left:" + _left->dump() + "\n"
 		"right:" + _right->dump() + "}";
 }
 
@@ -427,17 +427,17 @@ MemberFunctionCallNode::~MemberFunctionCallNode()
 
 XString UnaryOperatorNode::dump() const
 {
-	return _operatorStr + " { value:" + _value->dump() + "\n}";
+	return _operatorStr + "{ operand:" + _operand->dump() + "\n}";
 }
 
-void UnaryOperatorNode::setValue(ASTNode* value)
+void UnaryOperatorNode::setOperand(ASTNode* operand)
 {
-	_value = value;
+	_operand = operand;
 }
 
-ASTNode* UnaryOperatorNode::value()
+ASTNode* UnaryOperatorNode::operand()
 {
-	return _value;
+	return _operand;
 }
 
 void UnaryOperatorNode::setOperatorStr(const XString& operatorStr)
@@ -452,7 +452,7 @@ XString UnaryOperatorNode::operatorStr() const
 
 UnaryOperatorNode::~UnaryOperatorNode()
 {
-	delete _value;
+	delete _operand;
 }
 
 VariableNode::VariableNode(const XString name)

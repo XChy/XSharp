@@ -5,8 +5,11 @@
 #include <iostream>
 
 int main() {
+	while(true){
+		std::string a;
+		std::cin >> a;
 	Lexer lexer;
-    auto tokens = lexer.tokenize("int main(int a,String b){1+1*3*func(1,3,(\"123\"+\"123\"))*3/(3*3);}");
+    auto tokens = lexer.tokenize("int main(int a,String b){"+XString::fromStdString(a) + "}");
 	for (auto token : tokens) {
 		std::cout << token.dump().toStdString() << "  ";
 	}
@@ -14,5 +17,6 @@ int main() {
 	std::cout << std::endl;
 	Parser parser;
 	std::cout << parser.parse(tokens)->dump().toStdString();
+	}
 	return 0;
 }

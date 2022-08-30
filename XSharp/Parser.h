@@ -28,6 +28,7 @@ private:
 	Iterator nextCloseParenthesis(Iterator begin) const;
 	static std::vector<Iterator> findFunctionCommas(Iterator begin, Iterator end);
 	static int priority(BinaryOperatorNode* oper);
+	static int priority(UnaryOperatorNode* oper);
 	static Assoc assoc(BinaryOperatorNode* oper);
 
 	void forward();

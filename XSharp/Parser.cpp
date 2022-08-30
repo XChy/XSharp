@@ -197,7 +197,7 @@ ASTNode* Parser::statement()
 
 ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 {
-	using XSharp::binaryOperatorPriority;
+	using XSharp::binaryOperInfo;
 	if (exprBegin == exprEnd) { return nullptr; }
 
 	ASTNode* root = nullptr;
@@ -209,7 +209,10 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 	ASTNode* factor3 = nullptr;
 
 	root = factor1 = operand(exprBegin);
-	if (exprBegin == exprEnd)return root;
+	if (exprBegin == exprEnd) {
+		current = exprEnd;
+		return root;
+	}
 
 	if (exprBegin->type == Operator) {
 		root = oper1 = new BinaryOperatorNode;
@@ -217,10 +220,10 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 		oper1->setLeft(factor1);
 	}
 	else {
-		throw XSharpError("No operator matched after value");
+		throw XSharpError("No operator matched after operand");
 	}
 
-	if (++exprBegin == exprEnd)throw XSharpError("No value after operator");
+	if (++exprBegin == exprEnd)throw XSharpError("No operand after operator");
 
 	factor2 = operand(exprBegin);
 	oper1->setRight(factor2);
@@ -228,7 +231,7 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 	while (exprBegin != exprEnd) {
 		oper2 = new BinaryOperatorNode;
 		oper2->setOperatorStr(exprBegin->value);
-		if (++exprBegin == exprEnd)throw XSharpError("No value after operator");
+		if (++exprBegin == exprEnd)throw XSharpError("No operand after operator");
 
 		factor3 = operand(exprBegin);
 
@@ -331,23 +334,23 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 		return operand;
 	}
 	else if (before && !after) {
-		before->setValue(operand);
+		before->setOperand(operand);
 		return before;
 	}
 	else if (!before && after) {
-		after->setValue(operand);
+		after->setOperand(operand);
 		return after;
 	}
 	else {
-		using XSharp::UnaryOperInfo;
-		if (UnaryOperInfo[before->operatorStr()].priority < UnaryOperInfo[before->operatorStr()].priority) {
-			before->setValue(operand);
-			after->setValue(before);
+		using XSharp::unaryOperInfo;
+		if (priority(before) < priority(after)) {
+			before->setOperand(operand);
+			after->setOperand(before);
 			return after;
 		}
 		else {
-			after->setValue(operand);
-			before->setValue(after);
+			after->setOperand(operand);
+			before->setOperand(after);
 			return before;
 		}
 	}
@@ -418,12 +421,17 @@ std::vector<Parser::Iterator> Parser::findFunctionCommas(Iterator begin, Iterato
 
 int Parser::priority(BinaryOperatorNode* oper)
 {
-	return XSharp::binaryOperatorPriority[oper->operatorStr()].priority;
+	return XSharp::binaryOperInfo[oper->operatorStr()].priority;
+}
+
+int Parser::priority(UnaryOperatorNode* oper)
+{
+	return XSharp::unaryOperInfo[oper->operatorStr()].priority;;
 }
 
 Assoc Parser::assoc(BinaryOperatorNode* oper)
 {
-	return XSharp::binaryOperatorPriority[oper->operatorStr()].assoc;
+	return XSharp::binaryOperInfo[oper->operatorStr()].assoc;
 }
 
 void Parser::forward()
