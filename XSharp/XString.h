@@ -2,11 +2,11 @@
 
 #include "xsharp_global.h"
 #include "SharedData.h"
+#include <cstring>
 
 class XSharp_EXPORT XChar {
 	friend class XString;
 public:
-	XChar(const XChar& other) :ucs(other.ucs) {}
 	XChar(char ucs) :ucs(uchar(ucs)) {}
 	XChar(uchar ucs) :ucs(ucs) {}
 	XChar(short ucs) :ucs(ushort(ucs)) {}
@@ -68,10 +68,7 @@ public:
 	XString& operator=(const wchar_t* wstr);
 	XString& operator=(const char16_t* ustr);
 
-	XString& append(const char* ascii);
-	XString& append(const wchar_t* wstr);
 	XString& append(const XString& other);
-	XString& append(const char16_t* ustr);
 	XString& append(XChar xc);
 
 	XString& reverse();

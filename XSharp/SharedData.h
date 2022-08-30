@@ -21,7 +21,7 @@ public:
 		return mRefCount;
 	}
 private:
-	std::atomic<int> mRefCount;
+	std::atomic<uint> mRefCount;
 };
 
 template<typename T>
@@ -64,7 +64,7 @@ public:
 		if (ref->unref() == 0)
 		{
 			delete ref;
-			delete mData;
+			//delete mData;
 		}
 	}
 

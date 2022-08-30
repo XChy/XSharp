@@ -23,13 +23,13 @@ void StringData::allocate(uint allocSize) {
 void StringData::reallocate(uint allocSize) {
 	char16_t* newData = new char16_t[allocSize];
 	this->allocSize = allocSize;
-	memcpy(newData, str, size * sizeof(char16_t));
+    memcpy(newData, str, (size+1) * sizeof(char16_t));
 	delete[] str;
 	str = newData;
 }
 
 StringData::~StringData() {
-	delete[] str;
+	delete[] str ;
 }
 
 bool XChar::isDigit() const
@@ -166,8 +166,7 @@ int XString::size() const
 XString& XString::operator=(const char16_t* ustr) {
 	int len = ucs2len(ustr);
 	if (d.data()->allocSize < len + 1) {
-		delete[] d.data()->str;
-		d.data()->allocate(len + 1);
+		d = new StringData((len + 1)*2);
 	}
 	d.data()->size = len;
 	xstrcpy(d.data()->str, ustr, len + 1);
@@ -182,67 +181,34 @@ XString& XString::operator=(const char* utf8) {
 XString& XString::operator=(const wchar_t* wstr) {
 	int len = wcslen(wstr);
 	if (d.data()->allocSize < len + 1) {
-		delete d.data()->str;
-		d.data()->allocate(len + 1);
+		d = new StringData((len + 1) * 2);
 	}
 	d.data()->size = len;
 	xstrcpy(d.data()->str, wstr, len + 1);
 	return *this;
 }
 
-XString& XString::append(const char* ascii) {
-	if (!isDetach()) {
-		detach();
-	}
-	int otherSize = strlen(ascii);
-	int totalSize = d.data()->size + otherSize;
-	if (d.data()->allocSize < totalSize + 1) {
-		d.data()->reallocate((totalSize + 1) * 2);
-	}
-	xstrcpy(d.data()->str + d.data()->size, ascii, otherSize + 1);
-	d.data()->size = totalSize;
-	return *this;
-}
-
-XString& XString::append(const wchar_t* wstr) {
-	if (!isDetach()) {
-		detach();
-	}
-	int otherSize = wcslen(wstr);
-	int totalSize = d.data()->size + otherSize;
-	if (d.data()->allocSize < totalSize + 1) {
-		d.data()->reallocate((totalSize + 1) * 2);
-	}
-	xstrcpy(d.data()->str + d.data()->size, wstr, otherSize + 1);
-	d.data()->size = totalSize;
-	return *this;
-}
-
 XString& XString::append(const XString& other) {
-	if (!isDetach()) {
-		detach();
-	}
+	int oldSize = d.data()->size;
 	int otherSize = other.d.data()->size;
 	int totalSize = d.data()->size + otherSize;
-	if (d.data()->allocSize < totalSize + 1) {
-		d.data()->reallocate((totalSize + 1) * 2);
-	}
-	xstrcpy(d.data()->str + d.data()->size, other.d.data()->str, otherSize + 1);
-	d.data()->size = totalSize;
-	return *this;
-}
 
-XString& XString::append(const char16_t* ustr) {
-	if (!isDetach()) {
-		detach();
+	if (d.ref->refCount() == 1) {
+		if (d.data()->allocSize < totalSize + 1) {
+			d.data()->reallocate((totalSize + 1) * 2);
+		}
+		xstrcpy(d.data()->str + d.data()->size, other.d.data()->str, otherSize + 1);
+		d.data()->size = totalSize;
 	}
-	int otherSize = ucs2len(ustr);
-	int totalSize = d.data()->size + otherSize;
-	if (d.data()->allocSize < totalSize + 1) {
-		d.data()->reallocate((totalSize + 1) * 2);
+	else {
+		char16_t* oldData = d.data()->str;
+		d.ref->unref();
+		d.mData = new StringData((totalSize + 1) * 2);
+		d.data()->size = totalSize;
+		xstrcpy(d.data()->str, oldData, oldSize);
+		xstrcpy(d.data()->str + oldSize, other.d.data()->str, otherSize + 1);
 	}
-	xstrcpy(d.data()->str + d.data()->size, ustr, otherSize + 1);
-	d.data()->size = totalSize;
+	
 	return *this;
 }
 
@@ -525,7 +491,7 @@ XString XString::fromUtf8(const char* utf8Str)
 		}
 		else if (*it < 224) {
 			ushort ucs;
-			uint utf8;
+			uint utf8=0;
 			uchar utf8_1 = (*it) ^ 0xc0;
 			uchar utf8_2 = (*++it) ^ 0x80;
 			utf8 += utf8_1;
