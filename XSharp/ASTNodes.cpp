@@ -495,3 +495,23 @@ XString VariableNode::name() const
 {
 	return _name;
 }
+
+BoxNode::BoxNode(ASTNode* child)
+	:_child(child)
+{
+}
+
+XString BoxNode::dump() const
+{
+	return _child->dump();
+}
+
+void BoxNode::setChild(ASTNode* child)
+{
+	_child= child;
+}
+
+ASTNode* BoxNode::child()
+{
+	return _child;
+}

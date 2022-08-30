@@ -233,38 +233,58 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 
 		factor3 = operand(exprBegin);
 
-		if (priority(oper2) > priority(oper1)) {
+		if (priority(oper2) > priority(root)) {
 			oper2->setLeft(root);
 			oper2->setRight(factor3);
 			root = oper2;
 		}
-		else if (priority(oper2) == priority(oper1)) {
+		else if (priority(oper2) == priority(root)) {
 			if (assoc(oper2) == LeftToRight) {
-				oper2->setLeft(oper1);
+				oper2->setLeft(root);
 				oper2->setRight(factor3);
-				if (root == oper1) {
-					root = oper2;
-				}
-				else {
-					((BinaryOperatorNode*)root)->setRight(oper2);
-				}
+				root = oper2;
 			}
 			else if (assoc(oper2) == RightToLeft) {
-				oper2->setLeft(factor2);
+				oper2->setLeft(root->right());
 				oper2->setRight(factor3);
-				oper1->setRight(oper2);
+				root->setRight(oper2);
 			}
 		}
 		else {
-			oper1->setRight(oper2);
-			oper2->setLeft(factor2);
-			oper2->setRight(factor3);
-		}
-		oper1 = oper2;
-		factor2 = factor3;
-		
-	}
+			BinaryOperatorNode* node = root;
+			while (true) {
+				if (!node->right()->is<BinaryOperatorNode>()) {
+					oper2->setLeft(node->right());
+					oper2->setRight(factor3);
+					node->setRight(oper2);
+					break;
+				}
 
+				BinaryOperatorNode* current = (BinaryOperatorNode*)node->right();
+
+				if (priority(oper2) > priority(current)) {
+					oper2->setLeft(current);
+					oper2->setRight(factor3);
+					node->setRight(oper2);
+					break;
+				}
+				else if (priority(oper2) == priority(current)) {
+					if (assoc(oper2) == LeftToRight) {
+						oper2->setLeft(current);
+						oper2->setRight(factor3);
+						node->setRight(oper2);
+					}
+					else if (assoc(oper2) == RightToLeft) {
+						oper2->setLeft(current->right());
+						oper2->setRight(factor3);
+						current->setRight(oper2);
+					}
+					break;
+				}
+				node = current;
+			}
+		}
+	}
 	return root;
 }
 
@@ -294,7 +314,7 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 	}
 	else if (factorBegin->type == OpenParenthesis) {
 		auto nextPar = nextCloseParenthesis(factorBegin + 1);
-		operand = expression(factorBegin + 1, nextPar);
+		operand = new BoxNode(expression(factorBegin + 1, nextPar));
 		factorBegin = nextPar;
 	}
 	else if (factorBegin->type == Identifier) {

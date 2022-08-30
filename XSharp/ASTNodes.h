@@ -14,7 +14,7 @@ public:
 	}
 
 	template<typename T>
-	bool is() const {
+	bool is() {
 		return bool(dynamic_cast<T*>(this));
 	}
 
@@ -63,6 +63,17 @@ public:
 	XString value() const;
 private:
 	XString _value;
+};
+
+class XSharp_EXPORT BoxNode :public ASTNode {//Applied to hide the binary node's information
+public:
+	BoxNode(ASTNode* child);
+	XString dump() const;
+
+	void setChild(ASTNode* child);
+	ASTNode* child();
+private:
+	ASTNode* _child;
 };
 
 class XSharp_EXPORT BinaryOperatorNode :public ASTNode {

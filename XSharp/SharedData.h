@@ -64,7 +64,7 @@ public:
 		if (ref->unref() == 0)
 		{
 			delete ref;
-			//delete mData;
+			delete mData;
 		}
 	}
 
