@@ -71,7 +71,7 @@ StringNode::StringNode(const XString& value)
 
 XString StringNode::dump() const
 {
-	return _value;
+	return "\"" + _value + "\"";
 }
 
 void StringNode::setValue(XString value)
@@ -339,8 +339,9 @@ XString FunctionCallNode::dump() const
 {
 	XString paramsDump;
 	for (auto param : _params) {
-		paramsDump.append(param->dump());
+		paramsDump.append(param->dump()).append(',');
 	}
+	
 	return "FunctionCall{name:" + _name +  "\nparams:{" + paramsDump+ "}\n}";
 }
 

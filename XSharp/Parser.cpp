@@ -139,16 +139,17 @@ std::vector<ASTNode*> Parser::params(Iterator paramsBegin, Iterator paramsEnd)
 		return { expression(paramsBegin,paramsEnd) };
 	}
 	else {
-		std::vector<ASTNode*> _params(commas.size() + 1);
+		std::vector<ASTNode*> _params;
+		_params.reserve(commas.size() + 1);
 		_params.push_back(expression(paramsBegin, commas[0]));
 
 		for (int i = 0; i < commas.size() - 1; ++i) {
-			_params.push_back(expression(commas[i], commas[i + 1]));
+			_params.push_back(expression(commas[i]+1, commas[i + 1]));
 		}
 
-		_params.push_back(expression(commas[commas.size() - 1], paramsEnd));
+		_params.push_back(expression(commas[commas.size() - 1]+1, paramsEnd));
+		return _params;
 	}
-	return std::vector<ASTNode*>();
 }
 
 BlockNode* Parser::block()
