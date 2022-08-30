@@ -85,6 +85,11 @@ XString StringNode::value() const
 }
 
 
+BinaryOperatorNode::BinaryOperatorNode()
+	:_parent(nullptr)
+{
+}
+
 XString BinaryOperatorNode::dump() const
 {
 	return _operatorStr+"{ left:" + _left->dump() + "\n"
@@ -94,6 +99,9 @@ XString BinaryOperatorNode::dump() const
 void BinaryOperatorNode::setLeft(ASTNode* left)
 {
 	_left = left;
+	if (left->is<BinaryOperatorNode>()) {
+		((BinaryOperatorNode*)left)->setParent(this);
+	}
 }
 
 ASTNode* BinaryOperatorNode::left()
@@ -104,11 +112,24 @@ ASTNode* BinaryOperatorNode::left()
 void BinaryOperatorNode::setRight(ASTNode* right)
 {
 	_right = right;
+	if (right->is<BinaryOperatorNode>()) {
+		((BinaryOperatorNode*)right)->setParent(this);
+	}
 }
 
 ASTNode* BinaryOperatorNode::right()
 {
 	return _right;
+}
+
+void BinaryOperatorNode::setParent(BinaryOperatorNode* parent)
+{
+	_parent = parent;
+}
+
+BinaryOperatorNode* BinaryOperatorNode::parent()
+{
+	return _parent;
 }
 
 void BinaryOperatorNode::setOperatorStr(const XString& operatorStr)

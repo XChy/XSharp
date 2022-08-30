@@ -67,6 +67,7 @@ private:
 
 class XSharp_EXPORT BinaryOperatorNode :public ASTNode {
 public:
+	BinaryOperatorNode();
 	XString dump() const;
 
 	void setLeft(ASTNode* left);
@@ -75,6 +76,9 @@ public:
 	void setRight(ASTNode* right);
 	ASTNode* right();
 
+	void setParent(BinaryOperatorNode* parent);
+	BinaryOperatorNode* parent();
+
 	void setOperatorStr(const XString& operatorStr);
 	XString operatorStr() const;
 
@@ -82,6 +86,7 @@ public:
 private:
 	ASTNode* _left;
 	ASTNode* _right;
+	BinaryOperatorNode* _parent;
 	XString _operatorStr;
 };
 

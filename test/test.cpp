@@ -9,7 +9,7 @@ int main() {
 		std::string a;
 		std::cin >> a;
 	Lexer lexer;
-    auto tokens = lexer.tokenize("int main(int a,String b){"+XString::fromStdString(a) + "}");
+    auto tokens = lexer.tokenize("int main(int a,String b){"+XString::fromStdString(a) + ";}");
 	for (auto token : tokens) {
 		std::cout << token.dump().toStdString() << "  ";
 	}

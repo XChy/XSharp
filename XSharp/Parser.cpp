@@ -189,18 +189,18 @@ ASTNode* Parser::statement()
 
 		break;
 	default:
-		ASTNode* expr = expression(current, nextSentenceEnd(current));//current is ";",need to forward to next statement
-		forward();
+		auto exprEnd = nextSentenceEnd(current);
+		ASTNode* expr = expression(current, exprEnd);//current is ";",need to forward to next statement
+		current = exprEnd + 1;
 		return expr;
 	}
 }
 
 ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 {
-	using XSharp::binaryOperInfo;
 	if (exprBegin == exprEnd) { return nullptr; }
 
-	ASTNode* root = nullptr;
+	BinaryOperatorNode* root = nullptr;
 
 	ASTNode* factor1 = nullptr;
 	BinaryOperatorNode* oper1 = nullptr;
@@ -208,11 +208,9 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 	BinaryOperatorNode* oper2 = nullptr;
 	ASTNode* factor3 = nullptr;
 
-	root = factor1 = operand(exprBegin);
-	if (exprBegin == exprEnd) {
-		current = exprEnd;
-		return root;
-	}
+	factor1 = operand(exprBegin);
+
+	if (exprBegin == exprEnd)return factor1;
 
 	if (exprBegin->type == Operator) {
 		root = oper1 = new BinaryOperatorNode;
@@ -267,7 +265,6 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 		
 	}
 
-	current = exprEnd;
 	return root;
 }
 
