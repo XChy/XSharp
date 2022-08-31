@@ -81,7 +81,9 @@ VariableDeclarationNode* Parser::variableDeclaration()
 	}
 	else if (current->value == "=") {
 		forward();
-		root->setInitValue(expression(current, nextSentenceEnd(current) + 1));
+		auto nextEnd = nextSentenceEnd(current);
+		root->setInitValue(expression(current, nextEnd));
+		current = nextEnd + 1;
 	}
 	else {
 		throw XSharpError("variable defintion error");
@@ -131,10 +133,12 @@ std::vector<std::pair<XString, XString>> Parser::paramsDefinition()
 	return paramsDef;
 }
 
-std::vector<ASTNode*> Parser::params(Iterator paramsBegin, Iterator paramsEnd)
+std::vector<ASTNode*> Parser::paramsList(Iterator paramsBegin, Iterator paramsEnd)
 {
 	if (paramsBegin == paramsEnd)return std::vector<ASTNode*>();
+
 	auto commas = findFunctionCommas(paramsBegin, paramsEnd);
+
 	if (commas.size() == 0) {
 		return { expression(paramsBegin,paramsEnd) };
 	}
@@ -336,20 +340,25 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 			else {
 				throw XSharpError("No member matched with '.'");
 			}
-			
+
 		}
-		else if (factorBegin->type==OpenParenthesis) {
+		else if (factorBegin->type == OpenParenthesis) {
 			factorBegin++;
 			auto nextPar = nextCloseParenthesis(factorBegin);
 			FunctionCallNode* funcCall = new FunctionCallNode;
-			funcCall->setParams(params(factorBegin, nextPar));
+			funcCall->setParams(paramsList(factorBegin, nextPar));
 			funcCall->setFunction(operand);
 			operand = funcCall;
 			factorBegin = nextPar;
 		}
 		else if (factorBegin->type == OpenBracket) {
 			factorBegin++;
-			//To be completed
+			auto nextBra = nextCloseBracket(factorBegin);
+			IndexNode* index = new IndexNode;
+			index->setOperand(operand);
+			index->setIndexExpr(expression(factorBegin, nextBra));
+			operand = index;
+			factorBegin = nextBra;
 		}
 		else {
 			break;
@@ -392,11 +401,18 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 	}
 }
 
-Parser::Iterator Parser::nextSentenceEnd(Iterator factorBegin) const
+Parser::Iterator Parser::nextSentenceEnd(Iterator begin) const
 {
-	for (; factorBegin != end; ++factorBegin) {
-		if (factorBegin->type == SentenceEnd) {
-			return factorBegin;
+	int numUnmatchedBrace = 0;
+	for (; begin != end; ++begin) {
+		if (begin->type == OpenBrace) {
+			++numUnmatchedBrace;
+		}
+		else if (begin->type == CloseBrace) {
+			--numUnmatchedBrace;
+		}
+		if (begin->type == SentenceEnd && !numUnmatchedBrace) {
+			return begin;
 		}
 	}
 	throw XSharpError("';' is missing");
@@ -404,20 +420,38 @@ Parser::Iterator Parser::nextSentenceEnd(Iterator factorBegin) const
 
 Parser::Iterator Parser::nextCloseParenthesis(Iterator begin) const
 {
-	int numOpenParenthesis = 1;
+	int numUnmatchedParenthesis = 1;
 	for (auto it = begin; it != end; ++it) {
 		if (it->type == OpenParenthesis) {
-			++numOpenParenthesis;
+			++numUnmatchedParenthesis;
 		}
 		else if (it->type == CloseParenthesis) {
-			--numOpenParenthesis;
+			--numUnmatchedParenthesis;
 		}
-		if (!numOpenParenthesis) {
+		if (!numUnmatchedParenthesis) {
 			return it;
 		}
 	}
 
 	throw XSharpError("')' is missing");
+}
+
+Parser::Iterator Parser::nextCloseBracket(Iterator begin) const
+{
+	int numUnmatchedBracket = 1;
+	for (auto it = begin; it != end; ++it) {
+		if (it->type == OpenBracket) {
+			++numUnmatchedBracket;
+		}
+		else if (it->type == CloseBracket) {
+			--numUnmatchedBracket;
+		}
+		if (!numUnmatchedBracket) {
+			return it;
+		}
+	}
+
+	throw XSharpError("']' is missing");
 }
 
 std::vector<Parser::Iterator> Parser::findFunctionCommas(Iterator begin, Iterator end)

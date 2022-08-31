@@ -1,7 +1,7 @@
 #include "ASTNodes.h"
 
 IntegerNode::IntegerNode(int64_t value)
-:_value(value)
+	:_value(value)
 {
 }
 
@@ -65,7 +65,7 @@ bool BooleanNode::value() const
 }
 
 StringNode::StringNode(const XString& value)
-:_value(value)
+	:_value(value)
 {
 }
 
@@ -86,13 +86,13 @@ XString StringNode::value() const
 
 
 BinaryOperatorNode::BinaryOperatorNode()
-	:_parent(nullptr),_left(nullptr),_right(nullptr)
+	:_parent(nullptr), _left(nullptr), _right(nullptr)
 {
 }
 
 XString BinaryOperatorNode::dump() const
 {
-	return _operatorStr+"{ left:" + _left->dump() + "\n"
+	return _operatorStr + "{ left:" + _left->dump() + "\n"
 		"right:" + _right->dump() + "}";
 }
 
@@ -276,7 +276,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 
 VariableDeclarationNode::VariableDeclarationNode()
-:_initValue(nullptr)
+	:_initValue(nullptr)
 {
 }
 
@@ -362,7 +362,7 @@ XString FunctionCallNode::dump() const
 	for (auto param : _params) {
 		paramsDump.append(param->dump()).append(',');
 	}
-	
+
 	return "FunctionCall{function:" + _function->dump() + "\nparams:{" + paramsDump + "}\n}";
 }
 
@@ -395,56 +395,6 @@ FunctionCallNode::~FunctionCallNode()
 {
 	for (auto i : _params)delete i;
 	delete _function;
-}
-
-XString MemberFunctionCallNode::dump() const
-{
-	XString paramsDump;
-	for (auto param : _params) {
-		paramsDump.append(param->dump());
-	}
-	return "FunctionCall{name:" + _name +"\nobject:"+ _object->dump() + "\nparams:{" + paramsDump + "}\n}";
-}
-
-void MemberFunctionCallNode::setName(const XString& name)
-{
-	_name = name;
-}
-
-XString MemberFunctionCallNode::name() const
-{
-	return _name;
-}
-
-void MemberFunctionCallNode::setObject(ASTNode* object)
-{
-	_object = object;
-}
-
-ASTNode* MemberFunctionCallNode::object()
-{
-	return _object;
-}
-
-void MemberFunctionCallNode::setParams(std::vector<ASTNode*> params)
-{
-	_params = params;
-}
-
-void MemberFunctionCallNode::addParam(ASTNode* param)
-{
-	_params.push_back(param);
-}
-
-std::vector<ASTNode*> MemberFunctionCallNode::params() const
-{
-	return _params;
-}
-
-MemberFunctionCallNode::~MemberFunctionCallNode()
-{
-	for (auto i : _params)delete i;
-	delete _object;
 }
 
 XString UnaryOperatorNode::dump() const
@@ -484,7 +434,7 @@ VariableNode::VariableNode(const XString name)
 
 XString VariableNode::dump() const
 {
-	return "Variable{name:"+_name+"}\n";
+	return "Variable{name:" + _name + "}";
 }
 
 void VariableNode::setName(const XString& name)
@@ -509,7 +459,7 @@ XString BoxNode::dump() const
 
 void BoxNode::setChild(ASTNode* child)
 {
-	_child= child;
+	_child = child;
 }
 
 ASTNode* BoxNode::child()
@@ -523,13 +473,13 @@ BoxNode::~BoxNode()
 }
 
 MemberNode::MemberNode(const XString name)
-	:_name(name),_object(nullptr)
+	:_name(name), _object(nullptr)
 {
 }
 
 XString MemberNode::dump() const
 {
-	return _object->dump()+"."+_name;
+	return _object->dump() + "." + _name;
 }
 
 void MemberNode::setName(const XString& name)
@@ -550,4 +500,29 @@ void MemberNode::setObject(ASTNode* object)
 ASTNode* MemberNode::object()
 {
 	return _object;
+}
+
+XString IndexNode::dump() const
+{
+	return "IndexOf[" + _operand->dump() + "] At [" + _indexExpr->dump() + "]";
+}
+
+ASTNode* IndexNode::setOperand(ASTNode* operand)
+{
+	return _operand = operand;
+}
+
+ASTNode* IndexNode::operand()
+{
+	return _operand;
+}
+
+void IndexNode::setIndexExpr(ASTNode* indexExpr)
+{
+	_indexExpr = indexExpr;
+}
+
+ASTNode* IndexNode::indexExpr()
+{
+	return _operand;
 }

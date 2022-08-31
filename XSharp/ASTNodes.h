@@ -6,7 +6,7 @@
 
 class XSharp_EXPORT ASTNode {
 public:
-	virtual XString dump() const=0;
+	virtual XString dump() const = 0;
 
 	template<typename T>
 	T* to() {
@@ -21,7 +21,7 @@ public:
 	virtual ~ASTNode() = default;//The children are managed by the parent
 };
 
-class XSharp_EXPORT IntegerNode:public ASTNode {
+class XSharp_EXPORT IntegerNode :public ASTNode {
 public:
 	IntegerNode(int64_t value = 0);
 	XString dump() const;
@@ -146,12 +146,12 @@ public:
 	XString returnType() const;
 
 	void setParams(std::vector<std::pair<XString, XString>> params);
-	void addParam(const std::pair<XString,XString>& param);
+	void addParam(const std::pair<XString, XString>& param);
 	std::vector<std::pair<XString, XString>> params() const;
-	
+
 	BlockNode* impl() const;
 	void setImpl(BlockNode* impl);
-	
+
 	~FunctionDeclarationNode();
 private:
 	XString _name;
@@ -227,28 +227,6 @@ private:
 	std::vector<ASTNode*> _params;
 };
 
-class XSharp_EXPORT MemberFunctionCallNode :public ASTNode {
-public:
-	XString dump() const;
-
-	void setName(const XString& name);
-	XString name() const;
-
-	void setObject(ASTNode* object);
-	ASTNode* object();
-
-	void setParams(std::vector<ASTNode*> params);
-	void addParam(ASTNode* param);
-	std::vector<ASTNode*> params() const;
-
-	~MemberFunctionCallNode();
-private:
-	XString _name;
-	XString _returnType;
-	ASTNode* _object;
-	std::vector<ASTNode*> _params;
-};
-
 class XSharp_EXPORT VariableNode :public ASTNode {
 public:
 	VariableNode(const XString name);
@@ -275,4 +253,18 @@ public:
 private:
 	XString _name;
 	ASTNode* _object;
+};
+
+class XSharp_EXPORT IndexNode :public ASTNode {
+public:
+	XString  dump() const;
+
+	ASTNode* setOperand(ASTNode* operand);
+	ASTNode* operand();
+
+	void setIndexExpr(ASTNode* indexExpr);
+	ASTNode* indexExpr();
+private:
+	ASTNode* _operand;
+	ASTNode* _indexExpr;
 };

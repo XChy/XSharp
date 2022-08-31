@@ -4,7 +4,7 @@
 
 namespace XSharp
 {
-	static std::unordered_map<XString, bool> keywords={
+	static std::unordered_map<XString, bool> keywords = {
 		{"for",true},
 		{"while",true},
 		{"break",true},
@@ -20,6 +20,7 @@ namespace XSharp
 		{"try",true},
 		{"class",true},
 		{"const",true},
+		{"static",true},
 		{"enum",true},
 		{"false",true},
 		{"true",true},
