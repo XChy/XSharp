@@ -86,7 +86,7 @@ XString StringNode::value() const
 
 
 BinaryOperatorNode::BinaryOperatorNode()
-	:_parent(nullptr)
+	:_parent(nullptr),_left(nullptr),_right(nullptr)
 {
 }
 
@@ -363,17 +363,17 @@ XString FunctionCallNode::dump() const
 		paramsDump.append(param->dump()).append(',');
 	}
 	
-	return "FunctionCall{name:" + _name +  "\nparams:{" + paramsDump+ "}\n}";
+	return "FunctionCall{function:" + _function->dump() + "\nparams:{" + paramsDump + "}\n}";
 }
 
-void FunctionCallNode::setName(const XString& name)
+void FunctionCallNode::setFunction(ASTNode* func)
 {
-	_name = name;
+	_function = func;
 }
 
-XString FunctionCallNode::name() const
+ASTNode* FunctionCallNode::function()
 {
-	return _name;
+	return _function;
 }
 
 void FunctionCallNode::setParams(std::vector<ASTNode*> params)
@@ -394,6 +394,7 @@ std::vector<ASTNode*> FunctionCallNode::params() const
 FunctionCallNode::~FunctionCallNode()
 {
 	for (auto i : _params)delete i;
+	delete _function;
 }
 
 XString MemberFunctionCallNode::dump() const
@@ -420,7 +421,7 @@ void MemberFunctionCallNode::setObject(ASTNode* object)
 	_object = object;
 }
 
-ASTNode* MemberFunctionCallNode::object() const
+ASTNode* MemberFunctionCallNode::object()
 {
 	return _object;
 }
@@ -519,4 +520,34 @@ ASTNode* BoxNode::child()
 BoxNode::~BoxNode()
 {
 	delete _child;
+}
+
+MemberNode::MemberNode(const XString name)
+	:_name(name),_object(nullptr)
+{
+}
+
+XString MemberNode::dump() const
+{
+	return _object->dump()+"."+_name;
+}
+
+void MemberNode::setName(const XString& name)
+{
+	_name = name;
+}
+
+XString MemberNode::name() const
+{
+	return _name;
+}
+
+void MemberNode::setObject(ASTNode* object)
+{
+	_object = object;
+}
+
+ASTNode* MemberNode::object()
+{
+	return _object;
 }

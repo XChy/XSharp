@@ -144,10 +144,10 @@ std::vector<ASTNode*> Parser::params(Iterator paramsBegin, Iterator paramsEnd)
 		_params.push_back(expression(paramsBegin, commas[0]));
 
 		for (int i = 0; i < commas.size() - 1; ++i) {
-			_params.push_back(expression(commas[i]+1, commas[i + 1]));
+			_params.push_back(expression(commas[i] + 1, commas[i + 1]));
 		}
 
-		_params.push_back(expression(commas[commas.size() - 1]+1, paramsEnd));
+		_params.push_back(expression(commas[commas.size() - 1] + 1, paramsEnd));
 		return _params;
 	}
 }
@@ -315,17 +315,7 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 		factorBegin = nextPar;
 	}
 	else if (factorBegin->type == Identifier) {
-		if ((factorBegin + 1)->type == OpenParenthesis) {
-			auto functionEnd = nextCloseParenthesis(factorBegin + 2);
-			FunctionCallNode* temp = new FunctionCallNode;
-			temp->setName(factorBegin->value);
-			temp->setParams(params(factorBegin + 2, functionEnd));
-			operand = temp;
-			factorBegin = functionEnd;
-		}
-		else {
-			operand = new VariableNode(factorBegin->value);
-		}
+		operand = new VariableNode(factorBegin->value);
 	}
 	else {
 		delete before;
@@ -334,10 +324,43 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 
 	factorBegin++;
 
+	while (true)
+	{
+		if (factorBegin->type == Dot) {
+			factorBegin++;
+			if (factorBegin->type == Identifier) {
+				MemberNode* member = new MemberNode(factorBegin->value);
+				member->setObject(operand);
+				operand = member;
+			}
+			else {
+				throw XSharpError("No member matched with '.'");
+			}
+			
+		}
+		else if (factorBegin->type==OpenParenthesis) {
+			factorBegin++;
+			auto nextPar = nextCloseParenthesis(factorBegin);
+			FunctionCallNode* funcCall = new FunctionCallNode;
+			funcCall->setParams(params(factorBegin, nextPar));
+			funcCall->setFunction(operand);
+			operand = funcCall;
+			factorBegin = nextPar;
+		}
+		else if (factorBegin->type == OpenBracket) {
+			factorBegin++;
+			//To be completed
+		}
+		else {
+			break;
+		}
+		factorBegin++;
+	}
+
 	if (factorBegin->type == Operator) {
 		if ((factorBegin + 1)->type != Integer && (factorBegin + 1)->type != DecimalFraction
 			&& (factorBegin + 1)->type != Boolean && (factorBegin + 1)->type != String
-			&& (factorBegin + 1)->type != OpenParenthesis&& (factorBegin + 1)->type != Identifier) {
+			&& (factorBegin + 1)->type != OpenParenthesis && (factorBegin + 1)->type != Identifier) {
 			after = new UnaryOperatorNode;
 			after->setOperatorStr(factorBegin->value);
 			factorBegin++;
@@ -356,7 +379,6 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 		return after;
 	}
 	else {
-		using XSharp::unaryOperInfo;
 		if (priority(before) < priority(after)) {
 			before->setOperand(operand);
 			after->setOperand(before);

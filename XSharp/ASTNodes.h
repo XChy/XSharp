@@ -214,8 +214,8 @@ class XSharp_EXPORT FunctionCallNode :public ASTNode {
 public:
 	XString dump() const;
 
-	void setName(const XString& name);
-	XString name() const;
+	void setFunction(ASTNode* func);
+	ASTNode* function();
 
 	void setParams(std::vector<ASTNode*> params);
 	void addParam(ASTNode* param);
@@ -223,8 +223,7 @@ public:
 
 	~FunctionCallNode();
 private:
-	XString _name;
-	XString _returnType;
+	ASTNode* _function;
 	std::vector<ASTNode*> _params;
 };
 
@@ -236,7 +235,7 @@ public:
 	XString name() const;
 
 	void setObject(ASTNode* object);
-	ASTNode* object() const;
+	ASTNode* object();
 
 	void setParams(std::vector<ASTNode*> params);
 	void addParam(ASTNode* param);
@@ -260,4 +259,20 @@ public:
 	XString name() const;
 private:
 	XString _name;
+};
+
+class XSharp_EXPORT MemberNode :public ASTNode {
+public:
+	MemberNode(const XString name);
+
+	XString dump() const;
+
+	void setName(const XString& name);
+	XString name() const;
+
+	void setObject(ASTNode* object);
+	ASTNode* object();
+private:
+	XString _name;
+	ASTNode* _object;
 };
