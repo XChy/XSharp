@@ -114,7 +114,7 @@ std::vector<Token> Lexer::tokenize(const XString& source) const
 XString Lexer::hex(XString::const_iterator& it) const
 {
 	XString result;
-	while (it->isDigit())
+	while (it->isDigit()|| (*it >= 'a' && *it <= 'f') || (*it >= 'A' && *it <= 'F'))
 	{
 		result.append(*it);
 		++it;

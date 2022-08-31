@@ -18,6 +18,8 @@ public:
 	bool isLetter() const;
 	bool isLetterOrDigit() const;
 
+	char16_t value() const;
+
 	int digitValue() const;
 	XChar operator-(const XChar& other) const;
 	bool operator==(XChar other) const;

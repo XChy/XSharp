@@ -203,8 +203,6 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 	BinaryOperatorNode* root = nullptr;
 
 	ASTNode* factor1 = nullptr;
-	BinaryOperatorNode* oper1 = nullptr;
-	ASTNode* factor2 = nullptr;
 	BinaryOperatorNode* oper2 = nullptr;
 	ASTNode* factor3 = nullptr;
 
@@ -213,9 +211,9 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 	if (exprBegin == exprEnd)return factor1;
 
 	if (exprBegin->type == Operator) {
-		root = oper1 = new BinaryOperatorNode;
-		oper1->setOperatorStr(exprBegin->value);
-		oper1->setLeft(factor1);
+		root = new BinaryOperatorNode;
+		root->setOperatorStr(exprBegin->value);
+		root->setLeft(factor1);
 	}
 	else {
 		throw XSharpError("No operator matched after operand");
@@ -223,8 +221,7 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 
 	if (++exprBegin == exprEnd)throw XSharpError("No operand after operator");
 
-	factor2 = operand(exprBegin);
-	oper1->setRight(factor2);
+	root->setRight(operand(exprBegin));
 
 	while (exprBegin != exprEnd) {
 		oper2 = new BinaryOperatorNode;
@@ -260,28 +257,28 @@ ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
 					break;
 				}
 
-				BinaryOperatorNode* current = (BinaryOperatorNode*)node->right();
+				BinaryOperatorNode* currentNode = (BinaryOperatorNode*)node->right();
 
-				if (priority(oper2) > priority(current)) {
-					oper2->setLeft(current);
+				if (priority(oper2) > priority(currentNode)) {
+					oper2->setLeft(currentNode);
 					oper2->setRight(factor3);
 					node->setRight(oper2);
 					break;
 				}
-				else if (priority(oper2) == priority(current)) {
+				else if (priority(oper2) == priority(currentNode)) {
 					if (assoc(oper2) == LeftToRight) {
-						oper2->setLeft(current);
+						oper2->setLeft(currentNode);
 						oper2->setRight(factor3);
 						node->setRight(oper2);
 					}
 					else if (assoc(oper2) == RightToLeft) {
-						oper2->setLeft(current->right());
+						oper2->setLeft(currentNode->right());
 						oper2->setRight(factor3);
-						current->setRight(oper2);
+						currentNode->setRight(oper2);
 					}
 					break;
 				}
-				node = current;
+				node = currentNode;
 			}
 		}
 	}

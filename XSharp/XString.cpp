@@ -51,6 +51,11 @@ bool XChar::isLetterOrDigit() const {
 	return isLetter() || isDigit();
 }
 
+char16_t XChar::value() const
+{
+	return ucs;
+}
+
 int XChar::digitValue() const
 {
 	return ucs - '0';
@@ -422,7 +427,7 @@ Interger XString::toInteger(int base) const
 				result += it->digitValue();
 			}
 			else if ((*it >= 'a' && *it <= 'f') || (*it >= 'A' && *it <= 'F')) {
-				result += 10 + it->digitValue();
+				result += 10 + (it->value() - XChar('a').value());
 			}
 		}
 		break;

@@ -515,3 +515,8 @@ ASTNode* BoxNode::child()
 {
 	return _child;
 }
+
+BoxNode::~BoxNode()
+{
+	delete _child;
+}

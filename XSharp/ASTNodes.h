@@ -65,13 +65,15 @@ private:
 	XString _value;
 };
 
-class XSharp_EXPORT BoxNode :public ASTNode {//Applied to hide the binary node's information
+class XSharp_EXPORT BoxNode :public ASTNode {//Applied to hide the binary operator node's information
 public:
 	BoxNode(ASTNode* child);
 	XString dump() const;
 
 	void setChild(ASTNode* child);
 	ASTNode* child();
+
+	~BoxNode();
 private:
 	ASTNode* _child;
 };
