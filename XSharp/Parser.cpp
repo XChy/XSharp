@@ -69,11 +69,15 @@ FunctionDeclarationNode* Parser::functionDeclaration()
 VariableDeclarationNode* Parser::variableDeclaration()
 {
 	VariableDeclarationNode* root = new VariableDeclarationNode;
-	root->setType(current->value);
-	forward();
+	root->setType(type());
 
-	root->setName(current->value);
-	forward();
+	if (current->type == Identifier) {
+		root->setName(current->value);
+		forward();
+	}
+	else {
+		throw XSharpError("No name after a typename");
+	}
 
 	if (current->type == SentenceEnd) {
 		root->setInitValue(nullptr);
@@ -91,9 +95,9 @@ VariableDeclarationNode* Parser::variableDeclaration()
 	return root;
 }
 
-std::vector<std::pair<XString, XString>> Parser::paramsDefinition()
+std::vector<std::pair<TypeInfo, XString>> Parser::paramsDefinition()
 {
-	std::vector<std::pair<XString, XString>> paramsDef;
+	std::vector<std::pair<TypeInfo, XString>> paramsDef;
 	if (current->type == OpenParenthesis) {
 		forward();
 		while (current->type != CloseParenthesis) {
@@ -101,14 +105,8 @@ std::vector<std::pair<XString, XString>> Parser::paramsDefinition()
 				throw XSharpError("No ')' matched");
 			}
 			else {
-				std::pair<XString, XString> paramDef;
-				if (current->type == Identifier) {
-					paramDef.first = current->value;
-					forward();
-				}
-				else {
-					throw XSharpError("No typename matched");
-				}
+				std::pair<TypeInfo, XString> paramDef;
+				paramDef.first = type();
 
 				if (current->type == Identifier) {
 					paramDef.second = current->value;
@@ -187,17 +185,28 @@ BlockNode* Parser::block()
 
 ASTNode* Parser::statement()
 {
+	ASTNode* stmt = nullptr;
+	auto end = nextSentenceEnd(current);
 	switch (current->type)
 	{
 	case Keyword:
-
+		if (current->value == "const") {
+			stmt = variableDeclaration();
+		}
+		break;
+	case Identifier:
+		if ((current + 1)->type == OpenBracket && (current + 2)->type == CloseBracket) {
+			stmt = variableDeclaration();
+		}
+		else if ((current + 1)->type == Identifier) {
+			stmt = variableDeclaration();
+		}
 		break;
 	default:
-		auto exprEnd = nextSentenceEnd(current);
-		ASTNode* expr = expression(current, exprEnd);//current is ";",need to forward to next statement
-		current = exprEnd + 1;
-		return expr;
+		ASTNode* expr = expression(current, end);//current is ";",need to forward to next statement
 	}
+	current = end + 1;
+	return stmt;
 }
 
 ASTNode* Parser::expression(Iterator exprBegin, Iterator exprEnd)
@@ -399,6 +408,35 @@ ASTNode* Parser::operand(Iterator& factorBegin)
 			return before;
 		}
 	}
+}
+
+TypeInfo Parser::type()
+{
+	TypeInfo info;
+	if (current->type == Keyword && current->value == "const") {
+		info.isConst = true;
+		forward();
+	}
+
+	if (current->type == Identifier) {
+		info.typeName = current->value;
+		forward();
+
+		int arrayDimension = 0;
+		while (current->type == OpenBracket)
+		{
+			forward();
+			if (current->type == CloseBracket) {
+				arrayDimension++;
+				forward();
+			}
+		}
+		info.arrayDimension = arrayDimension;
+	}
+	else {
+		throw XSharpError("No typename matched");
+	}
+	return info;
 }
 
 Parser::Iterator Parser::nextSentenceEnd(Iterator begin) const

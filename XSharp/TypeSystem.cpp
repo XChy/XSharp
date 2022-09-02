@@ -1,9 +1,11 @@
 #include "TypeSystem.h"
 
-int XSharp::registerType(XSharp::Type)
+using namespace XSharp;
+
+int XSharp::registerType(XSharp::BasicType)
 {
 	registerNum++;
-	return registerNum-1;
+	return registerNum - 1;
 }
 
 int XSharp::typeidOf(XString name)
@@ -15,4 +17,9 @@ int XSharp::typeidOf(XString name)
 		}
 	}
 	return id;
+}
+
+BasicType* XSharp::typeOf(int typeId)
+{
+	return &types[typeId];
 }

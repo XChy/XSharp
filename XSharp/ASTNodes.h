@@ -4,6 +4,8 @@
 #include "XString.h"
 #include "TypeSystem.h"
 
+using XSharp::TypeInfo;
+
 class XSharp_EXPORT ASTNode {
 public:
 	virtual XString dump() const = 0;
@@ -145,9 +147,9 @@ public:
 	void setReturnType(XString returnType);
 	XString returnType() const;
 
-	void setParams(std::vector<std::pair<XString, XString>> params);
-	void addParam(const std::pair<XString, XString>& param);
-	std::vector<std::pair<XString, XString>> params() const;
+	void setParams(std::vector<std::pair<TypeInfo, XString>> params);
+	void addParam(const std::pair<TypeInfo, XString>& param);
+	std::vector<std::pair<TypeInfo, XString>> params() const;
 
 	BlockNode* impl() const;
 	void setImpl(BlockNode* impl);
@@ -156,7 +158,7 @@ public:
 private:
 	XString _name;
 	XString _returnType;
-	std::vector<std::pair<XString, XString>> _params;// <type name,param name>
+	std::vector<std::pair<TypeInfo, XString>> _params;// <type name,param name>
 	BlockNode* _impl;
 };
 
@@ -167,14 +169,15 @@ private:
 	XString _name;
 };
 
+
 class XSharp_EXPORT VariableDeclarationNode :public ASTNode {
 public:
 	VariableDeclarationNode();
 
 	XString dump() const;
 
-	void setType(const XString& type);
-	XString type() const;
+	void setType(const TypeInfo& type);
+	TypeInfo type() const;
 
 	void setName(const XString& name);
 	XString name() const;
@@ -183,8 +186,14 @@ public:
 	ASTNode* initValue() const;
 
 	~VariableDeclarationNode();
+	bool isConst() const;
+	void setIsConst(bool newIsConst);
+
+	int arrayDimension() const;
+	void setArrayDimension(int newArrayDimension);
+
 private:
-	XString _type;
+	TypeInfo _typeInfo;
 	XString _name;
 	ASTNode* _initValue;
 };

@@ -213,8 +213,8 @@ FunctionDeclarationNode::FunctionDeclarationNode()
 XString FunctionDeclarationNode::dump() const
 {
 	XString paramsDump;
-	for (std::pair<XString, XString> param : _params) {
-		paramsDump.append(param.first).append(' ').append(param.second).append("\n");
+	for (std::pair<TypeInfo, XString> param : _params) {
+		paramsDump.append(param.first.typeName).append(' ').append(param.second).append("\n");
 	}
 
 	XString implDump = "no";
@@ -244,17 +244,17 @@ XString FunctionDeclarationNode::returnType() const
 	return _returnType;
 }
 
-void FunctionDeclarationNode::setParams(std::vector<std::pair<XString, XString>> params)
+void FunctionDeclarationNode::setParams(std::vector<std::pair<TypeInfo, XString>> params)
 {
 	_params = params;
 }
 
-void FunctionDeclarationNode::addParam(const std::pair<XString, XString>& param)
+void FunctionDeclarationNode::addParam(const std::pair<TypeInfo, XString>& param)
 {
 	_params.push_back(param);
 }
 
-std::vector<std::pair<XString, XString>> FunctionDeclarationNode::params() const
+std::vector<std::pair<TypeInfo, XString>> FunctionDeclarationNode::params() const
 {
 	return _params;
 }
@@ -278,6 +278,8 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 VariableDeclarationNode::VariableDeclarationNode()
 	:_initValue(nullptr)
 {
+	_typeInfo.arrayDimension = 0;
+	_typeInfo.isConst = false;
 }
 
 XString VariableDeclarationNode::dump() const
@@ -286,17 +288,17 @@ XString VariableDeclarationNode::dump() const
 	if (_initValue) {
 		initDump = _initValue->dump();
 	}
-	return "Variable{name:" + _name + "\ntype:" + _type + "\ninitValue:" + initDump + "}\n";
+	return "Variable{name:" + _name + "\ntype:" + _typeInfo.typeName + "\ninitValue:" + initDump + "}\n";
 }
 
-void VariableDeclarationNode::setType(const XString& type)
+void VariableDeclarationNode::setType(const TypeInfo& type)
 {
-	_type = type;
+	_typeInfo = type;
 }
 
-XString VariableDeclarationNode::type() const
+TypeInfo VariableDeclarationNode::type() const
 {
-	return _type;
+	return _typeInfo;
 }
 
 void VariableDeclarationNode::setName(const XString& name)
@@ -322,6 +324,26 @@ ASTNode* VariableDeclarationNode::initValue() const
 VariableDeclarationNode::~VariableDeclarationNode()
 {
 	delete _initValue;
+}
+
+bool VariableDeclarationNode::isConst() const
+{
+	return _typeInfo.isConst;
+}
+
+void VariableDeclarationNode::setIsConst(bool newIsConst)
+{
+	_typeInfo.isConst = newIsConst;
+}
+
+int VariableDeclarationNode::arrayDimension() const
+{
+	return _typeInfo.arrayDimension;
+}
+
+void VariableDeclarationNode::setArrayDimension(int newArrayDimension)
+{
+	_typeInfo.arrayDimension = newArrayDimension;
 }
 
 
@@ -524,5 +546,5 @@ void IndexNode::setIndexExpr(ASTNode* indexExpr)
 
 ASTNode* IndexNode::indexExpr()
 {
-	return _operand;
+	return _indexExpr;
 }

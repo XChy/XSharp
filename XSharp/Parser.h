@@ -16,13 +16,15 @@ private:
 	FunctionDeclarationNode* functionDeclaration();
 	VariableDeclarationNode* variableDeclaration();
 
-	std::vector<std::pair<XString, XString>> paramsDefinition();
-	std::vector<ASTNode*> paramsList(Iterator paramsBegin,Iterator paramsEnd);
+	std::vector<std::pair<TypeInfo, XString>> paramsDefinition();
+	std::vector<ASTNode*> paramsList(Iterator paramsBegin, Iterator paramsEnd);
 
 	BlockNode* block();
 	ASTNode* statement();
-	ASTNode* expression(Iterator exprBegin,Iterator exprEnd);
+	ASTNode* expression(Iterator exprBegin, Iterator exprEnd);
 	ASTNode* operand(Iterator& factorBegin);
+
+	TypeInfo type();
 
 	Iterator nextSentenceEnd(Iterator begin) const;
 	Iterator nextCloseParenthesis(Iterator begin) const;

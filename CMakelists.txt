@@ -6,14 +6,8 @@ option(BUILD_SHARED_LIBRARY "Set to switch to build shared library" ON)
 option(BUILD_STATIC_LIBRARY "Set to switch to build static library" OFF)
 
 include_directories(./)
-set(SRC
-XSharp/XSharpEngine.cpp
- XSharp/Lexer.cpp  
- XSharp/Tokens.cpp 
- XSharp/XString.cpp 
- XSharp/XSharpUtils.cpp  
- XSharp/Parser.cpp  
-     "XSharp/ASTNodes.h" "XSharp/ASTNodes.cpp" "XSharp/TypeSystem.h" "XSharp/TypeSystem.cpp" "XSharp/OperInfo.h")
+file(GLOB_RECURSE SRC "XSharp/*.cpp" "XSharp/*.h")
+
 if (BUILD_SHARED_LIBRARY)
     add_definitions(-DXSharp_SHARED_LIBRARY)
     message(STATUS "Build shared library")
