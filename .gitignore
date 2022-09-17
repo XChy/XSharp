@@ -10,3 +10,10 @@
 /.vs
 /.vscode
 /out/build
+/CMakeFiles
+/cmake*
+/CMakeCache*
+/Makefile
+/build
+/lib*
+/XSharp_TEST

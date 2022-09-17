@@ -1,13 +1,13 @@
-#pragma once
-
-#include <XSharp/Lexer.h>
-#include <XSharp/Parser.h>
+#include "XSharp/Lexer.h"
+#include "XSharp/Parser.h"
 #include <iostream>
 
 int main() {
 	while (true) {
-		char a[1024];
-		std::cin.getline(a, 1024);
+		try{
+		char a[1024]="1+1;";
+		// std::cin.getline(a, 1024);
+		std::cout<<"h";
 		Lexer lexer;
 		auto tokens = lexer.tokenize("int main(int a,String b){" + XString(a) + "}");
 		for (auto token : tokens) {
@@ -17,6 +17,9 @@ int main() {
 		std::cout << std::endl;
 		Parser parser;
 		std::cout << parser.parse(tokens)->dump().toStdString();
+		}catch(XSharpError e){
+			std::cout<<e.errorInfo.toStdString();
+		}
 	}
 	return 0;
 }

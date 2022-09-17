@@ -6,7 +6,7 @@
 #include "XSharpUtils.h"
 #include "OperInfo.h"
 
-class Parser {
+class XSharp_EXPORT Parser {
 public:
 	typedef std::vector<Token>::const_iterator Iterator;
 	ASTNode* parse(const std::vector<Token>& tokenList);//The astnode pointer is managed by caller

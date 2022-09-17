@@ -1,4 +1,3 @@
-#pragma once
 #include "XString.h"
 
 StringData::StringData(const StringData& other) {
@@ -372,69 +371,6 @@ const XChar* XString::unicode() const
 	return data();
 }
 
-template<typename Interger>
-Interger XString::toInteger(int base) const
-{
-	Interger result = 0;
-	switch (base) {
-	case 2:
-		for (auto it = begin(); it != end(); ++it) {
-			result <<= 1;
-			if (*it == '1') {
-				result += 1;
-			}
-		}
-		break;
-	case 10:
-		for (auto it = begin(); it != end(); ++it) {
-			if (*it == 'e') {
-				++it;
-				bool isMinus = false;
-				if (*it == '+') {
-					++it;
-				}
-				else if (*it == '-')
-				{
-					++it;
-					isMinus = true;
-				}
-				Interger ePart = 0;
-				while (it != end()) {
-					ePart *= 10;
-					ePart += it->digitValue();
-					++it;
-				}
-				if (isMinus) {
-					while (ePart--) {
-						result /= 10;
-					}
-				}
-				else {
-					while (ePart--) {
-						result *= 10;
-					}
-				}
-				break;
-			}
-			result *= 10;
-			result += it->digitValue();
-		}
-		break;
-	case 16:
-		for (auto it = begin(); it != end(); ++it) {
-			result <<= 4;
-			if (it->isDigit()) {
-				result += it->digitValue();
-			}
-			else if ((*it >= 'a' && *it <= 'f') || (*it >= 'A' && *it <= 'F')) {
-				result += 10 + (it->value() - XChar('a').value());
-			}
-		}
-		break;
-	}
-	return result;
-}
-
 int XString::toInt(int base) const
 {
 	return toInteger<int>(base);
@@ -543,55 +479,6 @@ XString XString::fromUtf8(const char* utf8Str)
 			ucs = utf8;
 			result.append(ucs);
 		}
-	}
-	return result;
-}
-
-template<typename Interger>
-XString XString::fromInterger(Interger v, int base)
-{
-	XString result;
-	bool isMinus = v < 0;
-	v = llabs(v);
-	switch (base) {
-	case 2:
-		if (isMinus) {
-			result.append('-');
-		}
-		while (v != 0) {
-			result.append((v & 1) ? '1' : '0');
-			v >>= 1;
-		}
-		break;
-	case 10:
-		if (v == 0) {
-			result.append('0');
-			break;
-		}
-		while (v != 0) {
-			result.append(XChar(char(v % 10 + '0')));
-			v /= 10;
-		}
-		if (isMinus) {
-			result.append('-');
-		}
-		result.reverse();
-		break;
-	case 16:
-		if (isMinus) {
-			result.append('-');
-		}
-		while (v != 0) {
-			int base16 = v & 0xf;
-			if (base16 >= 0 && base16 <= 9) {
-				result.append(char(base16 + '0'));
-			}
-			else {
-				result.append(char(base16 - 10 + 'a'));
-			}
-			v >>= 4;
-		}
-		break;
 	}
 	return result;
 }

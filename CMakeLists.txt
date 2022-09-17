@@ -2,8 +2,8 @@ project(XSharp)
 cmake_minimum_required(VERSION 3.5)
 
 option(BUILD_TEST "Set to complie the test sample" ON)
-option(BUILD_SHARED_LIBRARY "Set to switch to build shared library" ON)
-option(BUILD_STATIC_LIBRARY "Set to switch to build static library" OFF)
+option(BUILD_SHARED_LIBRARY "Set to switch to build shared library" OFF)
+option(BUILD_STATIC_LIBRARY "Set to switch to build static library" ON)
 
 include_directories(./)
 file(GLOB_RECURSE SRC "XSharp/*.cpp" "XSharp/*.h")
