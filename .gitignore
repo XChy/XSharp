@@ -16,3 +16,6 @@
 /build
 /lib*
 /XSharp_TEST
+/.cache
+/XSharp_TEST_UTILS
+cmake_install.cmake

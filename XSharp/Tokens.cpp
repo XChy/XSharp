@@ -1,7 +1,8 @@
 #include "Tokens.h"
 
-Token::Token(TokenType type, const XString& value):type(type),value(value)
-{}
+Token::Token(TokenType type, const XString &value) : type(type), value(value)
+{
+}
 
 XString Token::dump() const
 {
@@ -67,16 +68,17 @@ XString Token::dump() const
     return result;
 }
 
-bool XSharp::isKeyword(const XString& keyword)
+bool XSharp::isKeyword(const XString &keyword)
 {
     if (keywords.find(keyword) == keywords.end())
         return false;
-    else {
+    else
+    {
         return keywords[keyword];
     }
 }
 
-bool XSharp::isOperator(const XString& oper)
+bool XSharp::isOperator(const XString &oper)
 {
     if (operators.find(oper) == operators.end())
         return false;
@@ -86,15 +88,18 @@ bool XSharp::isOperator(const XString& oper)
 
 bool XSharp::isOperator(XChar oper)
 {
-    for (const std::pair<XString, bool>& a : operators) {
-        if (a.first.contains(oper))return true;
+    for (const std::pair<XString, bool> &a : operators)
+    {
+        if (a.first.contains(oper))
+            return true;
     }
     return false;
 }
 
-bool XSharp::operatorContains(const XString& part)
+bool XSharp::operatorContains(const XString &part)
 {
-    for (const std::pair<XString, bool>& oper : operators) {
+    for (const std::pair<XString, bool> &oper : operators)
+    {
         if (oper.first.subStringIndex(part))
             return true;
     }

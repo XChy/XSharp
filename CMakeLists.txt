@@ -26,19 +26,25 @@ endif()
 
 if (BUILD_TEST)
     add_definitions(-DXSharp_TEST)
+    add_definitions(-DXSharp_TEST_UTILS)
     message(STATUS "Build test sample")
 
     add_executable(XSharp_TEST test/test.cpp ${SRC})
     SET_TARGET_PROPERTIES(XSharp_TEST PROPERTIES OUTPUT_NAME "XSharp_TEST")
+    add_executable(XSharp_TEST_UTILS test/test_utils.cpp ${SRC})
+    SET_TARGET_PROPERTIES(XSharp_TEST_UTILS PROPERTIES OUTPUT_NAME "XSharp_TEST_UTILS")
 endif()
 
 if( NOT CMAKE_BUILD_TYPE )
     set( CMAKE_BUILD_TYPE Release )
 endif()
 
+set( CMAKE_BUILD_TYPE Debug )
+
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -g -Wall -Wno-unused-variable -pthread")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -g -fsanitize=address -Wall -Wno-unused-variable -pthread")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++11 -O2 -pthread -fopenmp")
+
 endif()
 
 set(CMAKE_CXX_STANDARD 11)

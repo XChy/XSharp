@@ -2,51 +2,62 @@
 #include "xsharp_global.h"
 #include <atomic>
 
-class XSharp_EXPORT XRefCount {
+class XSharp_EXPORT XRefCount
+{
 public:
 	XRefCount()
-		:mRefCount(1)
-	{}
-	XRefCount(const XRefCount& other)
-		:mRefCount(other.refCount())
-	{}
-	int ref() {
+	    : mRefCount(1)
+	{
+	}
+	XRefCount(const XRefCount &other)
+	    : mRefCount(other.refCount())
+	{
+	}
+	int ref()
+	{
 		return ++mRefCount;
 	}
-	int unref() {
+	int unref()
+	{
 		return --mRefCount;
 	}
 	int refCount() const
 	{
 		return mRefCount;
 	}
+
 private:
-	std::atomic<uint> mRefCount;
+	uint mRefCount;
 };
 
-template<typename T>
-class XSharp_EXPORT XSharedData {
+template <typename T>
+class XSharp_EXPORT XSharedData
+{
 public:
 	XSharedData()
-		:ref(new XRefCount),
-		mData(nullptr)
-	{}
-	XSharedData(T* p)
-		:ref(new XRefCount),
-		mData(p)
-	{}
-	XSharedData(const XSharedData& other)
-		:ref(other.ref),
-		mData(other.data())
+	    : ref(new XRefCount),
+	      mData(nullptr)
+	{
+	}
+	XSharedData(T *p)
+	    : ref(new XRefCount),
+	      mData(p)
+	{
+	}
+	XSharedData(const XSharedData &other)
+	    : ref(other.ref),
+	      mData(other.data())
 	{
 		ref->ref();
 	}
-	XSharedData& operator=(const XSharedData& other)
+	XSharedData &operator=(const XSharedData &other)
 	{
-		if (this == &other) {
+		if (this == &other)
+		{
 			return *this;
 		}
-		if (ref->unref() == 0) {
+		if (ref->unref() == 0)
+		{
 			delete ref;
 			delete mData;
 		}
@@ -55,7 +66,7 @@ public:
 		ref->ref();
 		return *this;
 	}
-	T* data() const
+	T *data() const
 	{
 		return mData;
 	}
@@ -68,6 +79,6 @@ public:
 		}
 	}
 
-	XRefCount* ref;
-	T* mData;
+	XRefCount *ref;
+	T *mData;
 };
