@@ -13,6 +13,6 @@ class XSharp_EXPORT Semantics
     void analyze(ASTNode* ast);
 
    private:
-    SymbolTable symbols;
-    XSharpError error;
+    SymbolTable _symbols;
+    XSharpError _error;
 };

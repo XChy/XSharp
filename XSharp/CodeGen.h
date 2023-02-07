@@ -10,4 +10,5 @@ class CodeGen
     CodeGen();
 
    private:
+    XSharpError _error;
 };

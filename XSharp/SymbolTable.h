@@ -1,4 +1,5 @@
 #pragma once
+#include <system_error>
 #include "xsharp_global.h"
 
 class SymbolTable
@@ -7,4 +8,5 @@ class SymbolTable
     SymbolTable();
 
    private:
+    std::vector<SymbolTable*> children;
 };
