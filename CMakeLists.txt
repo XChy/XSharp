@@ -27,7 +27,7 @@ endif()
 if (BUILD_TEST)
     add_definitions(-DXSharp_TEST)
     add_definitions(-DXSharp_TEST_UTILS)
-    message(STATUS "Build test sample")
+    message(STATUS "Build test samples")
 
     add_executable(XSharp_TEST test/test.cpp ${SRC})
     SET_TARGET_PROPERTIES(XSharp_TEST PROPERTIES OUTPUT_NAME "XSharp_TEST")

@@ -9,4 +9,5 @@ class SymbolTable
 
    private:
     std::vector<SymbolTable*> children;
+    SymbolTable* parent;
 };
