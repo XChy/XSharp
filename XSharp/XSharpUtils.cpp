@@ -7,6 +7,6 @@ XSharpError::XSharpError(const XString& info)
 }
 
 XSharpError::XSharpError(XSharpErrorType type, const XString& info)
-    : errorType(type), errorInfo(info)
+    : errorInfo(info), errorType(type)
 {
 }
