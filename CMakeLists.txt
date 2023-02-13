@@ -4,9 +4,19 @@ cmake_minimum_required(VERSION 3.5)
 option(BUILD_TEST "Set to complie the test sample" ON)
 option(BUILD_SHARED_LIBRARY "Set to switch to build shared library" OFF)
 option(BUILD_STATIC_LIBRARY "Set to switch to build static library" ON)
+option(SUPPORT_LLVMIR "Set to complie XSharpIR generator" ON)
+option(SUPPORT_XSharpIR "Set to complie XSharpIR generator" ON)
 
 include_directories(./)
 file(GLOB_RECURSE SRC "XSharp/*.cpp" "XSharp/*.h")
+
+if (SUPPORT_LLVMIR)
+    aux_source_directory("XSharpIR" SRC)
+endif()
+
+if (SUPPORT_XSharpIR)
+    aux_source_directory("LLVMIR" SRC)
+endif()
 
 if (BUILD_SHARED_LIBRARY)
     add_definitions(-DXSharp_SHARED_LIBRARY)
@@ -42,9 +52,8 @@ endif()
 set( CMAKE_BUILD_TYPE Debug )
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -g -fsanitize=address -Wall -Wno-unused-variable -pthread")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -fsanitize=address -Wall -Wno-unused-variable -pthread -O0 -g -ggdb")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O2 -pthread -fopenmp")
-
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
