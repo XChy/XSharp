@@ -19,3 +19,5 @@
 /.cache
 /XSharp_TEST_UTILS
 cmake_install.cmake
+XSharp_TEST_LLVM
+anonymous.bc

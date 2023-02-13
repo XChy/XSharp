@@ -11,11 +11,14 @@ include_directories(./)
 file(GLOB_RECURSE SRC "XSharp/*.cpp" "XSharp/*.h")
 
 if (SUPPORT_LLVMIR)
-    aux_source_directory("XSharpIR" SRC)
+    aux_source_directory("LLVMIR" SRC)
+      #$(llvm-config --cxxflags --ldflags --system-libs --libs core)
+
+
 endif()
 
 if (SUPPORT_XSharpIR)
-    aux_source_directory("LLVMIR" SRC)
+    aux_source_directory("XSharpIR" SRC)
 endif()
 
 if (BUILD_SHARED_LIBRARY)
@@ -24,6 +27,7 @@ if (BUILD_SHARED_LIBRARY)
 
     add_library(XSharp_SHARED SHARED ${SRC} )
     SET_TARGET_PROPERTIES(XSharp_SHARED PROPERTIES OUTPUT_NAME "XSharp")
+    target_link_libraries(XSharp_SHARED ${llvm_libs})
 endif()
 
 if(BUILD_STATIC_LIBRARY)
@@ -32,6 +36,7 @@ if(BUILD_STATIC_LIBRARY)
 
     add_library(XSharp_STATIC STATIC ${SRC})
     SET_TARGET_PROPERTIES(XSharp_STATIC PROPERTIES OUTPUT_NAME "XSharp")
+    target_link_libraries(XSharp_STATIC ${llvm_libs})
 endif()
 
 if (BUILD_TEST)
@@ -41,8 +46,13 @@ if (BUILD_TEST)
 
     add_executable(XSharp_TEST test/test.cpp ${SRC})
     SET_TARGET_PROPERTIES(XSharp_TEST PROPERTIES OUTPUT_NAME "XSharp_TEST")
+
     add_executable(XSharp_TEST_UTILS test/test_utils.cpp ${SRC})
     SET_TARGET_PROPERTIES(XSharp_TEST_UTILS PROPERTIES OUTPUT_NAME "XSharp_TEST_UTILS")
+
+    add_executable(XSharp_TEST_LLVM test/test_llvm.cpp ${SRC})
+    SET_TARGET_PROPERTIES(XSharp_TEST_LLVM PROPERTIES OUTPUT_NAME "XSharp_TEST_LLVM")
+
 endif()
 
 if( NOT CMAKE_BUILD_TYPE )
@@ -52,7 +62,7 @@ endif()
 set( CMAKE_BUILD_TYPE Debug )
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -fsanitize=address -Wall -Wno-unused-variable -pthread -O0 -g -ggdb")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -fsanitize=address -Wall -Wno-unused-variable -pthread -O0 -g -ggdb -I/usr/lib/llvm-14/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/lib/llvm-14/lib -lLLVM-14")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O2 -pthread -fopenmp")
 endif()
 
