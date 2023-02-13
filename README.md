@@ -1,4 +1,4 @@
-Not completed yet
+**Not completed yet**
 
 # XSharp
 A toy OOP language with lexer, parser, compiler and runtime 
@@ -9,7 +9,7 @@ Having learned about the theory of compiler, a dull coder try to develop somethi
 
 XSharp is compiled into the byte codes,and then run in a XSharp runtime environment.
 
-Also it provide a way to generate a binary directly with [LLVM](https://github.com/llvm/llvm-project)
+Also it provide a way to generate native binary with [LLVM](https://github.com/llvm/llvm-project)
 
 ### Install
 This project can be built with CMake 
@@ -32,7 +32,7 @@ xsharp xxx.xe          # execute the bytecode
 
 ### Third-Party
 - ##### **LLVM** (**optional**) 
-     XSharp can compile XSharp code into LLVM IR, which XSharp apply LLVM14 to compile and optimize to generate binary
+     XSharp can compile XSharp code into LLVM IR, which XSharp apply **LLVM14** to compile and optimize to generate binary
 
 
 ### Grammar
@@ -44,10 +44,29 @@ xsharp xxx.xe          # execute the bytecode
 
 - #### Function Declaration
  ```C++
- i32 abs(i32 a){
+ i32 abs(i32 a)
+ {
     if(a >= 0) 
         return a;
 	else 
         return -a;
  }
+```
+
+- ### Class Declaration
+```C++
+class foo
+{
+    string name();
+    int age();
+
+    string _name;
+    int _age;
+}
+// Or in form below
+class foo
+{
+    string _name{get{}, set{}};
+    int _age{get{}, set{}};
+}
 ```
