@@ -1,3 +1,5 @@
+Waiting to complete
+
 # XSharp
 A toy OOP language with lexer, parser, compiler and runtime 
 
@@ -15,16 +17,18 @@ Type "XSharp [your filename]" to run the "xar" package.
 ### Grammar
 - #### Variable Declaration
  ##### [type name] [variable name] = value. For example:
- ```
+ ```C++
  i32 a=2333;
 ```
 
+
 - #### Function Declaration
  ##### [return type] [type name] [function name] ([type name] param1,[type name] param2,...){[block]}. For example:
- ```
+ ```C++
  i32 abs(i32 a){
- 	if(a>=0) return a;
-	else return -a;
+    if(a>=0) 
+        return a;
+	else 
+        return -a;
  }
 ```
-Waiting to complete
