@@ -4,13 +4,17 @@ Not completed yet
 A toy OOP language with lexer, parser, compiler and runtime 
 
 ###  Background
-Having learned something about the theory of compiler,a dull coder try to develop something to have fun.
+Having learned about the theory of compiler, a dull coder try to develop something to have fun.
+
+
 XSharp is compiled into the byte codes,and then run in a XSharp runtime environment.
+
+Also it provide a way to generate a binary directly with [LLVM](https://github.com/llvm/llvm-project)
 
 ### Install
 This project can be built with CMake 
 
-Input the command below in  to build XSharp Compiler in your computer(**Default support Linux now**)
+Input the command below in to build XSharp Compiler in your computer(**Only support Linux now**)
 ```bash
 git clone git@github.com:XChy/XSharp.git
 cmake . && make #you can configure CMake yourself
@@ -27,10 +31,9 @@ xsharp xxx.xe          # execute the bytecode
 ```
 
 ### Third-Party
-#####**LLVM** (**optional**) 
- XSharp can apply LLVM14 to compile XSharp code into LLVM IR,
+- ##### **LLVM** (**optional**) 
+     XSharp can compile XSharp code into LLVM IR, which XSharp apply LLVM14 to compile and optimize to generate binary
 
- so that the code can be transformed into binary
 
 ### Grammar
 - #### Variable Declaration
