@@ -4,7 +4,7 @@
 #include "XString.h"
 #include "TypeSystem.h"
 
-using XSharp::TypeInfo;
+using XSharp::TypeNode;
 
 class XSharp_EXPORT ASTNode
 {
@@ -161,8 +161,8 @@ class XSharp_EXPORT VariableDeclarationNode : public ASTNode
 
     XString dump() const;
 
-    void setType(const TypeInfo& type);
-    TypeInfo type() const;
+    void setType(const TypeNode& type);
+    TypeNode type() const;
 
     void setName(const XString& name);
     XString name() const;
@@ -178,7 +178,7 @@ class XSharp_EXPORT VariableDeclarationNode : public ASTNode
     void setArrayDimension(int newArrayDimension);
 
    private:
-    TypeInfo _typeInfo;
+    TypeNode _typeInfo;
     XString _name;
     ASTNode* _initValue;
 };

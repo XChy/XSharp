@@ -5,6 +5,8 @@
 #include "XSharp/XSharpUtils.h"
 #include "SymbolTable.h"
 
+namespace XSharp {
+
 class XSharp_EXPORT Semantics
 {
    public:
@@ -32,3 +34,5 @@ class XSharp_EXPORT Semantics
     SymbolTable rootSymbolTable;
     XSharpError _error;
 };
+
+}  // namespace XSharp

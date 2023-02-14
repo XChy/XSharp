@@ -30,3 +30,13 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
     module->dump();
     return bytecodes;
 }
+
+llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
+{
+    // TODO LLVMIR generation for Function Declaration
+}
+
+llvm::Value* LLVMHelper::codegen(ASTNode* node)
+{
+    // TODO LLVMIR generation for Value-like ASTNode
+}

@@ -223,12 +223,12 @@ XString VariableDeclarationNode::dump() const
            "\ninitValue:" + initDump + "}\n";
 }
 
-void VariableDeclarationNode::setType(const TypeInfo& type)
+void VariableDeclarationNode::setType(const TypeNode& type)
 {
     _typeInfo = type;
 }
 
-TypeInfo VariableDeclarationNode::type() const { return _typeInfo; }
+TypeNode VariableDeclarationNode::type() const { return _typeInfo; }
 
 void VariableDeclarationNode::setName(const XString& name) { _name = name; }
 

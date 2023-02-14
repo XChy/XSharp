@@ -4,24 +4,34 @@
 #include "XString.h"
 
 namespace XSharp {
-	class BasicType {
-	public:
-		XString name;
-		std::unordered_map<XString, void*> functions;
-	};
 
-	struct TypeInfo {
-		XString typeName;
-		bool isConst;
-		int arrayDimension;
-	};
+class TypeNode
+{
+   public:
+    enum Categories {
+        Variable,
+        Class,
+        Function,
+        Array,
+        Closure,
+        Basic
+    } category;
 
-	static int registerType(XSharp::BasicType type);//return typeid
+    uint typeID;
 
-	static int typeidOf(XString name);//If no type with the name exists,return -1
+    bool isConst;
+    int arrayDimension;
+};
 
-	static BasicType* typeOf(int typeId);
+static uint registerType(const XSharp::TypeNode& type);
 
-	static int registerNum = 0;
-	static std::vector<XSharp::BasicType> types;//The index is typeid
-}
+// return typeid
+// If no type with the name exists ,return 0
+static uint typeIDOf(XString name);
+
+static TypeNode* typeOf(int typeId);
+
+static uint registerNum = 0;
+static std::vector<TypeNode> types{TypeNode()};
+
+}  // namespace XSharp

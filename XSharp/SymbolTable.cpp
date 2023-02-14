@@ -1,5 +1,7 @@
 #include "XSharp/SymbolTable.h"
 
+using namespace XSharp;
+
 SymbolTable::SymbolTable() {}
 
 void SymbolTable::addSymbol(const Symbol& symbol)

@@ -1,3 +1,4 @@
+#pragma once
 #include <cstddef>
 #include <llvm-14/llvm/IR/Value.h>
 #include <llvm/IR/Module.h>
@@ -12,6 +13,7 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
+#include "LLVMIR/LLVMTypes.h"
 
 class LLVMHelper
 {
@@ -20,7 +22,8 @@ class LLVMHelper
     // error saved in LLVMHelper's error
     static std::vector<std::byte> generateLLVMIR(ASTNode* ast,
                                                  const XString& filename);
-    static llvm::Value* codegen();
+    static llvm::Function* genFunction(FunctionDeclarationNode* node);
+    static llvm::Value* codegen(ASTNode* node);
 
     XSharpError error;
 };

@@ -352,9 +352,9 @@ ASTNode* Parser::operand()
     }
 }
 
-TypeInfo Parser::type()
+TypeNode Parser::type()
 {
-    TypeInfo info;
+    TypeNode info;
     if (current->type == Keyword && current->value == "const") {
         info.isConst = true;
         forward();

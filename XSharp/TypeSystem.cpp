@@ -1,25 +1,26 @@
 #include "TypeSystem.h"
+#include <algorithm>
 
 using namespace XSharp;
 
-int XSharp::registerType(XSharp::BasicType)
+static uint XSharp::registerType(const XSharp::TypeNode& type)
 {
-	registerNum++;
-	return registerNum - 1;
+    registerNum++;
+    types.push_back(type);
+    return registerNum;
 }
 
-int XSharp::typeidOf(XString name)
-{
-	int id = -1;
-	for (int i = 0; i < types.size(); i++) {
-		if (types[i].name == name) {
-			id = i;
-		}
-	}
-	return id;
-}
+TypeNode* XSharp::typeOf(int typeId) { return &types[typeId]; }
 
-BasicType* XSharp::typeOf(int typeId)
+static uint XSharp::typeIDOf(XString name)
 {
-	return &types[typeId];
+    auto iterator_found = std::find_if(
+        types.begin(), types.end(),
+        [&](auto element) -> bool { return element.typeName == name; });
+
+    if (iterator_found != types.end()) {
+        return iterator_found->typeID;
+    }
+
+    return 0;
 }

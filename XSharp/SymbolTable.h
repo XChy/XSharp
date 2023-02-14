@@ -4,6 +4,8 @@
 #include "XSharp/XString.h"
 #include "XSharp/Symbol.h"
 
+namespace XSharp {
+
 class SymbolTable
 {
     typedef std::unordered_map<XString, Symbol>::iterator Iterator;
@@ -28,3 +30,5 @@ class SymbolTable
     std::unordered_map<XString, Symbol> symbols;
     SymbolTable* parent;
 };
+
+}  // namespace XSharp

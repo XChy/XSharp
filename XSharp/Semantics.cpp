@@ -1,4 +1,6 @@
 #include "XSharp/Semantics.h"
+using namespace XSharp;
+
 Semantics::Semantics() {}
 
 Semantics::Semantics(ASTNode* ast) { analyze(ast); }

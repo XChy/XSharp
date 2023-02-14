@@ -1,6 +1,10 @@
+#pragma once
 #include "XSharp/XString.h"
+#include "XSharp/TypeSystem.h"
 
+namespace XSharp {
 struct Symbol {
     XString name;
-    enum Type { Var, Class, Function };
+    uint typeID;
 };
+}  // namespace XSharp

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "XSharp/TypeSystem.h"
 #include "xsharp_global.h"
 #include "ASTNodes.h"
 #include "Tokens.h"
@@ -28,7 +29,7 @@ class XSharp_EXPORT Parser
     ASTNode* expression(std::vector<TokenType> stopwords);
     ASTNode* operand();
 
-    TypeInfo type();
+    TypeNode type();
     static int priority(BinaryOperatorNode* oper);
     static int priority(UnaryOperatorNode* oper);
     static Assoc assoc(BinaryOperatorNode* oper);
