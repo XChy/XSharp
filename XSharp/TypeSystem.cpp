@@ -3,24 +3,48 @@
 
 using namespace XSharp;
 
-static uint XSharp::registerType(const XSharp::TypeNode& type)
+TypeNode::~TypeNode()
+{
+    // TODO complete deconstructor
+}
+
+TypeContext::TypeContext()
+{
+    // fill a useless node so that typeID start with 1
+    typesList.push_back(new TypeNode);
+}
+
+uint TypeContext::registerType(const XSharp::TypeNode& type)
 {
     registerNum++;
-    types.push_back(type);
+    TypeNode* newNode = new TypeNode(type);
+
+    newNode->typeID = registerNum;
+    typesMap[type.typeName()] = registerNum;
     return registerNum;
 }
 
-TypeNode* XSharp::typeOf(int typeId) { return &types[typeId]; }
-
-static uint XSharp::typeIDOf(XString name)
+XString TypeNode::typeName() const
 {
-    auto iterator_found = std::find_if(
-        types.begin(), types.end(),
-        [&](auto element) -> bool { return element.typeName == name; });
+    switch (category) {
+        // TODO:complete full type name generation
+    }
+}
 
-    if (iterator_found != types.end()) {
-        return iterator_found->typeID;
+TypeNode* TypeContext::typeOf(int typeId) { return typesList[typeId]; }
+
+uint TypeContext::typeIDOf(XString name)
+{
+    auto iterator_found = typesMap.find(name);
+
+    if (iterator_found != typesMap.end()) {
+        return iterator_found->second;
     }
 
     return 0;
+}
+
+TypeContext::~TypeContext()
+{
+    for (TypeNode* type : typesList) delete type;
 }
