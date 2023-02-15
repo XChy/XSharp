@@ -3,13 +3,51 @@
 #include "XSharp/XString.h"
 using namespace XSharp;
 
-TypeNode::TypeNode()
-{  // TODO complete constructor
-}
+TypeNode::TypeNode() {}
 
 TypeNode::TypeNode(const TypeNode& other)
 {
-    // TODO complete constructor
+    typeID = other.typeID;
+    baseName = other.baseName;
+    category = other.category;
+    isConst = other.isConst;
+    switch (category) {
+        case Basic:
+            typeSpecifiedInfo = std::get<BasicType>(other.typeSpecifiedInfo);
+            break;
+        case Array: {
+            ArrayType array = std::get<ArrayType>(other.typeSpecifiedInfo);
+            array.elementType = new TypeNode(*other.elementType());
+            typeSpecifiedInfo = array;
+        } break;
+        case Function: {
+            FunctionType function;
+            function.returnValueType = new TypeNode(*other.returnValueType());
+            for (TypeNode* param : other.paramsType())
+                function.paramTypes.push_back(new TypeNode(*param));
+            typeSpecifiedInfo = function;
+        } break;
+        case Class:
+            // TODO class-related
+            break;
+        case Closure:
+            break;
+    }
+}
+
+TypeNode::~TypeNode()
+{
+    switch (category) {
+        case Array:
+            delete elementType();
+            break;
+        case Function:
+            for (TypeNode* param : paramsType()) delete param;
+            delete returnValueType(); break;
+        case Class:
+            // TODO class-related
+            break;
+    }
 }
 
 bool TypeNode::equals(const TypeNode& other) const
@@ -40,8 +78,14 @@ bool TypeNode::equals(const TypeNode& other) const
     }
 }
 
-TypeNode* TypeNode::returnValueType() const {}
-std::vector<TypeNode*> paramsType() const {}
+TypeNode* TypeNode::returnValueType() const
+{
+    return std::get<FunctionType>(typeSpecifiedInfo).returnValueType;
+}
+std::vector<TypeNode*> TypeNode::paramsType() const
+{
+    return std::get<FunctionType>(typeSpecifiedInfo).paramTypes;
+}
 
 // Array type, TODO complete below
 uint TypeNode::arrayDimension() const
@@ -83,9 +127,4 @@ XString TypeNode::typeName() const
 BasicType TypeNode::basicType() const
 {
     return std::get<BasicType>(typeSpecifiedInfo);
-}
-
-TypeNode::~TypeNode()
-{
-    // TODO complete deconstructor
 }

@@ -54,8 +54,6 @@ class TypeNode
     TypeNode();
     TypeNode(const TypeNode& other);
     ~TypeNode();
-    enum Categories { Basic, Array, Function, Closure, Class } category;
-
     bool equals(const TypeNode& other) const;
 
     // Basic type
@@ -78,6 +76,7 @@ class TypeNode
     uint typeID;
     XString baseName;
     bool isConst;
+    enum Categories { Basic, Array, Function, Closure, Class } category;
 
     std::variant<BasicType, ClassType, FunctionType, ArrayType, ClosureType>
         typeSpecifiedInfo;
