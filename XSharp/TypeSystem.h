@@ -4,64 +4,9 @@
 #include <vector>
 #include "xsharp_global.h"
 #include "XString.h"
+#include "Type.h"
 
 namespace XSharp {
-
-enum class BasicType {
-    I32,  // signed integer
-    I64,
-    UI32,  // unsigned integer
-    UI64,
-    Float,
-    Double,
-    Char,
-    Boolean,
-};
-
-class TypeNode
-{
-   public:
-    TypeNode()
-    {  // TODO complete constructor
-    }
-    TypeNode(const TypeNode& other)
-    {
-        // TODO complete constructor
-    }
-    ~TypeNode();
-    enum Categories { Class, Function, Array, Closure, Basic } category;
-
-    uint typeID;
-
-    XString baseName;
-
-    bool isConst;
-
-    XString typeName() const;
-
-    union {
-        // Basic
-        BasicType basicType;
-        // Class
-        struct {
-            uint parentTypeID;
-            bool isAbstract;
-        };
-
-        // Array
-        struct {
-            uint arrayDimension;
-            uint arraySize;
-            uint elementTypeID;
-        };
-
-        // Function
-        struct {
-            std::vector<uint> paramTypeIDs;
-            uint returnValueTypeID;
-        };
-    };
-};
 
 class TypeContext
 {

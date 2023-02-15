@@ -3,11 +3,6 @@
 
 using namespace XSharp;
 
-TypeNode::~TypeNode()
-{
-    // TODO complete deconstructor
-}
-
 TypeContext::TypeContext()
 {
     // fill a useless node so that typeID start with 1
@@ -22,13 +17,6 @@ uint TypeContext::registerType(const XSharp::TypeNode& type)
     newNode->typeID = registerNum;
     typesMap[type.typeName()] = registerNum;
     return registerNum;
-}
-
-XString TypeNode::typeName() const
-{
-    switch (category) {
-        // TODO:complete full type name generation
-    }
 }
 
 TypeNode* TypeContext::typeOf(int typeId) { return typesList[typeId]; }
