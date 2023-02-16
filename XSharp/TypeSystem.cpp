@@ -7,6 +7,7 @@ TypeContext::TypeContext()
 {
     // fill a useless node so that typeID start with 1
     typesList.push_back(new TypeNode);
+    // TODO register basic type when initializing
 }
 
 uint TypeContext::registerType(const XSharp::TypeNode& type)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "XSharp/Type.h"
 #include "xsharp_global.h"
 #include "XString.h"
 #include "TypeSystem.h"
@@ -174,11 +175,8 @@ class XSharp_EXPORT VariableDeclarationNode : public ASTNode
     bool isConst() const;
     void setIsConst(bool newIsConst);
 
-    int arrayDimension() const;
-    void setArrayDimension(int newArrayDimension);
-
    private:
-    TypeNode _typeInfo;
+    TypeNode _type;
     XString _name;
     ASTNode* _initValue;
 };
@@ -193,8 +191,8 @@ class XSharp_EXPORT FunctionDeclarationNode : public ASTNode
     void setName(const XString& name);
     XString name() const;
 
-    void setReturnType(XString returnType);
-    XString returnType() const;
+    void setReturnType(const TypeNode& returnType);
+    TypeNode returnType() const;
 
     void setParams(std::vector<VariableDeclarationNode*> params);
     void addParam(VariableDeclarationNode* param);
@@ -207,7 +205,7 @@ class XSharp_EXPORT FunctionDeclarationNode : public ASTNode
 
    private:
     XString _name;
-    XString _returnType;
+    TypeNode _returnType;
     std::vector<VariableDeclarationNode*> _params;  // <type name,param name>
     BlockNode* _impl;
 };

@@ -361,7 +361,7 @@ TypeNode Parser::type()
     }
 
     if (current->type == Identifier) {
-        info.typeName = current->value;
+        info.baseName = current->value;
         forward();
 
         int arrayDimension = 0;

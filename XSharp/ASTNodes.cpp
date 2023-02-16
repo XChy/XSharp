@@ -1,5 +1,6 @@
 #include "ASTNodes.h"
 #include <vector>
+#include "XSharp/Type.h"
 
 IntegerNode::IntegerNode(int64_t value) : _value(value) {}
 
@@ -164,7 +165,7 @@ XString FunctionDeclarationNode::dump() const
     if (_impl) {
         implDump = _impl->dump();
     }
-    return "Function{name:" + _name + "\nreturnType:" + _returnType +
+    return "Function{name:" + _name + "\nreturnType:" + _returnType.typeName() +
            "\nparams:{" + paramsDump + "}\nblock:{" + implDump + "}\n}\n";
 }
 
@@ -172,12 +173,12 @@ void FunctionDeclarationNode::setName(const XString& name) { _name = name; }
 
 XString FunctionDeclarationNode::name() const { return _name; }
 
-void FunctionDeclarationNode::setReturnType(XString returnType)
+void FunctionDeclarationNode::setReturnType(const TypeNode& returnType)
 {
     _returnType = returnType;
 }
 
-XString FunctionDeclarationNode::returnType() const { return _returnType; }
+TypeNode FunctionDeclarationNode::returnType() const { return _returnType; }
 
 void FunctionDeclarationNode::setParams(
     std::vector<VariableDeclarationNode*> params)
@@ -209,8 +210,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 VariableDeclarationNode::VariableDeclarationNode() : _initValue(nullptr)
 {
-    _typeInfo.arrayDimension = 0;
-    _typeInfo.isConst = false;
+    _type.isConst = false;
 }
 
 XString VariableDeclarationNode::dump() const
@@ -219,16 +219,13 @@ XString VariableDeclarationNode::dump() const
     if (_initValue) {
         initDump = _initValue->dump();
     }
-    return "Variable{name:" + _name + "\ntype:" + _typeInfo.typeName +
+    return "Variable{name:" + _name + "\ntype:" + _type.typeName +
            "\ninitValue:" + initDump + "}\n";
 }
 
-void VariableDeclarationNode::setType(const TypeNode& type)
-{
-    _typeInfo = type;
-}
+void VariableDeclarationNode::setType(const TypeNode& type) { _type = type; }
 
-TypeNode VariableDeclarationNode::type() const { return _typeInfo; }
+TypeNode VariableDeclarationNode::type() const { return _type; }
 
 void VariableDeclarationNode::setName(const XString& name) { _name = name; }
 
@@ -243,21 +240,11 @@ ASTNode* VariableDeclarationNode::initValue() const { return _initValue; }
 
 VariableDeclarationNode::~VariableDeclarationNode() { delete _initValue; }
 
-bool VariableDeclarationNode::isConst() const { return _typeInfo.isConst; }
+bool VariableDeclarationNode::isConst() const { return _type.isConst; }
 
 void VariableDeclarationNode::setIsConst(bool newIsConst)
 {
-    _typeInfo.isConst = newIsConst;
-}
-
-int VariableDeclarationNode::arrayDimension() const
-{
-    return _typeInfo.arrayDimension;
-}
-
-void VariableDeclarationNode::setArrayDimension(int newArrayDimension)
-{
-    _typeInfo.arrayDimension = newArrayDimension;
+    _type.isConst = newIsConst;
 }
 
 XString BlockNode::dump() const

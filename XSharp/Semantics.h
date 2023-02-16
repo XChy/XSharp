@@ -5,6 +5,10 @@
 #include "XSharp/XSharpUtils.h"
 #include "SymbolTable.h"
 
+#ifdef XSharp_LLVM_SUPPORT
+#include "LLVMIR/LLVMHelper.h"
+#endif
+
 namespace XSharp {
 
 class XSharp_EXPORT Semantics

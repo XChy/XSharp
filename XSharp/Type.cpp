@@ -5,6 +5,25 @@ using namespace XSharp;
 
 TypeNode::TypeNode() {}
 
+TypeNode::~TypeNode()
+{
+    switch (category) {
+        case Array:
+            delete elementType();
+            break;
+        case Function:
+            for (TypeNode* param : paramsType()) delete param;
+            delete returnValueType();
+            break;
+        case Class:
+            // TODO Class-related
+            break;
+        case Closure:
+            // TODO Closure-related
+            break;
+    }
+}
+
 TypeNode::TypeNode(const TypeNode& other)
 {
     typeID = other.typeID;
@@ -35,21 +54,6 @@ TypeNode::TypeNode(const TypeNode& other)
     }
 }
 
-TypeNode::~TypeNode()
-{
-    switch (category) {
-        case Array:
-            delete elementType();
-            break;
-        case Function:
-            for (TypeNode* param : paramsType()) delete param;
-            delete returnValueType(); break;
-        case Class:
-            // TODO class-related
-            break;
-    }
-}
-
 bool TypeNode::equals(const TypeNode& other) const
 {
     if (this->category != other.category) {
@@ -60,7 +64,6 @@ bool TypeNode::equals(const TypeNode& other) const
             return this->basicType() == other.basicType();
         case Array:
             return arrayDimension() == other.arrayDimension() &&
-                   arraySize() == other.arrayDimension() &&
                    elementType()->equals(*other.elementType());
         case Function:
             if (!returnValueType()->equals(*other.returnValueType()))
@@ -93,11 +96,6 @@ uint TypeNode::arrayDimension() const
     return std::get<ArrayType>(typeSpecifiedInfo).arrayDimension;
 }
 
-uint TypeNode::arraySize() const
-{
-    return std::get<ArrayType>(typeSpecifiedInfo).arrayDimension;
-}
-
 TypeNode* TypeNode::elementType() const
 {
     return std::get<ArrayType>(typeSpecifiedInfo).elementType;
@@ -114,7 +112,8 @@ XString TypeNode::typeName() const
         case Class:
             return "Class";
         case Array:
-            return elementType()->typeName() + "[" + arraySize() + "]";
+            return elementType()->typeName() + "[]*" +
+                   XString::fromInterger(arrayDimension());
         case Function:
             XString name = returnValueType()->typeName();
             name.append('(');
@@ -127,4 +126,59 @@ XString TypeNode::typeName() const
 BasicType TypeNode::basicType() const
 {
     return std::get<BasicType>(typeSpecifiedInfo);
+}
+
+TypeNode* createBasicType(BasicType type)
+{
+    TypeNode* node = new TypeNode;
+    node->typeSpecifiedInfo = type;
+    switch (type) {
+        case BasicType::I32:
+            node->baseName = "i32";
+        case BasicType::I64:
+            node->baseName = "i64";
+        case BasicType::UI32:
+            node->baseName = "ui32";
+        case BasicType::UI64:
+            node->baseName = "ui64";
+        case BasicType::Float:
+            node->baseName = "float";
+        case BasicType::Double:
+            node->baseName = "double";
+        case BasicType::Boolean:
+            node->baseName = "boolean";
+        case BasicType::Char:
+            node->baseName = "char";
+    }
+}
+
+TypeNode* createFunctionType(TypeNode* returnValueType,
+                             std::vector<TypeNode*> paramsType)
+{
+    TypeNode* node = new TypeNode;
+    node->typeSpecifiedInfo = FunctionType{.paramTypes = paramsType,
+                                           .returnValueType = returnValueType};
+    return node;
+}
+
+TypeNode* createArrayType(TypeNode* elementType, uint dimension)
+{
+    TypeNode* node = new TypeNode;
+    node->typeSpecifiedInfo =
+        ArrayType{.arrayDimension = dimension, .elementType = elementType};
+    return node;
+}
+
+TypeNode* createClassType()
+{
+    TypeNode* node = new TypeNode;
+    node->typeSpecifiedInfo = ClassType{};
+    return node;
+}
+
+TypeNode* createClosureType()
+{
+    TypeNode* node = new TypeNode;
+    node->typeSpecifiedInfo = ClosureType{};
+    return node;
 }

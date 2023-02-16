@@ -15,11 +15,15 @@ std::vector<std::byte> Semantics::getXSharpIR()
     // TODO: generate XSharp's IR
 }
 
-std::vector<std::byte> Semantics::getLLVMIR()
-{
-    // TODO: generate LLVM IR
+std::vector<std::byte> Semantics::getLLVMIR(){
+#ifdef XSharp_LLVM_SUPPORT
+// TODO: generate LLVM IR
+#endif
 }
 
-XSharpError Semantics::error() { return _error; }
+XSharpError Semantics::error()
+{
+    return _error;
+}
 
 SymbolTable Semantics::rootSymbols() { return rootSymbolTable; }

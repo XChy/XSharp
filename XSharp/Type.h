@@ -23,16 +23,11 @@ enum class BasicType {
 
 struct ClassType {
     // TODO: complete class type-specified setting
-    TypeNode* parentType;
-    bool isAbstract;
-    // type and name of member and methods
-    std::vector<TypeNode*> members;
-    std::vector<TypeNode*> memberMethods;
+    std::vector<TypeNode*> genericsParams;
 };
 
 struct ArrayType {
     uint arrayDimension;
-    uint arraySize;
     TypeNode* elementType;
 };
 
@@ -48,6 +43,7 @@ struct ClosureType {
     uint returnValueTypeID;
 };
 
+// TypeNode has no destructor, for which TypeContext have to manage its memory
 class TypeNode
 {
    public:
@@ -65,7 +61,6 @@ class TypeNode
 
     // Array type, TODO complete below
     uint arrayDimension() const;
-    uint arraySize() const;
     TypeNode* elementType() const;
 
     // Class type,  TODO complete below
@@ -81,5 +76,16 @@ class TypeNode
     std::variant<BasicType, ClassType, FunctionType, ArrayType, ClosureType>
         typeSpecifiedInfo;
 };
+
+TypeNode* createBasicType(BasicType type);
+
+TypeNode* createFunctionType(TypeNode* returnValueType,
+                             std::vector<TypeNode*> paramsType);
+
+TypeNode* createArrayType(TypeNode* elementType, uint dimension);
+
+TypeNode* createClassType();
+
+TypeNode* createClosureType();
 
 }  // namespace XSharp
