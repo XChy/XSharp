@@ -128,7 +128,7 @@ BasicType TypeNode::basicType() const
     return std::get<BasicType>(typeSpecifiedInfo);
 }
 
-TypeNode* createBasicType(BasicType type)
+TypeNode* XSharp::createBasicType(BasicType type)
 {
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo = type;
@@ -152,8 +152,8 @@ TypeNode* createBasicType(BasicType type)
     }
 }
 
-TypeNode* createFunctionType(TypeNode* returnValueType,
-                             std::vector<TypeNode*> paramsType)
+TypeNode* XSharp::createFunctionType(TypeNode* returnValueType,
+                                     std::vector<TypeNode*> paramsType)
 {
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo = FunctionType{.paramTypes = paramsType,
@@ -161,7 +161,7 @@ TypeNode* createFunctionType(TypeNode* returnValueType,
     return node;
 }
 
-TypeNode* createArrayType(TypeNode* elementType, uint dimension)
+TypeNode* XSharp::createArrayType(TypeNode* elementType, uint dimension)
 {
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo =
@@ -169,14 +169,14 @@ TypeNode* createArrayType(TypeNode* elementType, uint dimension)
     return node;
 }
 
-TypeNode* createClassType()
+TypeNode* XSharp::createClassType()
 {
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo = ClassType{};
     return node;
 }
 
-TypeNode* createClosureType()
+TypeNode* XSharp::createClosureType()
 {
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo = ClosureType{};
