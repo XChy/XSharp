@@ -21,6 +21,13 @@ enum class BasicType {
     Boolean,
 };
 
+std::unordered_map<XString, BasicType> nameToBasicType = {
+    {"i32", BasicType::I32},     {"i64", BasicType::I64},
+    {"ui32", BasicType::UI32},   {"i64", BasicType::UI64},
+    {"float", BasicType::Float}, {"double", BasicType::Double},
+    {"char", BasicType::Char},   {"boolean", BasicType::Boolean},
+};
+
 struct ClassType {
     // TODO: complete class type-specified setting
     std::vector<TypeNode*> genericsParams;
@@ -84,8 +91,10 @@ TypeNode* createFunctionType(TypeNode* returnValueType,
 
 TypeNode* createArrayType(TypeNode* elementType, uint dimension);
 
-TypeNode* createClassType();
+TypeNode* createClassType(const XString& baseName);
 
 TypeNode* createClosureType();
+
+TypeNode* createTypeFor(const XString& baseName);
 
 }  // namespace XSharp

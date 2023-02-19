@@ -29,7 +29,7 @@ class XSharp_EXPORT Parser
     ASTNode* expression(std::vector<TokenType> stopwords);
     ASTNode* operand();
 
-    TypeNode* type();
+    TypeNode type();
     static int priority(BinaryOperatorNode* oper);
     static int priority(UnaryOperatorNode* oper);
     static Assoc assoc(BinaryOperatorNode* oper);

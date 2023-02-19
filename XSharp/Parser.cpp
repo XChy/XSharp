@@ -51,8 +51,7 @@ FunctionDeclarationNode* Parser::functionDeclaration()
 {
     FunctionDeclarationNode* root = new FunctionDeclarationNode;
 
-    root->setReturnType(current->value);
-    forward();
+    root->setReturnType(type());
 
     root->setName(current->value);
     forward();
@@ -353,7 +352,7 @@ ASTNode* Parser::operand()
     }
 }
 
-TypeNode* Parser::type()
+TypeNode Parser::type()
 {
     bool isConst = false;
     uint arrayDimension = 0;
@@ -381,9 +380,9 @@ TypeNode* Parser::type()
     }
 
     if (arrayDimension == 0) {
-        // TODO non-array
+        // TODO: basic type generate
     } else {
-        // TODO array
+        // TODO: array
     }
 }
 

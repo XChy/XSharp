@@ -169,7 +169,7 @@ TypeNode* XSharp::createArrayType(TypeNode* elementType, uint dimension)
     return node;
 }
 
-TypeNode* XSharp::createClassType()
+TypeNode* XSharp::createClassType(const XString& baseName)
 {
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo = ClassType{};
@@ -181,4 +181,14 @@ TypeNode* XSharp::createClosureType()
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo = ClosureType{};
     return node;
+}
+
+TypeNode* XSharp::createTypeFor(const XString& baseName)
+{
+    auto mapIter = nameToBasicType.find(baseName);
+    if (mapIter != nameToBasicType.end()) {
+        return createBasicType(nameToBasicType[baseName]);
+    } else {
+        return createClassType(baseName);
+    }
 }
