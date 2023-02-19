@@ -1,26 +1,28 @@
 #include "TypeSystem.h"
 #include <algorithm>
+#include "XSharp/Type.h"
 
 using namespace XSharp;
 
 TypeContext::TypeContext()
 {
     // fill a useless node so that typeID start with 1
-    typesList.push_back(new TypeNode);
+    typesList.push_back(TypeNode{});
     // TODO register basic type when initializing
 }
 
 uint TypeContext::registerType(const XSharp::TypeNode& type)
 {
     registerNum++;
-    TypeNode* newNode = new TypeNode(type);
 
-    newNode->typeID = registerNum;
     typesMap[type.typeName()] = registerNum;
+
+    typesList.push_back(type);
+    typesList[registerNum].typeID = registerNum;
     return registerNum;
 }
 
-TypeNode* TypeContext::typeOf(int typeId) { return typesList[typeId]; }
+TypeNode* TypeContext::typeOf(int typeId) { return &typesList[typeId]; }
 
 uint TypeContext::typeIDOf(XString name)
 {
@@ -31,9 +33,4 @@ uint TypeContext::typeIDOf(XString name)
     }
 
     return 0;
-}
-
-TypeContext::~TypeContext()
-{
-    for (TypeNode* type : typesList) delete type;
 }

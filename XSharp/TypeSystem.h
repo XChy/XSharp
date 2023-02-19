@@ -22,9 +22,7 @@ class TypeContext
     TypeNode* typeOf(int typeId);
 
     std::unordered_map<XString, uint> typesMap;
-    std::vector<TypeNode*> typesList;
-
-    ~TypeContext();
+    std::vector<TypeNode> typesList;
 
    private:
     uint registerNum = 0;

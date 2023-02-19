@@ -3,6 +3,7 @@
 #include <vector>
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Tokens.h"
+#include "XSharp/Type.h"
 #include "XSharp/XSharpUtils.h"
 
 ASTNode* Parser::parse(const std::vector<Token>& tokenList)
@@ -71,7 +72,7 @@ FunctionDeclarationNode* Parser::functionDeclaration()
 }
 
 VariableDeclarationNode* Parser::variableDeclaration(
-    std::vector<TokenType> stopwords)
+    const std::vector<TokenType>& stopwords)
 {
     VariableDeclarationNode* root = new VariableDeclarationNode;
     root->setType(type());
@@ -352,19 +353,20 @@ ASTNode* Parser::operand()
     }
 }
 
-TypeNode Parser::type()
+TypeNode* Parser::type()
 {
-    TypeNode info;
+    bool isConst = false;
+    uint arrayDimension = 0;
+    TypeNode* typenode = nullptr;
     if (current->type == Keyword && current->value == "const") {
-        info.isConst = true;
+        isConst = true;
         forward();
     }
 
     if (current->type == Identifier) {
-        info.baseName = current->value;
+        typenode->baseName = current->value;
         forward();
 
-        int arrayDimension = 0;
         while (current->type == OpenBracket) {
             forward();
             if (current->type == CloseBracket) {
@@ -374,11 +376,15 @@ TypeNode Parser::type()
                 throw XSharpError("No close bracket expected");
             }
         }
-        info.arrayDimension = arrayDimension;
     } else {
         throw XSharpError("No typename matched");
     }
-    return info;
+
+    if (arrayDimension == 0) {
+        // TODO non-array
+    } else {
+        // TODO array
+    }
 }
 
 int Parser::priority(BinaryOperatorNode* oper)
