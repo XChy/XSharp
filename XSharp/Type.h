@@ -84,17 +84,18 @@ class TypeNode
         typeSpecifiedInfo;
 };
 
-TypeNode* createBasicType(BasicType type);
+TypeNode createBasicType(BasicType type);
 
-TypeNode* createFunctionType(TypeNode* returnValueType,
-                             std::vector<TypeNode*> paramsType);
+// params' memory is managed by TypeSystem
+TypeNode createFunctionType(TypeNode* returnValueType,
+                            std::vector<TypeNode*> paramsType);
 
-TypeNode* createArrayType(TypeNode* elementType, uint dimension);
+TypeNode createArrayType(TypeNode* elementType, uint dimension);
 
-TypeNode* createClassType(const XString& baseName);
+TypeNode createClassType(const XString& baseName);
 
-TypeNode* createClosureType();
+TypeNode createClosureType();
 
-TypeNode* createTypeFor(const XString& baseName);
+TypeNode createTypeFor(const XString& baseName);
 
 }  // namespace XSharp

@@ -5,6 +5,7 @@
 #include "XSharp/Tokens.h"
 #include "XSharp/Type.h"
 #include "XSharp/XSharpUtils.h"
+#include "XSharp/XString.h"
 
 ASTNode* Parser::parse(const std::vector<Token>& tokenList)
 {
@@ -356,14 +357,14 @@ TypeNode Parser::type()
 {
     bool isConst = false;
     uint arrayDimension = 0;
-    TypeNode* typenode = nullptr;
+    XString baseName;
     if (current->type == Keyword && current->value == "const") {
         isConst = true;
         forward();
     }
 
     if (current->type == Identifier) {
-        typenode->baseName = current->value;
+        baseName = current->value;
         forward();
 
         while (current->type == OpenBracket) {
@@ -380,9 +381,10 @@ TypeNode Parser::type()
     }
 
     if (arrayDimension == 0) {
-        // TODO: basic type generate
+        return XSharp::createTypeFor(baseName);
     } else {
-        // TODO: array
+        TypeNode arrayType = XSharp::createArrayType(
+            new TypeNode(XSharp::createTypeFor(baseName)), arrayDimension);
     }
 }
 

@@ -128,7 +128,7 @@ BasicType TypeNode::basicType() const
     return std::get<BasicType>(typeSpecifiedInfo);
 }
 
-TypeNode* XSharp::createBasicType(BasicType type)
+TypeNode XSharp::createBasicType(BasicType type)
 {
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo = type;
@@ -152,38 +152,38 @@ TypeNode* XSharp::createBasicType(BasicType type)
     }
 }
 
-TypeNode* XSharp::createFunctionType(TypeNode* returnValueType,
-                                     std::vector<TypeNode*> paramsType)
+TypeNode XSharp::createFunctionType(TypeNode* returnValueType,
+                                    std::vector<TypeNode*> paramsType)
 {
-    TypeNode* node = new TypeNode;
-    node->typeSpecifiedInfo = FunctionType{.paramTypes = paramsType,
-                                           .returnValueType = returnValueType};
+    TypeNode node;
+    node.typeSpecifiedInfo = FunctionType{.paramTypes = paramsType,
+                                          .returnValueType = returnValueType};
     return node;
 }
 
-TypeNode* XSharp::createArrayType(TypeNode* elementType, uint dimension)
+TypeNode XSharp::createArrayType(TypeNode* elementType, uint dimension)
 {
-    TypeNode* node = new TypeNode;
-    node->typeSpecifiedInfo =
+    TypeNode node;
+    node.typeSpecifiedInfo =
         ArrayType{.arrayDimension = dimension, .elementType = elementType};
     return node;
 }
 
-TypeNode* XSharp::createClassType(const XString& baseName)
+TypeNode XSharp::createClassType(const XString& baseName)
 {
-    TypeNode* node = new TypeNode;
-    node->typeSpecifiedInfo = ClassType{};
+    TypeNode node;
+    node.typeSpecifiedInfo = ClassType{};
     return node;
 }
 
-TypeNode* XSharp::createClosureType()
+TypeNode XSharp::createClosureType()
 {
-    TypeNode* node = new TypeNode;
-    node->typeSpecifiedInfo = ClosureType{};
+    TypeNode node;
+    node.typeSpecifiedInfo = ClosureType{};
     return node;
 }
 
-TypeNode* XSharp::createTypeFor(const XString& baseName)
+TypeNode XSharp::createTypeFor(const XString& baseName)
 {
     auto mapIter = nameToBasicType.find(baseName);
     if (mapIter != nameToBasicType.end()) {
