@@ -18,12 +18,16 @@
 class LLVMHelper
 {
    public:
+    LLVMHelper();
     // generate LLVM IR for the ast
     // error saved in LLVMHelper's error
-    static std::vector<std::byte> generateLLVMIR(ASTNode* ast,
-                                                 const XString& filename);
-    static llvm::Function* genFunction(FunctionDeclarationNode* node);
-    static llvm::Value* codegen(ASTNode* node);
+    std::vector<std::byte> generateLLVMIR(ASTNode* ast,
+                                          const XString& filename);
+    llvm::Function* genFunction(FunctionDeclarationNode* node);
+    llvm::Value* codegen(ASTNode* node);
 
     XSharpError error;
+    llvm::LLVMContext context;
+    llvm::Module module;
+    llvm::IRBuilder<> builder;
 };

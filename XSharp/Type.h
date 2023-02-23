@@ -11,6 +11,7 @@ namespace XSharp {
 class TypeNode;
 
 enum class BasicType {
+    Void,
     I32,  // signed integer
     I64,
     UI32,  // unsigned integer
@@ -22,10 +23,11 @@ enum class BasicType {
 };
 
 static std::unordered_map<XString, BasicType> nameToBasicType = {
-    {"i32", BasicType::I32},     {"i64", BasicType::I64},
-    {"ui32", BasicType::UI32},   {"i64", BasicType::UI64},
-    {"float", BasicType::Float}, {"double", BasicType::Double},
-    {"char", BasicType::Char},   {"boolean", BasicType::Boolean},
+    {"void", BasicType::Void},       {"i32", BasicType::I32},
+    {"i64", BasicType::I64},         {"ui32", BasicType::UI32},
+    {"i64", BasicType::UI64},        {"float", BasicType::Float},
+    {"double", BasicType::Double},   {"char", BasicType::Char},
+    {"boolean", BasicType::Boolean},
 };
 
 struct ClassType {

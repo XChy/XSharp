@@ -16,10 +16,12 @@ static llvm::Type* llvmTypeFor(XSharp::TypeNode* type,
         case TypeNode::Basic:
 
             switch (type->basicType()) {
+                case BasicType::Void:
+                    return llvm::Type::getVoidTy(context);
                 case BasicType::Boolean:
                     return llvm::Type::getInt1Ty(context);
                 case BasicType::Char:
-                    return llvm::Type::getInt8Ty(context);
+                    return llvm::Type::getInt16Ty(context);
                 case BasicType::I32:
                 case BasicType::UI32:
                     return llvm::Type::getInt32Ty(context);

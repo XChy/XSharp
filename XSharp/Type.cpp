@@ -133,22 +133,33 @@ TypeNode XSharp::createBasicType(BasicType type)
     TypeNode* node = new TypeNode;
     node->typeSpecifiedInfo = type;
     switch (type) {
+        case BasicType::Void:
+            node->baseName = "void";
+            break;
         case BasicType::I32:
             node->baseName = "i32";
+            break;
         case BasicType::I64:
             node->baseName = "i64";
+            break;
         case BasicType::UI32:
             node->baseName = "ui32";
+            break;
         case BasicType::UI64:
             node->baseName = "ui64";
+            break;
         case BasicType::Float:
             node->baseName = "float";
+            break;
         case BasicType::Double:
             node->baseName = "double";
+            break;
         case BasicType::Boolean:
             node->baseName = "boolean";
+            break;
         case BasicType::Char:
             node->baseName = "char";
+            break;
     }
 }
 
