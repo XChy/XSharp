@@ -219,7 +219,7 @@ XString VariableDeclarationNode::dump() const
     if (_initValue) {
         initDump = _initValue->dump();
     }
-    return "Variable{name:" + _name + "\ntype:" + _type.typeName +
+    return "Variable{name:" + _name + "\ntype:" + _type.typeName() +
            "\ninitValue:" + initDump + "}\n";
 }
 

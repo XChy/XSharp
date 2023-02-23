@@ -7,4 +7,5 @@
 #include <llvm/IR/TypeFinder.h>
 #include "XSharp/TypeSystem.h"
 
-static llvm::Type* llvmTypeFor(XSharp::TypeNode type);
+static llvm::Type* llvmTypeFor(XSharp::TypeNode* type,
+                               llvm::LLVMContext& context);

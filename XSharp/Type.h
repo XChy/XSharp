@@ -21,7 +21,7 @@ enum class BasicType {
     Boolean,
 };
 
-std::unordered_map<XString, BasicType> nameToBasicType = {
+static std::unordered_map<XString, BasicType> nameToBasicType = {
     {"i32", BasicType::I32},     {"i64", BasicType::I64},
     {"ui32", BasicType::UI32},   {"i64", BasicType::UI64},
     {"float", BasicType::Float}, {"double", BasicType::Double},
