@@ -56,9 +56,9 @@ TypeNode::TypeNode(const TypeNode& other)
 
 bool TypeNode::equals(const TypeNode& other) const
 {
-    if (this->category != other.category) {
-        return false;
-    }
+    if (this->typeID == other.typeID) return true;
+    if (this->category != other.category) return false;
+
     switch (category) {
         case Basic:
             return this->basicType() == other.basicType();
@@ -77,6 +77,9 @@ bool TypeNode::equals(const TypeNode& other) const
             return true;
         case Class:
             // TODO Class related
+            return true;
+        case Closure:
+            // TODO Closure related
             return true;
     }
 }

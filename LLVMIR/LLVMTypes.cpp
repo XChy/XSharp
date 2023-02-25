@@ -6,15 +6,13 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Type.h"
 
-static llvm::Type* llvmTypeFor(XSharp::TypeNode* type,
-                               llvm::LLVMContext& context)
+llvm::Type* llvmTypeFor(XSharp::TypeNode* type, llvm::LLVMContext& context)
 {
     using XSharp::BasicType;
     // TODO complete XSharp's Type to Variable
     using XSharp::TypeNode;
     switch (type->category) {
         case TypeNode::Basic:
-
             switch (type->basicType()) {
                 case BasicType::Void:
                     return llvm::Type::getVoidTy(context);

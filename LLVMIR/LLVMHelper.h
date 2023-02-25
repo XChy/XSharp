@@ -13,6 +13,7 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
+#include "XSharp/SymbolTable.h"
 #include "LLVMIR/LLVMTypes.h"
 
 class LLVMHelper
@@ -24,10 +25,16 @@ class LLVMHelper
     std::vector<std::byte> generateLLVMIR(ASTNode* ast,
                                           const XString& filename);
     llvm::Function* genFunction(FunctionDeclarationNode* node);
+    llvm::Value* genBinaryOp(BinaryOperatorNode* op);
+    llvm::Value* genUnaryOp(UnaryOperatorNode* op);
     llvm::Value* codegen(ASTNode* node);
 
+    XSharp::SymbolTable symbolTable() const;
+
+   private:
     XSharpError error;
     llvm::LLVMContext context;
     llvm::Module module;
     llvm::IRBuilder<> builder;
+    XSharp::SymbolTable symbols;
 };

@@ -25,13 +25,16 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
 {
     using namespace llvm;
     std::vector<std::byte> bytecodes;
-    LLVMContext context;
 
-    Module module("XSharp", context);
-    module.setDataLayout("");
-    module.setTargetTriple("i386-pc-linux-gnu");
-
-    IRBuilder<> builder(context);
+    if (ast->is<DefinitionsNode>()) {
+        DefinitionsNode* definitions = ast->to<DefinitionsNode>();
+        for (auto var : definitions->variableDeclarations()) {
+        }
+        for (auto func : definitions->functionDeclarations()) {
+        }
+        for (auto classDef : definitions->classDeclarations()) {
+        }
+    }
 
     SmallVector<char> buffer;
     BitcodeWriter bitcodeWriter(buffer);
@@ -46,6 +49,18 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
 llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
 {
     // TODO LLVMIR generation for Function Declaration
+}
+
+llvm::Value* LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
+{
+    // TODO: BinaryOperatorNode to llvmIR
+    return nullptr;
+}
+
+llvm::Value* LLVMHelper::genUnaryOp(UnaryOperatorNode* op)
+{
+    // TODO: UnaryOperatorNode to llvmIR
+    return nullptr;
 }
 
 llvm::Value* LLVMHelper::codegen(ASTNode* node)
@@ -71,18 +86,22 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
     }
 
     if (node->is<BoxNode>()) {
+        return codegen(node->to<BoxNode>()->child());
+    }
+    if (node->is<BlockNode>()) {
     }
     if (node->is<BinaryOperatorNode>()) {
+        return genBinaryOp(node->to<BinaryOperatorNode>());
     }
     if (node->is<UnaryOperatorNode>()) {
+        return genUnaryOp(node->to<UnaryOperatorNode>());
     }
     if (node->is<VariableDeclarationNode>()) {
     }
     if (node->is<FunctionDeclarationNode>()) {
+        return genFunction(node->to<FunctionDeclarationNode>());
     }
     if (node->is<ClassDeclarationNode>()) {
-    }
-    if (node->is<DefinitionsNode>()) {
     }
     if (node->is<FunctionCallNode>()) {
     }
@@ -93,4 +112,7 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
     if (node->is<IndexNode>()) {
     }
     // TODO LLVMIR generation for Value-like ASTNode
+    return nullptr;
 }
+
+XSharp::SymbolTable LLVMHelper::symbolTable() const { return symbols; }
