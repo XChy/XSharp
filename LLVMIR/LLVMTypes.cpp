@@ -39,13 +39,15 @@ llvm::Type* llvmTypeFor(XSharp::TypeNode* type, llvm::LLVMContext& context)
             for (TypeNode* paramTypeNode : type->paramsType())
                 llvmTypesForParams.push_back(
                     llvmTypeFor(paramTypeNode, context));
+
             return llvm::FunctionType::get(llvmTypeFor(type, context),
                                            llvmTypesForParams, false);
         }
         case TypeNode::Array:
-            // TODO: decide array's length is fixed or variable
-            return llvm::ArrayType::get(
-                llvmTypeFor(type->elementType(), context), 10086);
+            // Allocate XSharp's array on heap
+            // So the type of array is the pointer type of its element
+            return llvm::PointerType::get(
+                llvmTypeFor(type->elementType(), context), 0);
         case TypeNode::Class:
             break;
         case TypeNode::Closure:

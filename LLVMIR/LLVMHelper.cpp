@@ -6,6 +6,8 @@
 #include <llvm-14/llvm/IR/BasicBlock.h>
 #include <llvm-14/llvm/IR/Constant.h>
 #include <llvm-14/llvm/IR/Constants.h>
+#include <llvm-14/llvm/IR/DerivedTypes.h>
+#include <llvm-14/llvm/IR/Function.h>
 #include <llvm-14/llvm/IR/LLVMContext.h>
 #include <llvm-14/llvm/IR/Module.h>
 #include <memory>
@@ -48,7 +50,30 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
 
 llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
 {
-    // TODO LLVMIR generation for Function Declaration
+    // TODO: SymbolTable-related
+    using llvm::BasicBlock;
+    using llvm::ConstantInt;
+    using llvm::Function;
+
+    std::vector<llvm::Type*> paramsType(node->params().size());
+    for (auto param : node->params()) {
+        auto paramType = param->type();
+        paramsType.push_back(llvmTypeFor(&paramType, context));
+    }
+
+    auto retType = node->returnType();
+    llvm::FunctionType* functionType = llvm::FunctionType::get(
+        llvmTypeFor(&retType, context), paramsType, false);
+
+    Function* func = Function::Create(functionType, Function::ExternalLinkage,
+                                      "abc", module);
+
+    BasicBlock* block = BasicBlock::Create(context, "entry", func);
+    builder.SetInsertPoint(block);
+
+    for (auto content : node->impl()->contents()) {
+        codegen(content);
+    }
 }
 
 llvm::Value* LLVMHelper::genBinaryOp(BinaryOperatorNode* op)

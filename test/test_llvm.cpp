@@ -1,9 +1,6 @@
-#include <llvm-14/llvm/IR/DerivedTypes.h>
-#include <llvm-14/llvm/IR/Function.h>
-#include <llvm-14/llvm/IR/ModuleSummaryIndex.h>
-#include <llvm-14/llvm/IR/Type.h>
 #include <vector>
 #include "LLVMIR/LLVMHelper.h"
+#include "XSharp/ASTNodes.h"
 
 int main()
 {
@@ -30,6 +27,11 @@ int main()
         FunctionType::get(Type::getDoubleTy(*context), params, false);
     Function* func = Function::Create(functionType, Function::ExternalLinkage,
                                       "abc", module.get());
+
+    BasicBlock* block = BasicBlock::Create(*context, "entry", func);
+    builder.SetInsertPoint(block);
+    auto value = ConstantInt::get(*context, APInt(64, 10086));
+    builder.CreateRet(value);
 
     // llvm::raw_fd_ostream out("anonymous.bc", code);
     // WriteBitcodeToFile(*module, out);
