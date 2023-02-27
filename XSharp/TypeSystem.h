@@ -13,7 +13,7 @@ class TypeContext
    public:
     TypeContext();
 
-    uint registerType(const XSharp::TypeNode& type);
+    TypeNode* registerType(const XSharp::TypeNode& type);
 
     // return typeid
     // If no type with the name exists ,return 0
@@ -27,5 +27,7 @@ class TypeContext
    private:
     uint registerNum = 0;
 };
+
+static TypeContext globalTypeContext;
 
 }  // namespace XSharp

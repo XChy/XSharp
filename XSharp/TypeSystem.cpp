@@ -11,7 +11,7 @@ TypeContext::TypeContext()
     // TODO register basic type when initializing
 }
 
-uint TypeContext::registerType(const XSharp::TypeNode& type)
+TypeNode* TypeContext::registerType(const XSharp::TypeNode& type)
 {
     registerNum++;
 
@@ -19,7 +19,7 @@ uint TypeContext::registerType(const XSharp::TypeNode& type)
 
     typesList.push_back(type);
     typesList[registerNum].typeID = registerNum;
-    return registerNum;
+    return &typesList[registerNum];
 }
 
 TypeNode* TypeContext::typeOf(int typeId) { return &typesList[typeId]; }

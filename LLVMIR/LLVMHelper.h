@@ -1,6 +1,8 @@
 #pragma once
 #include <cstddef>
-#include <llvm-14/llvm/IR/Value.h>
+#include <vector>
+#include <llvm-14/llvm/IR/GlobalVariable.h>
+#include <llvm/IR/Value.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Function.h>
@@ -14,6 +16,7 @@
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 #include "XSharp/SymbolTable.h"
+#include "XSharp/TypeSystem.h"
 #include "LLVMIR/LLVMTypes.h"
 
 class LLVMHelper
@@ -24,6 +27,8 @@ class LLVMHelper
     // error saved in LLVMHelper's error
     std::vector<std::byte> generateLLVMIR(ASTNode* ast,
                                           const XString& filename);
+
+    llvm::GlobalVariable* genGlobalVariable(VariableDeclarationNode* node);
     llvm::Function* genFunction(FunctionDeclarationNode* node);
     llvm::Value* genBinaryOp(BinaryOperatorNode* op);
     llvm::Value* genUnaryOp(UnaryOperatorNode* op);
@@ -32,9 +37,12 @@ class LLVMHelper
     XSharp::SymbolTable symbolTable() const;
 
    private:
-    XSharpError error;
+    std::vector<XSharpError> errors;
+
     llvm::LLVMContext context;
     llvm::Module module;
     llvm::IRBuilder<> builder;
+
     XSharp::SymbolTable symbols;
+    XSharp::SymbolTable* currentSymbols;
 };

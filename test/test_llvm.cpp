@@ -24,17 +24,24 @@ int main()
 
     std::vector<Type*> params(1, Type::getDoubleTy(*context));
     FunctionType* functionType =
-        FunctionType::get(Type::getDoubleTy(*context), params, false);
+        FunctionType::get(Type::getInt32Ty(*context), params, false);
     Function* func = Function::Create(functionType, Function::ExternalLinkage,
                                       "abc", module.get());
 
     BasicBlock* block = BasicBlock::Create(*context, "entry", func);
     builder.SetInsertPoint(block);
     auto value = ConstantInt::get(*context, APInt(64, 10086));
-    builder.CreateRet(value);
+    auto alloca =
+        builder.CreateAlloca(Type::getInt32Ty(*context), nullptr, "a");
+    auto alloca1 =
+        builder.CreateAlloca(Type::getInt32Ty(*context), nullptr, "b");
+    auto addResult = builder.CreateAdd(
+        builder.CreateLoad(Type::getInt32Ty(*context), alloca),
+        builder.CreateLoad(Type::getInt32Ty(*context), alloca1));
+    builder.CreateRet(addResult);
 
-    // llvm::raw_fd_ostream out("anonymous.bc", code);
-    // WriteBitcodeToFile(*module, out);
+    llvm::raw_fd_ostream out("anonymous.bc", code);
+    WriteBitcodeToFile(*module, out);
     module->dump();
     return 0;
 }

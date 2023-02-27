@@ -1,19 +1,21 @@
 #include "LLVMIR/LLVMHelper.h"
-#include <llvm-14/llvm/ADT/APFloat.h>
-#include <llvm-14/llvm/ADT/APInt.h>
-#include <llvm-14/llvm/ADT/SmallVector.h>
-#include <llvm-14/llvm/Bitcode/BitcodeWriter.h>
-#include <llvm-14/llvm/IR/BasicBlock.h>
-#include <llvm-14/llvm/IR/Constant.h>
-#include <llvm-14/llvm/IR/Constants.h>
-#include <llvm-14/llvm/IR/DerivedTypes.h>
-#include <llvm-14/llvm/IR/Function.h>
-#include <llvm-14/llvm/IR/LLVMContext.h>
-#include <llvm-14/llvm/IR/Module.h>
-#include <memory>
-#include <system_error>
+#include <llvm/IR/GlobalValue.h>
+#include <llvm/IR/GlobalVariable.h>
+#include <llvm/ADT/APFloat.h>
+#include <llvm/ADT/APInt.h>
+#include <llvm/ADT/SmallVector.h>
+#include <llvm/Bitcode/BitcodeWriter.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Constant.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/TypeSystem.h"
+#include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 
 LLVMHelper::LLVMHelper() : module("XSharp", context), builder(context)
@@ -32,7 +34,8 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
         DefinitionsNode* definitions = ast->to<DefinitionsNode>();
         for (auto var : definitions->variableDeclarations()) {
         }
-        for (auto func : definitions->functionDeclarations()) {
+        for (auto funcNode : definitions->functionDeclarations()) {
+            genFunction(funcNode);
         }
         for (auto classDef : definitions->classDeclarations()) {
         }
@@ -48,6 +51,21 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
     return bytecodes;
 }
 
+llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
+    VariableDeclarationNode* varNode)
+{
+    if (symbols.hasSymbol(varNode->name())) {
+        errors.push_back(
+            {XSharpErrorType::SemanticsError, "Redefinition of variable"});
+        return nullptr;
+    }
+
+    symbols.addSymbol(
+        {.name = varNode->name(),
+         .type = XSharp::globalTypeContext.registerType(varNode->type())});
+
+    // llvm::GlobalVariable::classof(nullptr);
+}
 llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
 {
     // TODO: SymbolTable-related
@@ -66,7 +84,7 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
         llvmTypeFor(&retType, context), paramsType, false);
 
     Function* func = Function::Create(functionType, Function::ExternalLinkage,
-                                      "abc", module);
+                                      node->name().toStdString(), module);
 
     BasicBlock* block = BasicBlock::Create(context, "entry", func);
     builder.SetInsertPoint(block);
@@ -74,6 +92,8 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
     for (auto content : node->impl()->contents()) {
         codegen(content);
     }
+
+    return func;
 }
 
 llvm::Value* LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
