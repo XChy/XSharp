@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <vector>
-#include <llvm-14/llvm/IR/GlobalVariable.h>
+#include <llvm/IR/GlobalVariable.h>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/LLVMContext.h>

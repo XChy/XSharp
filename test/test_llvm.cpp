@@ -25,9 +25,9 @@ int main()
     std::vector<Type*> params(1, Type::getDoubleTy(*context));
     FunctionType* functionType =
         FunctionType::get(Type::getInt32Ty(*context), params, false);
+
     Function* func = Function::Create(functionType, Function::ExternalLinkage,
                                       "abc", module.get());
-
     BasicBlock* block = BasicBlock::Create(*context, "entry", func);
     builder.SetInsertPoint(block);
     auto value = ConstantInt::get(*context, APInt(64, 10086));

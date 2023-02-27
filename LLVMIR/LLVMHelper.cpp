@@ -1,4 +1,5 @@
 #include "LLVMIR/LLVMHelper.h"
+#include <llvm-14/llvm/IR/Value.h>
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
 #include <llvm/ADT/APFloat.h>
@@ -14,6 +15,7 @@
 #include <llvm/IR/Module.h>
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Type.h"
 #include "XSharp/TypeSystem.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
@@ -60,11 +62,15 @@ llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
         return nullptr;
     }
 
-    symbols.addSymbol(
-        {.name = varNode->name(),
-         .type = XSharp::globalTypeContext.registerType(varNode->type())});
+    TypeNode* typenode =
+        XSharp::globalTypeContext.registerType(varNode->type());
 
-    // llvm::GlobalVariable::classof(nullptr);
+    llvm::GlobalVariable* global = new llvm::GlobalVariable(
+        llvmTypeFor(typenode, context), typenode->isConst,
+        llvm::GlobalVariable::ExternalLinkage);
+
+    symbols.addSymbol(
+        {.name = varNode->name(), .type = typenode, .definition = global});
 }
 llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
 {
