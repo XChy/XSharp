@@ -24,6 +24,7 @@ DefinitionsNode* Parser::definitions()
             }
         } else if (current->type == Identifier) {
             forward();
+            // TODO: Identify the variable and function when parsing
             if (current->type == Identifier) {  // Function or variable
                 forward();
                 if (current->type == OpenParenthesis) {  // define function
@@ -64,7 +65,7 @@ FunctionDeclarationNode* Parser::functionDeclaration()
     forward();
 
     root->setParams(paramsDefinition());
-    // end with ')', and skip ')'
+    // end with ')', so skip ')'
     forward();
 
     root->setImpl(block());
@@ -99,6 +100,10 @@ VariableDeclarationNode* Parser::variableDeclaration(
 std::vector<VariableDeclarationNode*> Parser::paramsDefinition()
 {
     std::vector<VariableDeclarationNode*> paramsDef;
+
+    // if no parameter in parentheses, then return empty paramsDef
+    if (current->type == CloseParenthesis) return paramsDef;
+
     while (true) {
         paramsDef.push_back(variableDeclaration({Comma, CloseParenthesis}));
         if (current->type == CloseParenthesis)

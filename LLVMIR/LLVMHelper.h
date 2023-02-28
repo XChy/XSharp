@@ -29,9 +29,9 @@ class LLVMHelper
     std::vector<std::byte> generateLLVMIR(ASTNode* ast,
                                           const XString& filename);
 
-    llvm::GlobalVariable* genGlobalVariable(VariableDeclarationNode* node);
-    llvm::AllocaInst* genBasicVariable(VariableDeclarationNode* node);
-    llvm::Function* genFunction(FunctionDeclarationNode* node);
+    llvm::GlobalVariable* genGlobalVariable(VariableDeclarationNode* var);
+    llvm::AllocaInst* genLocalVariable(VariableDeclarationNode* var);
+    llvm::Function* genFunction(FunctionDeclarationNode* func);
     llvm::Value* genBinaryOp(BinaryOperatorNode* op);
     llvm::Value* genUnaryOp(UnaryOperatorNode* op);
     llvm::Value* codegen(ASTNode* node);

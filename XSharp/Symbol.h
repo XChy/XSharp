@@ -8,12 +8,22 @@
 #endif
 
 namespace XSharp {
+
+enum class SymbolType {
+    GlobalVariable,
+    LocalVariable,
+    Function,
+};
+
 struct Symbol {
     // Symbol's name
     XString name;
 
+    // Symbol's type
+    SymbolType symbolType;
+
     // X# Type
-    TypeNode* type;
+    TypeNode* valueType;
 
     // if we apply LLVM as the backend,
     // the symbol also needs to save LLVM-related information

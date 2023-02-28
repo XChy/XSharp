@@ -72,8 +72,33 @@ llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
         llvm::GlobalVariable::ExternalLinkage, nullptr,
         varNode->name().toStdString());
 
-    symbols.addSymbol(
-        {.name = varNode->name(), .type = typenode, .definition = global});
+    symbols.addSymbol({.name = varNode->name(),
+                       .symbolType = XSharp::SymbolType::GlobalVariable,
+                       .valueType = typenode,
+                       .definition = global});
+}
+
+llvm::AllocaInst* LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
+{
+    if (symbols.hasSymbol(varNode->name())) {
+        errors.push_back(
+            {XSharpErrorType::SemanticsError, "Redefinition of variable"});
+        return nullptr;
+    }
+
+    TypeNode* typenode =
+        XSharp::globalTypeContext.registerType(varNode->type());
+
+    // TODO: variable's initValue's processing
+    auto xsharpType = varNode->type();
+    auto llvmValue =
+        builder.CreateAlloca(llvmTypeFor(&xsharpType, context), nullptr,
+                             varNode->name().toStdString());
+
+    symbols.addSymbol({.name = varNode->name(),
+                       .symbolType = XSharp::SymbolType::LocalVariable,
+                       .valueType = typenode,
+                       .definition = llvmValue});
 }
 
 llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
@@ -152,6 +177,7 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
         return genUnaryOp(node->to<UnaryOperatorNode>());
     }
     if (node->is<VariableDeclarationNode>()) {
+        return genLocalVariable(node->to<VariableDeclarationNode>());
     }
     if (node->is<FunctionDeclarationNode>()) {
         return genFunction(node->to<FunctionDeclarationNode>());

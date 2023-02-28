@@ -94,7 +94,7 @@ std::vector<Token> Lexer::tokenize(const XString &source) const
         } else if (*it == '.') {
             ++it;
             result.push_back(Token(Dot, "."));
-        } else if (it->isSpace()) {
+        } else if (it->isSpace() || *it == '\n') {
             ++it;
         } else {
             throw XSharpError(XString("Unknown char:").append(*it));
