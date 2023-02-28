@@ -1,0 +1,9 @@
+i32 a;
+i64 c;
+i32 main(){
+    i32 b;
+    float d;
+}
+
+float add(float e,float f){
+    }

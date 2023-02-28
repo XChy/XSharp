@@ -108,7 +108,7 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
     using llvm::ConstantInt;
     using llvm::Function;
 
-    std::vector<llvm::Type*> paramsType(node->params().size());
+    std::vector<llvm::Type*> paramsType;
     for (auto param : node->params()) {
         auto paramType = param->type();
         paramsType.push_back(llvmTypeFor(&paramType, context));
@@ -123,6 +123,12 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
 
     BasicBlock* block = BasicBlock::Create(context, "entry", func);
     builder.SetInsertPoint(block);
+
+    auto iter = func->arg_begin();
+    for (int i = 0; i < func->arg_size(); ++i) {
+        iter->setName(node->params()[i]->name().toStdString());
+        iter++;
+    }
 
     for (auto content : node->impl()->contents()) {
         codegen(content);

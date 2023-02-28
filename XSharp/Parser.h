@@ -19,18 +19,26 @@ class XSharp_EXPORT Parser
     DefinitionsNode* definitions();
     ClassDeclarationNode* classDeclaration();
     FunctionDeclarationNode* functionDeclaration();
+
+    // end after the stopword
     VariableDeclarationNode* variableDeclaration(
         const std::vector<TokenType>& stopwords);
 
     std::vector<VariableDeclarationNode*> paramsDefinition();
+
+    // end at the right parenthesis
     std::vector<ASTNode*> paramsList();
 
     BlockNode* block();
     ASTNode* statement();
+
+    // end at the pos of stopwords
     ASTNode* expression(std::vector<TokenType> stopwords);
     ASTNode* operand();
 
+    // end after <type-name>
     TypeNode type();
+
     static int priority(BinaryOperatorNode* oper);
     static int priority(UnaryOperatorNode* oper);
     static Assoc assoc(BinaryOperatorNode* oper);

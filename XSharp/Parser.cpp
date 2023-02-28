@@ -91,6 +91,7 @@ VariableDeclarationNode* Parser::variableDeclaration(
     } else if (current->type == Operator && current->value == "=") {
         forward();
         root->setInitValue(expression(stopwords));
+        forward();
     } else {
         throw XSharpError("variable defintion error");
     }
@@ -106,10 +107,12 @@ std::vector<VariableDeclarationNode*> Parser::paramsDefinition()
 
     while (true) {
         paramsDef.push_back(variableDeclaration({Comma, CloseParenthesis}));
+        backward();
+
         if (current->type == CloseParenthesis)
             break;
         else if (current->type == Comma)
-            current++;
+            forward();
         else
             throw XSharpError("')' expected is missing");
     }
@@ -209,7 +212,7 @@ ASTNode* Parser::expression(std::vector<TokenType> stopwords)
     while (!isStopwords(current, stopwords)) {
         oper2 = new BinaryOperatorNode;
         oper2->setOperatorStr(current->value);
-        if (isStopwords(++current, stopwords))
+        if (isStopwords(current, stopwords))
             throw XSharpError("No operand after operator");
 
         factor3 = operand();

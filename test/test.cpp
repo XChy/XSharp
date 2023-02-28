@@ -40,7 +40,8 @@ void test(const char *path)
     char code[2048];
 
     int fd = open(path, O_RDONLY);
-    read(fd, code, 2048);
+    int size = read(fd, code, 2048);
+    code[size] = '\0';
     close(fd);
 
     printf("Compliation Result of %s:\n", path);
