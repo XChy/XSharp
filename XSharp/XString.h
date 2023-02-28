@@ -40,7 +40,7 @@ class XSharp_EXPORT StringData
 {
    public:
     StringData(const StringData& other);
-    StringData(uint allocSize = 1);
+    StringData(uint allocSize = 2);
     void allocate(uint allocSize);
     void reallocate(uint allocSize);
     ~StringData();

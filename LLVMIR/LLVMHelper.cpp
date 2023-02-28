@@ -66,9 +66,11 @@ llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
     TypeNode* typenode =
         XSharp::globalTypeContext.registerType(varNode->type());
 
+    // TODO: variable's initValue's processing
     llvm::GlobalVariable* global = new llvm::GlobalVariable(
-        llvmTypeFor(typenode, context), typenode->isConst,
-        llvm::GlobalVariable::ExternalLinkage);
+        module, llvmTypeFor(typenode, context), typenode->isConst,
+        llvm::GlobalVariable::ExternalLinkage, nullptr,
+        varNode->name().toStdString());
 
     symbols.addSymbol(
         {.name = varNode->name(), .type = typenode, .definition = global});

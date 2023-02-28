@@ -134,43 +134,46 @@ BasicType TypeNode::basicType() const
 
 TypeNode XSharp::createBasicType(BasicType type)
 {
-    TypeNode* node = new TypeNode;
-    node->typeSpecifiedInfo = type;
+    TypeNode node;
+    node.category = TypeNode::Basic;
+    node.typeSpecifiedInfo = type;
     switch (type) {
         case BasicType::Void:
-            node->baseName = "void";
+            node.baseName = "void";
             break;
         case BasicType::I32:
-            node->baseName = "i32";
+            node.baseName = "i32";
             break;
         case BasicType::I64:
-            node->baseName = "i64";
+            node.baseName = "i64";
             break;
         case BasicType::UI32:
-            node->baseName = "ui32";
+            node.baseName = "ui32";
             break;
         case BasicType::UI64:
-            node->baseName = "ui64";
+            node.baseName = "ui64";
             break;
         case BasicType::Float:
-            node->baseName = "float";
+            node.baseName = "float";
             break;
         case BasicType::Double:
-            node->baseName = "double";
+            node.baseName = "double";
             break;
         case BasicType::Boolean:
-            node->baseName = "boolean";
+            node.baseName = "boolean";
             break;
         case BasicType::Char:
-            node->baseName = "char";
+            node.baseName = "char";
             break;
     }
+    return node;
 }
 
 TypeNode XSharp::createFunctionType(TypeNode* returnValueType,
                                     std::vector<TypeNode*> paramsType)
 {
     TypeNode node;
+    node.category = TypeNode::Function;
     node.typeSpecifiedInfo = FunctionType{.paramTypes = paramsType,
                                           .returnValueType = returnValueType};
     return node;
@@ -179,6 +182,7 @@ TypeNode XSharp::createFunctionType(TypeNode* returnValueType,
 TypeNode XSharp::createArrayType(TypeNode* elementType, uint dimension)
 {
     TypeNode node;
+    node.category = TypeNode::Array;
     node.typeSpecifiedInfo =
         ArrayType{.arrayDimension = dimension, .elementType = elementType};
     return node;
@@ -187,6 +191,7 @@ TypeNode XSharp::createArrayType(TypeNode* elementType, uint dimension)
 TypeNode XSharp::createClassType(const XString& baseName)
 {
     TypeNode node;
+    node.category = TypeNode::Class;
     node.typeSpecifiedInfo = ClassType{};
     return node;
 }
@@ -194,6 +199,7 @@ TypeNode XSharp::createClassType(const XString& baseName)
 TypeNode XSharp::createClosureType()
 {
     TypeNode node;
+    node.category = TypeNode::Closure;
     node.typeSpecifiedInfo = ClosureType{};
     return node;
 }

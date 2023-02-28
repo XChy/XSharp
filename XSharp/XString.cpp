@@ -88,7 +88,7 @@ void xstrcpy(char16_t* dst, const char16_t* src, int size)
     memcpy(dst, src, size * sizeof(char16_t));
 }
 
-XString::XString() : XString("") {}
+XString::XString() : d(new StringData) {}
 
 XString::XString(const XString& other) : d(other.d) {}
 

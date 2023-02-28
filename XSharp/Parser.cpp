@@ -386,6 +386,7 @@ TypeNode Parser::type()
     } else {
         TypeNode arrayType = XSharp::createArrayType(
             new TypeNode(XSharp::createTypeFor(baseName)), arrayDimension);
+        return arrayType;
     }
 }
 
