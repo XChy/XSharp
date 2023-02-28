@@ -86,6 +86,7 @@ VariableDeclarationNode* Parser::variableDeclaration(
 
     if (isStopwords(current, stopwords)) {
         root->setInitValue(nullptr);
+        forward();
     } else if (current->type == Operator && current->value == "=") {
         forward();
         root->setInitValue(expression(stopwords));

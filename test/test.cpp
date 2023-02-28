@@ -1,23 +1,21 @@
 #include <XSharp/Lexer.h>
 #include <XSharp/Parser.h>
+#include <LLVMIR/LLVMHelper.h>
+#include <cstdio>
 #include <iostream>
 
 int main()
 {
     while (true) {
         try {
-            char a[1024] = "1+1;";
-            std::cin.getline(a, 1024);
             Lexer lexer;
-            auto tokens =
-                lexer.tokenize("int main(int a,String b){" + XString(a) + "}");
-            for (auto token : tokens) {
-                std::cout << token.dump().toStdString() << "  ";
-            }
+            auto tokens = lexer.tokenize("int a;");
 
-            std::cout << std::endl;
             Parser parser;
             std::cout << parser.parse(tokens)->dump().toStdString();
+
+            LLVMHelper helper;
+            helper.generateLLVMIR(parser.parse(tokens), "a.bc");
         } catch (XSharpError e) {
             std::cout << e.errorInfo.toStdString();
         }

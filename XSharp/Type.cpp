@@ -124,6 +124,7 @@ XString TypeNode::typeName() const
             name.append(')');
             return name;
     }
+    return "";
 }
 
 BasicType TypeNode::basicType() const

@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <vector>
+#include <llvm-14/llvm/IR/Instructions.h>
 #include <llvm/IR/GlobalVariable.h>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Module.h>
@@ -29,6 +30,7 @@ class LLVMHelper
                                           const XString& filename);
 
     llvm::GlobalVariable* genGlobalVariable(VariableDeclarationNode* node);
+    llvm::AllocaInst* genBasicVariable(VariableDeclarationNode* node);
     llvm::Function* genFunction(FunctionDeclarationNode* node);
     llvm::Value* genBinaryOp(BinaryOperatorNode* op);
     llvm::Value* genUnaryOp(UnaryOperatorNode* op);

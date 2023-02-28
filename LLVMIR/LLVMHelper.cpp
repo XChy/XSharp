@@ -35,6 +35,7 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
     if (ast->is<DefinitionsNode>()) {
         DefinitionsNode* definitions = ast->to<DefinitionsNode>();
         for (auto var : definitions->variableDeclarations()) {
+            genGlobalVariable(var);
         }
         for (auto funcNode : definitions->functionDeclarations()) {
             genFunction(funcNode);
@@ -72,6 +73,7 @@ llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
     symbols.addSymbol(
         {.name = varNode->name(), .type = typenode, .definition = global});
 }
+
 llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
 {
     // TODO: SymbolTable-related
