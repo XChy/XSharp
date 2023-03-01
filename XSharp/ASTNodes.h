@@ -306,3 +306,21 @@ class XSharp_EXPORT IndexNode : public ASTNode
     ASTNode* _operand;
     ASTNode* _indexExpr;
 };
+
+// Control Flow's ASTNode
+
+class XSharp_EXPORT ReturnNode : public ASTNode
+{
+   public:
+    ReturnNode(ASTNode* expr);
+
+    XString dump() const;
+
+    void setReturnValue(ASTNode* retVal);
+    ASTNode* returnValue();
+
+    ~ReturnNode();
+
+   private:
+    ASTNode* retVal;
+};

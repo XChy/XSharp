@@ -1,9 +1,11 @@
 i32 a;
 i64 c;
-i32 main(){
-    i32 b;
-    float d;
+i64 main(){
+    i64 b;
+    b = 1 + 2;
+    return 0;
 }
 
-float add(float e,float f){
-    }
+void add(float e,float f){
+    return;
+}

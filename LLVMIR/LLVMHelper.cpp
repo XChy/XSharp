@@ -1,5 +1,6 @@
 #include "LLVMIR/LLVMHelper.h"
 #include <llvm-14/llvm/IR/Value.h>
+#include <llvm-14/llvm/Support/Alignment.h>
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
 #include <llvm/ADT/APFloat.h>
@@ -24,6 +25,7 @@ LLVMHelper::LLVMHelper() : module("XSharp", context), builder(context)
 {
     module.setDataLayout("");
     module.setTargetTriple("i386-pc-linux-gnu");
+    module.getFunction("printf");
 }
 
 std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
@@ -80,6 +82,7 @@ llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
 
 llvm::AllocaInst* LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
 {
+    // TODO: FIX BUGS of Var
     if (symbols.hasSymbol(varNode->name())) {
         errors.push_back(
             {XSharpErrorType::SemanticsError, "Redefinition of variable"});
@@ -134,12 +137,43 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
         codegen(content);
     }
 
+    // TODO: to be deleted
+    using llvm::APInt;
+    using llvm::ConstantInt;
+
     return func;
 }
 
 llvm::Value* LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
 {
-    // TODO: BinaryOperatorNode to llvmIR
+    // TODO: Type reasoning, truncuation and verifying
+
+    // Add
+    if (op->operatorStr() == "+") {
+        auto lhs = codegen(op->left());
+        auto rhs = codegen(op->right());
+        return builder.CreateAdd(lhs, rhs);
+    }
+
+    // Sub
+    if (op->operatorStr() == "-") {
+        return builder.CreateSub(codegen(op->left()), codegen(op->right()));
+    }
+
+    // Div
+    if (op->operatorStr() == "/") {
+        return builder.CreateSDiv(codegen(op->left()), codegen(op->right()));
+    }
+
+    // Mul
+    if (op->operatorStr() == "*") {
+        return builder.CreateMul(codegen(op->left()), codegen(op->right()));
+    }
+
+    // Assign
+    if (op->operatorStr() == "=") {
+        return builder.CreateStore(codegen(op->right()), codegen(op->left()));
+    }
     return nullptr;
 }
 
@@ -152,6 +186,8 @@ llvm::Value* LLVMHelper::genUnaryOp(UnaryOperatorNode* op)
 llvm::Value* LLVMHelper::codegen(ASTNode* node)
 {
     using namespace llvm;
+    if (node == nullptr) return nullptr;
+
     if (node->is<IntegerNode>()) {
         return ConstantInt::get(context,
                                 APInt(64, node->to<IntegerNode>()->value()));
@@ -193,10 +229,22 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
     if (node->is<FunctionCallNode>()) {
     }
     if (node->is<VariableNode>()) {
+        VariableNode* var = node->to<VariableNode>();
+        if (symbolTable().hasSymbol(var->name()))
+            return symbolTable()[var->name()].definition;
+        else {
+            errors.push_back(
+                {XSharpErrorType::SemanticsError, "Redefinition of variable"});
+            return nullptr;
+        }
     }
     if (node->is<MemberNode>()) {
     }
     if (node->is<IndexNode>()) {
+    }
+    if (node->is<ReturnNode>()) {
+        return builder.CreateRet(
+            codegen(node->to<ReturnNode>()->returnValue()));
     }
     // TODO LLVMIR generation for Value-like ASTNode
     return nullptr;

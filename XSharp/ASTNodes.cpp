@@ -1,6 +1,8 @@
 #include "ASTNodes.h"
+#include <cmath>
 #include <vector>
 #include "XSharp/Type.h"
+#include "XSharp/XString.h"
 
 IntegerNode::IntegerNode(int64_t value) : _value(value) {}
 
@@ -362,3 +364,15 @@ ASTNode* IndexNode::operand() { return _operand; }
 void IndexNode::setIndexExpr(ASTNode* indexExpr) { _indexExpr = indexExpr; }
 
 ASTNode* IndexNode::indexExpr() { return _indexExpr; }
+
+ReturnNode::ReturnNode(ASTNode* expr) : retVal(expr) {}
+
+XString ReturnNode::dump() const
+{
+    return "Return " + (retVal ? retVal->dump() : "") + "\n";
+}
+
+void ReturnNode::setReturnValue(ASTNode* retVal) { this->retVal = retVal; }
+ASTNode* ReturnNode::returnValue() { return retVal; }
+
+ReturnNode::~ReturnNode() { delete retVal; }

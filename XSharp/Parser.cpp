@@ -163,6 +163,10 @@ ASTNode* Parser::statement()
         case Keyword:
             if (current->value == "const") {
                 stmt = variableDeclaration({SentenceEnd});
+            } else if (current->value == "return") {
+                forward();
+                stmt = new ReturnNode(expression({SentenceEnd}));
+                forward();
             }
             break;
         case Identifier:
@@ -171,6 +175,9 @@ ASTNode* Parser::statement()
                 stmt = variableDeclaration({SentenceEnd});
             } else if ((current + 1)->type == Identifier) {
                 stmt = variableDeclaration({SentenceEnd});
+            } else {
+                stmt = expression({SentenceEnd});
+                forward();
             }
             break;
         default:
@@ -212,6 +219,8 @@ ASTNode* Parser::expression(std::vector<TokenType> stopwords)
     while (!isStopwords(current, stopwords)) {
         oper2 = new BinaryOperatorNode;
         oper2->setOperatorStr(current->value);
+        forward();
+
         if (isStopwords(current, stopwords))
             throw XSharpError("No operand after operator");
 
