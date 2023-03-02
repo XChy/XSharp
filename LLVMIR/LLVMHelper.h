@@ -1,7 +1,8 @@
 #pragma once
 #include <cstddef>
 #include <vector>
-#include <llvm-14/llvm/IR/Instructions.h>
+#include <llvm-14/llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Instructions.h>
 #include <llvm/IR/GlobalVariable.h>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Module.h>
@@ -32,6 +33,7 @@ class LLVMHelper
     llvm::GlobalVariable* genGlobalVariable(VariableDeclarationNode* var);
     llvm::AllocaInst* genLocalVariable(VariableDeclarationNode* var);
     llvm::Function* genFunction(FunctionDeclarationNode* func);
+    llvm::CallInst* genCall(FunctionCallNode* call);
     llvm::Value* genBinaryOp(BinaryOperatorNode* op);
     llvm::Value* genUnaryOp(UnaryOperatorNode* op);
     llvm::Value* codegen(ASTNode* node);

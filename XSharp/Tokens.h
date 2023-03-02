@@ -4,6 +4,7 @@
 #include "XString.h"
 
 namespace XSharp {
+
 static std::unordered_map<XString, bool> keywords = {
     {"for", true},       {"while", true},   {"break", true},
     {"continue", true},  {"if", true},      {"else", true},
@@ -29,6 +30,7 @@ bool isOperator(const XString& oper);
 bool isOperator(XChar oper);
 
 bool operatorContains(const XString& part);
+
 }  // namespace XSharp
 
 enum TokenType {

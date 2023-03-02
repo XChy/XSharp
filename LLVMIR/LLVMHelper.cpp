@@ -1,6 +1,7 @@
 #include "LLVMIR/LLVMHelper.h"
-#include <llvm-14/llvm/IR/Value.h>
-#include <llvm-14/llvm/Support/Alignment.h>
+#include <llvm-14/llvm/IR/Verifier.h>
+#include <llvm/IR/Value.h>
+#include <llvm/Support/Alignment.h>
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
 #include <llvm/ADT/APFloat.h>
@@ -25,7 +26,6 @@ LLVMHelper::LLVMHelper() : module("XSharp", context), builder(context)
 {
     module.setDataLayout("");
     module.setTargetTriple("i386-pc-linux-gnu");
-    module.getFunction("printf");
 }
 
 std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
@@ -137,11 +137,12 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
         codegen(content);
     }
 
-    // TODO: to be deleted
-    using llvm::APInt;
-    using llvm::ConstantInt;
-
     return func;
+}
+
+llvm::CallInst* LLVMHelper::genCall(FunctionCallNode* call)
+{
+    // TODO: Call's LLVMIR generation
 }
 
 llvm::Value* LLVMHelper::genBinaryOp(BinaryOperatorNode* op)

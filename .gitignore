@@ -1,8 +1,4 @@
-﻿################################################################################
-# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
-################################################################################
-
-/.vs/XSharp/v17
+﻿/.vs/XSharp/v17
 /.vs/ProjectSettings.json
 /.vs/XSharp/FileContentIndex
 /.vs/slnx.sqlite
@@ -15,6 +11,7 @@
 /Makefile
 /build
 /lib*
+/bin
 /XSharp_TEST
 /.cache
 /XSharp_TEST_UTILS
@@ -23,3 +20,7 @@ XSharp_TEST_LLVM
 anonymous.bc
 anonymous.s
 anonymous.o
+.clangd
+shared
+test/bin
+compile_commands.json

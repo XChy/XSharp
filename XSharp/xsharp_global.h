@@ -7,8 +7,6 @@
 #include <algorithm>
 #include <stack>
 
-#define XSharp_LLVM_SUPPORT
-
 typedef unsigned short ushort;
 typedef unsigned char uchar;
 typedef unsigned int uint;

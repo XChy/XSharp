@@ -49,4 +49,5 @@ static std::unordered_map<XString, UnaryOperatorInfo> unaryOperInfo = {
     {"++", {3, All, RightToLeft}},
     {"--", {3, All, RightToLeft}},
     {"!", {3, BeforeValue, RightToLeft}}};
+
 }  // namespace XSharp

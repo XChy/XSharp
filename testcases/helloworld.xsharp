@@ -6,6 +6,6 @@ i64 main(){
     return 0;
 }
 
-void add(float e,float f){
-    return;
+double add(float e, float f){
+    return 1.1;
 }
