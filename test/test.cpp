@@ -3,6 +3,7 @@
 #include <LLVMIR/LLVMHelper.h>
 #include <cstdio>
 #include <iostream>
+#include "XSharp/XString.h"
 
 #include <dirent.h>
 #include <string.h>
@@ -53,7 +54,7 @@ void test(const char *path)
     std::cout << ast->dump().toStdString();
 
     LLVMHelper helper;
-    helper.generateLLVMIR(ast, "a.bc");
+    helper.generateLLVMIR(ast, XString(path).append(".bc"));
 
     delete ast;
 

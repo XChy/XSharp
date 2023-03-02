@@ -24,3 +24,9 @@ anonymous.o
 shared
 test/bin
 compile_commands.json
+XSharpRuntime/CMakeFiles
+XSharpRuntime/Makefile
+testcases/arithmetic.xsharp.bc
+testcases/helloworld.xsharp.bc
+testcases/helloworld.xsharp.o
+testcases/helloworld

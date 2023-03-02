@@ -51,35 +51,32 @@ if(BUILD_TEST)
 
   make_directory(test/bin)
   add_executable(XSharp_TEST test/test.cpp ${SRC})
-  set_target_properties(XSharp_TEST PROPERTIES OUTPUT_NAME
-                                               "test/bin/XSharp_TEST")
+  set_target_properties(
+    XSharp_TEST PROPERTIES OUTPUT_NAME
+                           "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST")
 
   add_executable(XSharp_TEST_UTILS test/test_utils.cpp ${SRC})
-  set_target_properties(XSharp_TEST_UTILS
-                        PROPERTIES OUTPUT_NAME "test/bin/XSharp_TEST_UTILS")
+  set_target_properties(
+    XSharp_TEST_UTILS
+    PROPERTIES OUTPUT_NAME "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST_UTILS")
 
   add_executable(XSharp_TEST_LLVM test/test_llvm.cpp ${SRC})
-  set_target_properties(XSharp_TEST_LLVM PROPERTIES OUTPUT_NAME
-                                                    "test/bin/XSharp_TEST_LLVM")
+  set_target_properties(
+    XSharp_TEST_LLVM PROPERTIES OUTPUT_NAME
+                                "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST_LLVM")
 endif()
 
 # Shared Library is necessary
 if(BUILD_XSharpRuntime)
-  message(STATUS "Build XSharp's Runtime")
-
-  make_directory(bin)
-  add_library(XSharp_RUNTIME_DYNAMIC SHARED ${RUNTIME_SRC})
-  set_target_properties(XSharp_RUNTIME_DYNAMIC PROPERTIES OUTPUT_NAME
-                                                          "XSharpRuntime")
-  set_target_properties(XSharp_RUNTIME_DYNAMIC
-                        PROPERTIES LIBRARY_OUTPUT_DIRECTORY "shared")
+  add_subdirectory(XSharpRuntime)
 endif()
 
 if(BUILD_XSharpCLI)
   message(STATUS "Build XSharp's CLI")
 
   add_executable(XSharpC XSharpCLI/xsharpc.cpp ${SRC})
-  set_target_properties(XSharpC PROPERTIES OUTPUT_NAME "bin/xsharpc")
+  set_target_properties(XSharpC PROPERTIES OUTPUT_NAME
+                                           "${CMAKE_SOURCE_DIR}/bin/xsharpc")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)

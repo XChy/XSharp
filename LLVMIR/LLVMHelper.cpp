@@ -15,7 +15,10 @@
 #include <llvm/IR/Function.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
+#include <algorithm>
+#include <vector>
 #include "LLVMIR/LLVMTypes.h"
+#include "LLVMIR/BuiltIn.h"
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Type.h"
 #include "XSharp/TypeSystem.h"
@@ -24,8 +27,9 @@
 
 LLVMHelper::LLVMHelper() : module("XSharp", context), builder(context)
 {
-    module.setDataLayout("");
-    module.setTargetTriple("i386-pc-linux-gnu");
+    // module.setDataLayout("");
+    // module.setTargetTriple("i386-pc-linux-gnu");
+    setUpBuildIn(module, context);
 }
 
 std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
@@ -50,7 +54,7 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
     BitcodeWriter bitcodeWriter(buffer);
     bitcodeWriter.writeModule(module);
     std::error_code code;
-    llvm::raw_fd_ostream out("anonymous.bc", code);
+    llvm::raw_fd_ostream out(filename.toStdString(), code);
     WriteBitcodeToFile(module, out);
     module.dump();
     return bytecodes;
@@ -143,6 +147,38 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
 llvm::CallInst* LLVMHelper::genCall(FunctionCallNode* call)
 {
     // TODO: Call's LLVMIR generation
+    // Normal Function Call
+    if (call->function()->is<VariableNode>()) {
+        VariableNode* calleeNode = call->function()->to<VariableNode>();
+        XString calleeName = calleeNode->name();
+        // TODO: args's typecheck
+        std::vector<llvm::Value*> args;
+        for (auto ast : call->params()) args.push_back(codegen(ast));
+
+        // std::for_each(call->params().begin(), call->params().end(),
+        //[&](ASTNode* var) { args.push_back(codegen(var)); });
+        // customed
+        if (symbols.hasSymbol(calleeName)) {
+            auto symbol = symbols[calleeName];
+            // TODO:typecheck
+            builder.CreateCall(
+                (llvm::FunctionType*)llvmTypeFor(symbol.valueType, context),
+                symbol.definition, args);
+        }
+        // builtin
+        else if (module.getFunction(calleeName.toStdString())) {
+            auto llvmFunction = module.getFunction(calleeName.toStdString());
+            return builder.CreateCall(llvmFunction->getFunctionType(),
+                                      llvmFunction, args);
+        } else {
+            errors.push_back({XSharpErrorType::SemanticsError,
+                              "The function '{}' doesn't exist"});
+            return nullptr;
+        }
+    }
+    // This Call
+    else if (call->function()->is<MemberNode>()) {
+    }
 }
 
 llvm::Value* LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
@@ -228,6 +264,7 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
     if (node->is<ClassDeclarationNode>()) {
     }
     if (node->is<FunctionCallNode>()) {
+        return genCall(node->to<FunctionCallNode>());
     }
     if (node->is<VariableNode>()) {
         VariableNode* var = node->to<VariableNode>();
