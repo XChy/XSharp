@@ -399,10 +399,10 @@ TypeNode Parser::type()
     }
 
     if (arrayDimension == 0) {
-        return XSharp::createTypeFor(baseName);
+        return XSharp::getTypeFor(baseName);
     } else {
-        TypeNode arrayType = XSharp::createArrayType(
-            new TypeNode(XSharp::createTypeFor(baseName)), arrayDimension);
+        TypeNode arrayType = XSharp::getArrayType(
+            new TypeNode(XSharp::getTypeFor(baseName)), arrayDimension);
         return arrayType;
     }
 }

@@ -1,8 +1,8 @@
-#include <llvm-14/llvm/IR/DerivedTypes.h>
-#include <llvm-14/llvm/IR/LLVMContext.h>
-#include <llvm-14/llvm/IR/Type.h>
-#include <llvm-14/llvm/IR/TypeFinder.h>
-#include <llvm-14/llvm/Support/Casting.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/TypeFinder.h>
+#include <llvm/Support/Casting.h>
 #include <llvm/IR/Function.h>
 #include <cstdint>
 #include "LLVMIR/BuiltIn.h"

@@ -7,21 +7,21 @@ TypeNode::TypeNode() {}
 
 TypeNode::~TypeNode()
 {
-    switch (category) {
-        case Array:
-            delete elementType();
-            break;
-        case Function:
-            for (TypeNode* param : paramsType()) delete param;
-            delete returnValueType();
-            break;
-        case Class:
-            // TODO Class-related
-            break;
-        case Closure:
-            // TODO Closure-related
-            break;
-    }
+    // switch (category) {
+    // case Array:
+    // delete elementType();
+    // break;
+    // case Function:
+    // for (TypeNode* param : paramsType()) delete param;
+    // delete returnValueType();
+    // break;
+    // case Class:
+    //// TODO Class-related
+    // break;
+    // case Closure:
+    //// TODO Closure-related
+    // break;
+    //}
 }
 
 TypeNode::TypeNode(const TypeNode& other)
@@ -54,8 +54,13 @@ TypeNode::TypeNode(const TypeNode& other)
     }
 }
 
+TypeNode* TypeNode::innerType() const
+{
+    return std::get<ReferenceType>(typeSpecifiedInfo).innerType;
+}
 bool TypeNode::equals(const TypeNode& other) const
 {
+    if (this == &other) return true;
     if (this->typeID == other.typeID) return true;
     if (this->category != other.category) return false;
 
@@ -132,45 +137,45 @@ BasicType TypeNode::basicType() const
     return std::get<BasicType>(typeSpecifiedInfo);
 }
 
-TypeNode XSharp::createBasicType(BasicType type)
+TypeNode* XSharp::getBasicType(BasicType type)
 {
-    TypeNode node;
-    node.category = TypeNode::Basic;
-    node.typeSpecifiedInfo = type;
+    TypeNode* node;
+    node->category = TypeNode::Basic;
+    node->typeSpecifiedInfo = type;
     switch (type) {
         case BasicType::Void:
-            node.baseName = "void";
+            node->baseName = "void";
             break;
         case BasicType::I32:
-            node.baseName = "i32";
+            node->baseName = "i32";
             break;
         case BasicType::I64:
-            node.baseName = "i64";
+            node->baseName = "i64";
             break;
         case BasicType::UI32:
-            node.baseName = "ui32";
+            node->baseName = "ui32";
             break;
         case BasicType::UI64:
-            node.baseName = "ui64";
+            node->baseName = "ui64";
             break;
         case BasicType::Float:
-            node.baseName = "float";
+            node->baseName = "float";
             break;
         case BasicType::Double:
-            node.baseName = "double";
+            node->baseName = "double";
             break;
         case BasicType::Boolean:
-            node.baseName = "boolean";
+            node->baseName = "boolean";
             break;
         case BasicType::Char:
-            node.baseName = "char";
+            node->baseName = "char";
             break;
     }
     return node;
 }
 
-TypeNode XSharp::createFunctionType(TypeNode* returnValueType,
-                                    std::vector<TypeNode*> paramsType)
+TypeNode XSharp::getFunctionType(TypeNode* returnValueType,
+                                 std::vector<TypeNode*> paramsType)
 {
     TypeNode node;
     node.category = TypeNode::Function;
@@ -179,7 +184,16 @@ TypeNode XSharp::createFunctionType(TypeNode* returnValueType,
     return node;
 }
 
-TypeNode XSharp::createArrayType(TypeNode* elementType, uint dimension)
+TypeNode XSharp::getReferenceType(TypeNode* innerType)
+{
+    TypeNode node;
+    node.category = TypeNode::Function;
+    node.typeSpecifiedInfo =
+        ReferenceType{.innerType = new TypeNode(*innerType)};
+    return node;
+}
+
+TypeNode XSharp::getArrayType(TypeNode* elementType, uint dimension)
 {
     TypeNode node;
     node.category = TypeNode::Array;
@@ -188,7 +202,7 @@ TypeNode XSharp::createArrayType(TypeNode* elementType, uint dimension)
     return node;
 }
 
-TypeNode XSharp::createClassType(const XString& baseName)
+TypeNode XSharp::getClassType(const XString& baseName)
 {
     TypeNode node;
     node.category = TypeNode::Class;
@@ -196,7 +210,7 @@ TypeNode XSharp::createClassType(const XString& baseName)
     return node;
 }
 
-TypeNode XSharp::createClosureType()
+TypeNode XSharp::getClosureType()
 {
     TypeNode node;
     node.category = TypeNode::Closure;
@@ -204,12 +218,12 @@ TypeNode XSharp::createClosureType()
     return node;
 }
 
-TypeNode XSharp::createTypeFor(const XString& baseName)
+TypeNode XSharp::getTypeFor(const XString& baseName)
 {
     auto mapIter = nameToBasicType.find(baseName);
     if (mapIter != nameToBasicType.end()) {
-        return createBasicType(nameToBasicType[baseName]);
+        return getBasicType(nameToBasicType[baseName]);
     } else {
-        return createClassType(baseName);
+        return getClassType(baseName);
     }
 }

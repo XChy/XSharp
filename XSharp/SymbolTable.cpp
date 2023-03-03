@@ -2,7 +2,7 @@
 
 using namespace XSharp;
 
-SymbolTable::SymbolTable() {}
+SymbolTable::SymbolTable() : parent(nullptr) {}
 
 void SymbolTable::addSymbol(const Symbol& symbol)
 {

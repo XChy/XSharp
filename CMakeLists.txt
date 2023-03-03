@@ -16,11 +16,12 @@ file(GLOB_RECURSE RUNTIME_SRC "XSharpRuntime/*.cpp" "XSharpRuntime/*.c"
 
 if(SUPPORT_LLVMIR)
   aux_source_directory("LLVMIR" SRC)
-  add_definitions(-DXSharp_LLVM_SUPPORT)
+  add_definitions(-DXSharp_LLVMIR_SUPPORT)
 endif()
 
 if(SUPPORT_XSharpIR)
   aux_source_directory("XSharpIR" SRC)
+  add_definitions(-DXSharp_XSharpIR_SUPPORT)
 endif()
 
 if(BUILD_SHARED_LIBRARY)

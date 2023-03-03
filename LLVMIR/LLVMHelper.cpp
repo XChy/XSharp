@@ -30,6 +30,7 @@ LLVMHelper::LLVMHelper() : module("XSharp", context), builder(context)
     // module.setDataLayout("");
     // module.setTargetTriple("i386-pc-linux-gnu");
     setUpBuildIn(module, context);
+    currentSymbols = &globalSymbols;
 }
 
 std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
@@ -63,14 +64,14 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
 llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
     VariableDeclarationNode* varNode)
 {
-    if (symbols.hasSymbol(varNode->name())) {
+    if (globalSymbols.hasSymbol(varNode->name())) {
         errors.push_back(
             {XSharpErrorType::SemanticsError, "Redefinition of variable"});
         return nullptr;
     }
 
     TypeNode* typenode =
-        XSharp::globalTypeContext.registerType(varNode->type());
+        XSharp::GlobalTypeContext.registerType(varNode->type());
 
     // TODO: variable's initValue's processing
     llvm::GlobalVariable* global = new llvm::GlobalVariable(
@@ -78,23 +79,23 @@ llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
         llvm::GlobalVariable::ExternalLinkage, nullptr,
         varNode->name().toStdString());
 
-    symbols.addSymbol({.name = varNode->name(),
-                       .symbolType = XSharp::SymbolType::GlobalVariable,
-                       .valueType = typenode,
-                       .definition = global});
+    globalSymbols.addSymbol({.name = varNode->name(),
+                             .symbolType = XSharp::SymbolType::GlobalVariable,
+                             .valueType = typenode,
+                             .definition = global});
 }
 
 llvm::AllocaInst* LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
 {
     // TODO: FIX BUGS of Var
-    if (symbols.hasSymbol(varNode->name())) {
+    if (currentSymbols->hasSymbol(varNode->name())) {
         errors.push_back(
             {XSharpErrorType::SemanticsError, "Redefinition of variable"});
         return nullptr;
     }
 
     TypeNode* typenode =
-        XSharp::globalTypeContext.registerType(varNode->type());
+        XSharp::GlobalTypeContext.registerType(varNode->type());
 
     // TODO: variable's initValue's processing
     auto xsharpType = varNode->type();
@@ -102,10 +103,10 @@ llvm::AllocaInst* LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
         builder.CreateAlloca(llvmTypeFor(&xsharpType, context), nullptr,
                              varNode->name().toStdString());
 
-    symbols.addSymbol({.name = varNode->name(),
-                       .symbolType = XSharp::SymbolType::LocalVariable,
-                       .valueType = typenode,
-                       .definition = llvmValue});
+    currentSymbols->addSymbol({.name = varNode->name(),
+                               .symbolType = XSharp::SymbolType::LocalVariable,
+                               .valueType = typenode,
+                               .definition = llvmValue});
 }
 
 llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
@@ -114,6 +115,12 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
     using llvm::BasicBlock;
     using llvm::ConstantInt;
     using llvm::Function;
+
+    if (currentSymbols->hasSymbol(node->name())) {
+        errors.push_back(
+            {XSharpErrorType::SemanticsError, "Redefinition of function:{}"});
+        return nullptr;
+    }
 
     std::vector<llvm::Type*> paramsType;
     for (auto param : node->params()) {
@@ -141,6 +148,12 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
         codegen(content);
     }
 
+    // TODO: complete type for function
+    currentSymbols->addSymbol({.name = node->name(),
+                               .symbolType = XSharp::SymbolType::Function,
+                               //.valueType = node->returnType(),
+                               .definition = func});
+
     return func;
 }
 
@@ -158,8 +171,8 @@ llvm::CallInst* LLVMHelper::genCall(FunctionCallNode* call)
         // std::for_each(call->params().begin(), call->params().end(),
         //[&](ASTNode* var) { args.push_back(codegen(var)); });
         // customed
-        if (symbols.hasSymbol(calleeName)) {
-            auto symbol = symbols[calleeName];
+        if (globalSymbols.hasSymbol(calleeName)) {
+            auto symbol = globalSymbols[calleeName];
             // TODO:typecheck
             builder.CreateCall(
                 (llvm::FunctionType*)llvmTypeFor(symbol.valueType, context),
@@ -248,6 +261,9 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
         return codegen(node->to<BoxNode>()->child());
     }
     if (node->is<BlockNode>()) {
+        // TODO: Jump to next layer of SymbolTable
+        for (auto ast : node->to<BlockNode>()->contents()) codegen(ast);
+        return nullptr;
     }
     if (node->is<BinaryOperatorNode>()) {
         return genBinaryOp(node->to<BinaryOperatorNode>());
@@ -272,7 +288,7 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
             return symbolTable()[var->name()].definition;
         else {
             errors.push_back(
-                {XSharpErrorType::SemanticsError, "Redefinition of variable"});
+                {XSharpErrorType::SemanticsError, "Variable {} doesn't exist"});
             return nullptr;
         }
     }
@@ -288,4 +304,4 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
     return nullptr;
 }
 
-XSharp::SymbolTable LLVMHelper::symbolTable() const { return symbols; }
+XSharp::SymbolTable LLVMHelper::symbolTable() const { return globalSymbols; }

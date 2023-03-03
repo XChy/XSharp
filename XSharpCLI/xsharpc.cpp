@@ -1,3 +1,4 @@
+#include <cerrno>
 #include <cstdio>
 #include "XSharp/XSharpEngine.h"
 #include "XSharp/XString.h"
@@ -26,8 +27,8 @@ int main(int argc, char *argv[])
                 // Output Object File
                 break;
             default:
-                printf("Invalid Option: %c", optopt);
-                break;
+                printf("Invalid Option: %c", optionChar);
+                return -1;
         }
     }
 

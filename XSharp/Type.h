@@ -11,7 +11,7 @@ namespace XSharp {
 class TypeNode;
 
 enum class BasicType {
-    Void,
+    Void = 0,
     I32,  // signed integer
     I64,
     UI32,  // unsigned integer
@@ -20,14 +20,11 @@ enum class BasicType {
     Double,
     Char,
     Boolean,
+    ENDTYPE,  // Applied to traverse
 };
 
-static std::unordered_map<XString, BasicType> nameToBasicType = {
-    {"void", BasicType::Void},       {"i32", BasicType::I32},
-    {"i64", BasicType::I64},         {"ui32", BasicType::UI32},
-    {"ui64", BasicType::UI64},       {"float", BasicType::Float},
-    {"double", BasicType::Double},   {"char", BasicType::Char},
-    {"boolean", BasicType::Boolean},
+struct ReferenceType {
+    TypeNode* innerType;
 };
 
 struct ClassType {
@@ -64,6 +61,9 @@ class TypeNode
     // Basic type
     BasicType basicType() const;
 
+    // Reference type, as variable
+    TypeNode* innerType() const;
+
     // Function type, TODO complete below
     TypeNode* returnValueType() const;
     std::vector<TypeNode*> paramsType() const;
@@ -80,24 +80,34 @@ class TypeNode
     uint typeID;
     XString baseName;
     bool isConst;
-    enum Categories { Basic, Array, Function, Closure, Class } category;
+    enum Categories {
+        Basic,
+        Reference,
+        Array,
+        Function,
+        Closure,
+        Class
+    } category;
 
-    std::variant<BasicType, ClassType, FunctionType, ArrayType, ClosureType>
+    std::variant<BasicType, ReferenceType, ClassType, FunctionType, ArrayType,
+                 ClosureType>
         typeSpecifiedInfo;
 };
 
-TypeNode createBasicType(BasicType type);
+TypeNode* getBasicType(BasicType type);
+
+TypeNode* getReferenceType(TypeNode* innerType);
 
 // params' memory is managed by TypeSystem
-TypeNode createFunctionType(TypeNode* returnValueType,
-                            std::vector<TypeNode*> paramsType);
+TypeNode* getFunctionType(TypeNode* returnValueType,
+                          std::vector<TypeNode*> paramsType);
 
-TypeNode createArrayType(TypeNode* elementType, uint dimension);
+TypeNode* getArrayType(TypeNode* elementType, uint dimension);
 
-TypeNode createClassType(const XString& baseName);
+TypeNode* getClassType(const XString& baseName);
 
-TypeNode createClosureType();
+TypeNode* getClosureType();
 
-TypeNode createTypeFor(const XString& baseName);
+TypeNode* getTypeFor(const XString& baseName);
 
 }  // namespace XSharp

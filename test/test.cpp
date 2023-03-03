@@ -21,7 +21,7 @@ int main()
         struct dirent *p;
         while ((p = readdir(working_dir)) != NULL) {
             char path[PATH_MAX] = {0};
-            strcat(path, cases_path);
+            strcpy(path, cases_path);
             if (p->d_type == 8) {  //  files
                 strcat(path, p->d_name);
                 test(path);
@@ -38,6 +38,11 @@ int main()
 
 void test(const char *path)
 {
+    if (XString(path).subStringIndex("xsharp") !=
+        strlen(path) - strlen("xsharp")) {
+        return;
+    }
+
     char code[2048];
 
     int fd = open(path, O_RDONLY);

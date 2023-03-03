@@ -5,7 +5,7 @@
 #include "XSharp/XSharpUtils.h"
 #include "SymbolTable.h"
 
-#ifdef XSharp_LLVM_SUPPORT
+#ifdef XSharp_LLVMIR_SUPPORT
 #include "LLVMIR/LLVMHelper.h"
 #endif
 

@@ -260,7 +260,7 @@ int XString::subStringIndex(const XString& sub) const
     }
 
     for (int i = 0; i <= this->size() - sub.size(); ++i) {
-        if (memcmp(data(), sub.data(), sub.size() * 2) == 0) {
+        if (memcmp(data() + i, sub.data(), sub.size() * 2) == 0) {
             return i;
         }
     }

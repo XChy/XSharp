@@ -16,7 +16,7 @@ std::vector<std::byte> Semantics::getXSharpIR()
 }
 
 std::vector<std::byte> Semantics::getLLVMIR(){
-#ifdef XSharp_LLVM_SUPPORT
+#ifdef XSharp_LLVMIR_SUPPORT
 // TODO: generate LLVM IR
 #endif
 }

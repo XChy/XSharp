@@ -47,6 +47,6 @@ class LLVMHelper
     llvm::Module module;
     llvm::IRBuilder<> builder;
 
-    XSharp::SymbolTable symbols;
+    XSharp::SymbolTable globalSymbols;
     XSharp::SymbolTable* currentSymbols;
 };
