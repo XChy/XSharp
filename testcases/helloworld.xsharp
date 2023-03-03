@@ -1,10 +1,14 @@
 i64 add(){
-    printI64(121);
+    printI64(0b101 + 4);
+    add();
     return 11;
 }
 
 void main(){
+    i64 a;
+    a=10;
     printI64(121);
+    add();
     add();
     return;
 }

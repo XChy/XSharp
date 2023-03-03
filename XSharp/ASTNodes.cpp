@@ -1,8 +1,12 @@
 #include "ASTNodes.h"
+#include <math.h>
 #include <cmath>
 #include <vector>
 #include "XSharp/Type.h"
+#include "XSharp/TypeSystem.h"
 #include "XSharp/XString.h"
+
+using namespace XSharp;
 
 IntegerNode::IntegerNode(int64_t value) : _value(value) {}
 
@@ -89,6 +93,15 @@ void BinaryOperatorNode::setOperatorStr(const XString& operatorStr)
 
 XString BinaryOperatorNode::operatorStr() const { return _operatorStr; }
 
+TypeNode* BinaryOperatorNode::exprType()
+{
+    if (left()->exprType()->equals(*getI64Type()) &&
+        right()->exprType()->equals(*getI64Type())) {
+        return getI64Type();
+    }
+    return nullptr;
+}
+
 BinaryOperatorNode::~BinaryOperatorNode()
 {
     delete _left;
@@ -167,20 +180,21 @@ XString FunctionDeclarationNode::dump() const
     if (_impl) {
         implDump = _impl->dump();
     }
-    return "Function{name:" + _name + "\nreturnType:" + _returnType.typeName() +
-           "\nparams:{" + paramsDump + "}\nblock:{" + implDump + "}\n}\n";
+    return "Function{name:" + _name +
+           "\nreturnType:" + _returnType->typeName() + "\nparams:{" +
+           paramsDump + "}\nblock:{" + implDump + "}\n}\n";
 }
 
 void FunctionDeclarationNode::setName(const XString& name) { _name = name; }
 
 XString FunctionDeclarationNode::name() const { return _name; }
 
-void FunctionDeclarationNode::setReturnType(const TypeNode& returnType)
+void FunctionDeclarationNode::setReturnType(TypeNode* returnType)
 {
     _returnType = returnType;
 }
 
-TypeNode FunctionDeclarationNode::returnType() const { return _returnType; }
+TypeNode* FunctionDeclarationNode::returnType() const { return _returnType; }
 
 void FunctionDeclarationNode::setParams(
     std::vector<VariableDeclarationNode*> params)
@@ -210,10 +224,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
     delete _impl;
 }
 
-VariableDeclarationNode::VariableDeclarationNode() : _initValue(nullptr)
-{
-    _type.isConst = false;
-}
+VariableDeclarationNode::VariableDeclarationNode() : _initValue(nullptr) {}
 
 XString VariableDeclarationNode::dump() const
 {
@@ -221,13 +232,13 @@ XString VariableDeclarationNode::dump() const
     if (_initValue) {
         initDump = _initValue->dump();
     }
-    return "Variable{name:" + _name + "\ntype:" + _type.typeName() +
+    return "Variable{name:" + _name + "\ntype:" + _type->typeName() +
            "\ninitValue:" + initDump + "}\n";
 }
 
-void VariableDeclarationNode::setType(const TypeNode& type) { _type = type; }
+void VariableDeclarationNode::setType(TypeNode* type) { _type = type; }
 
-TypeNode VariableDeclarationNode::type() const { return _type; }
+TypeNode* VariableDeclarationNode::type() const { return _type; }
 
 void VariableDeclarationNode::setName(const XString& name) { _name = name; }
 
@@ -241,13 +252,6 @@ void VariableDeclarationNode::setInitValue(ASTNode* initValue)
 ASTNode* VariableDeclarationNode::initValue() const { return _initValue; }
 
 VariableDeclarationNode::~VariableDeclarationNode() { delete _initValue; }
-
-bool VariableDeclarationNode::isConst() const { return _type.isConst; }
-
-void VariableDeclarationNode::setIsConst(bool newIsConst)
-{
-    _type.isConst = newIsConst;
-}
 
 XString BlockNode::dump() const
 {
@@ -351,6 +355,7 @@ XString MemberNode::name() const { return _name; }
 void MemberNode::setObject(ASTNode* object) { _object = object; }
 
 ASTNode* MemberNode::object() { return _object; }
+MemberNode::~MemberNode() { delete _object; }
 
 XString IndexNode::dump() const
 {

@@ -25,7 +25,7 @@ class XSharp_EXPORT ASTNode
     }
 
     virtual ~ASTNode() = default;  // The children are managed by the parent
-    virtual TypeNode exprType() = 0;
+    virtual TypeNode* exprType() { return nullptr; };
 };
 
 class XSharp_EXPORT IntegerNode : public ASTNode
@@ -37,7 +37,7 @@ class XSharp_EXPORT IntegerNode : public ASTNode
     void setValue(int64_t value);
     int64_t value() const;
 
-    TypeNode exprType();
+    TypeNode* exprType() { return XSharp::getI64Type(); }
 
    private:
     int64_t _value;
@@ -52,7 +52,7 @@ class XSharp_EXPORT DecimalFractionNode : public ASTNode
     void setValue(double value);
     double value() const;
 
-    TypeNode exprType();
+    TypeNode* exprType() { return XSharp::getDoubleType(); }
 
    private:
     double _value;
@@ -67,7 +67,7 @@ class XSharp_EXPORT BooleanNode : public ASTNode
     void setValue(bool value);
     bool value() const;
 
-    TypeNode exprType();
+    TypeNode* exprType() { return XSharp::getBooleanType(); }
 
    private:
     bool _value;
@@ -82,7 +82,11 @@ class XSharp_EXPORT StringNode : public ASTNode
     void setValue(XString value);
     XString value() const;
 
-    TypeNode exprType();
+    TypeNode* exprType()
+    {
+        // TODO Builtin String Type
+        return nullptr;
+    };
 
    private:
     XString _value;
@@ -99,7 +103,7 @@ class XSharp_EXPORT BoxNode : public ASTNode
 
     ~BoxNode();
 
-    TypeNode exprType();
+    TypeNode* exprType() { return _child->exprType(); }
 
    private:
     ASTNode* _child;
@@ -123,7 +127,7 @@ class XSharp_EXPORT BinaryOperatorNode : public ASTNode
     void setOperatorStr(const XString& operatorStr);
     XString operatorStr() const;
 
-    TypeNode exprType();
+    TypeNode* exprType();
     ~BinaryOperatorNode();
 
    private:
@@ -144,7 +148,7 @@ class XSharp_EXPORT UnaryOperatorNode : public ASTNode
     void setOperatorStr(const XString& operatorStr);
     XString operatorStr() const;
 
-    TypeNode exprType();
+    // TypeNode* exprType();
     ~UnaryOperatorNode();
 
    private:
@@ -162,7 +166,6 @@ class XSharp_EXPORT BlockNode : public ASTNode
     void setContents(std::vector<ASTNode*> contents);
     std::vector<ASTNode*> contents() const;
 
-    TypeNode exprType();
     ~BlockNode();
 
    private:
@@ -176,8 +179,8 @@ class XSharp_EXPORT VariableDeclarationNode : public ASTNode
 
     XString dump() const;
 
-    void setType(const TypeNode& type);
-    TypeNode type() const;
+    void setType(TypeNode* type);
+    TypeNode* type() const;
 
     void setName(const XString& name);
     XString name() const;
@@ -186,13 +189,11 @@ class XSharp_EXPORT VariableDeclarationNode : public ASTNode
     ASTNode* initValue() const;
 
     ~VariableDeclarationNode();
-    bool isConst() const;
-    void setIsConst(bool newIsConst);
 
-    TypeNode exprType();
+    TypeNode* exprType() { return type(); }
 
    private:
-    TypeNode _type;
+    TypeNode* _type;
     XString _name;
     ASTNode* _initValue;
 };
@@ -207,8 +208,8 @@ class XSharp_EXPORT FunctionDeclarationNode : public ASTNode
     void setName(const XString& name);
     XString name() const;
 
-    void setReturnType(const TypeNode& returnType);
-    TypeNode returnType() const;
+    void setReturnType(TypeNode* returnType);
+    TypeNode* returnType() const;
 
     void setParams(std::vector<VariableDeclarationNode*> params);
     void addParam(VariableDeclarationNode* param);
@@ -217,13 +218,11 @@ class XSharp_EXPORT FunctionDeclarationNode : public ASTNode
     BlockNode* impl() const;
     void setImpl(BlockNode* impl);
 
-    TypeNode exprType();
-
     ~FunctionDeclarationNode();
 
    private:
     XString _name;
-    TypeNode _returnType;
+    TypeNode* _returnType;
     std::vector<VariableDeclarationNode*> _params;  // <type name,param name>
     BlockNode* _impl;
 };
@@ -233,7 +232,7 @@ class XSharp_EXPORT ClassDeclarationNode : public ASTNode
    public:
     XString dump() const;
 
-    TypeNode exprType();
+    TypeNode* exprType() { return nullptr; }
 
    private:
     XString _name;
@@ -252,7 +251,6 @@ class XSharp_EXPORT DefinitionsNode : public ASTNode
     std::vector<FunctionDeclarationNode*> functionDeclarations() const;
     std::vector<VariableDeclarationNode*> variableDeclarations() const;
 
-    TypeNode exprType();
     ~DefinitionsNode();
 
    private:
@@ -273,7 +271,6 @@ class XSharp_EXPORT FunctionCallNode : public ASTNode
     void addParam(ASTNode* param);
     std::vector<ASTNode*> params() const;
 
-    TypeNode exprType();
     ~FunctionCallNode();
 
    private:
@@ -290,8 +287,6 @@ class XSharp_EXPORT VariableNode : public ASTNode
 
     void setName(const XString& name);
     XString name() const;
-
-    TypeNode exprType();
 
    private:
     XString _name;
@@ -310,7 +305,7 @@ class XSharp_EXPORT MemberNode : public ASTNode
     void setObject(ASTNode* object);
     ASTNode* object();
 
-    TypeNode exprType();
+    ~MemberNode();
 
    private:
     XString _name;
@@ -328,7 +323,7 @@ class XSharp_EXPORT IndexNode : public ASTNode
     void setIndexExpr(ASTNode* indexExpr);
     ASTNode* indexExpr();
 
-    TypeNode exprType();
+    // TypeNode* exprType();
 
    private:
     ASTNode* _operand;

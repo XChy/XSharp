@@ -1,5 +1,5 @@
 #include "LLVMIR/LLVMHelper.h"
-#include <llvm-14/llvm/IR/Verifier.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/IR/Value.h>
 #include <llvm/Support/Alignment.h>
 #include <llvm/IR/GlobalValue.h>
@@ -29,7 +29,7 @@ LLVMHelper::LLVMHelper() : module("XSharp", context), builder(context)
 {
     // module.setDataLayout("");
     // module.setTargetTriple("i386-pc-linux-gnu");
-    setUpBuildIn(module, context);
+    setUpBuildIn(module, context, globalSymbols);
     currentSymbols = &globalSymbols;
 }
 
@@ -100,7 +100,7 @@ llvm::AllocaInst* LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
     // TODO: variable's initValue's processing
     auto xsharpType = varNode->type();
     auto llvmValue =
-        builder.CreateAlloca(llvmTypeFor(&xsharpType, context), nullptr,
+        builder.CreateAlloca(llvmTypeFor(xsharpType, context), nullptr,
                              varNode->name().toStdString());
 
     currentSymbols->addSymbol({.name = varNode->name(),
@@ -125,12 +125,12 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
     std::vector<llvm::Type*> paramsType;
     for (auto param : node->params()) {
         auto paramType = param->type();
-        paramsType.push_back(llvmTypeFor(&paramType, context));
+        paramsType.push_back(llvmTypeFor(paramType, context));
     }
 
     auto retType = node->returnType();
     llvm::FunctionType* functionType = llvm::FunctionType::get(
-        llvmTypeFor(&retType, context), paramsType, false);
+        llvmTypeFor(retType, context), paramsType, false);
 
     Function* func = Function::Create(functionType, Function::ExternalLinkage,
                                       node->name().toStdString(), module);
@@ -148,11 +148,14 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
         codegen(content);
     }
 
+    std::vector<TypeNode*> xParamsType;
+    for (auto var : node->params()) xParamsType.push_back(var->type());
     // TODO: complete type for function
-    currentSymbols->addSymbol({.name = node->name(),
-                               .symbolType = XSharp::SymbolType::Function,
-                               //.valueType = node->returnType(),
-                               .definition = func});
+    currentSymbols->addSymbol(
+        {.name = node->name(),
+         .symbolType = XSharp::SymbolType::Function,
+         .valueType = XSharp::getFunctionType(node->returnType(), xParamsType),
+         .definition = func});
 
     return func;
 }
@@ -171,8 +174,8 @@ llvm::CallInst* LLVMHelper::genCall(FunctionCallNode* call)
         // std::for_each(call->params().begin(), call->params().end(),
         //[&](ASTNode* var) { args.push_back(codegen(var)); });
         // customed
-        if (globalSymbols.hasSymbol(calleeName)) {
-            auto symbol = globalSymbols[calleeName];
+        if (currentSymbols->hasSymbol(calleeName)) {
+            auto symbol = currentSymbols->findSymbol(calleeName)->second;
             // TODO:typecheck
             builder.CreateCall(
                 (llvm::FunctionType*)llvmTypeFor(symbol.valueType, context),

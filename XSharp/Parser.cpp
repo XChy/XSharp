@@ -122,6 +122,8 @@ std::vector<VariableDeclarationNode*> Parser::paramsDefinition()
 std::vector<ASTNode*> Parser::paramsList()
 {
     std::vector<ASTNode*> results;
+    if (current->type == CloseParenthesis) return results;
+
     while (true) {
         results.push_back(expression({CloseParenthesis, Comma}));
         if (current->type == CloseParenthesis)
@@ -371,7 +373,7 @@ ASTNode* Parser::operand()
     }
 }
 
-TypeNode Parser::type()
+TypeNode* Parser::type()
 {
     bool isConst = false;
     uint arrayDimension = 0;
@@ -401,8 +403,8 @@ TypeNode Parser::type()
     if (arrayDimension == 0) {
         return XSharp::getTypeFor(baseName);
     } else {
-        TypeNode arrayType = XSharp::getArrayType(
-            new TypeNode(XSharp::getTypeFor(baseName)), arrayDimension);
+        TypeNode* arrayType =
+            XSharp::getArrayType(XSharp::getTypeFor(baseName), arrayDimension);
         return arrayType;
     }
 }

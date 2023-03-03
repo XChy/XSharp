@@ -6,7 +6,9 @@
 #include <llvm/IR/Function.h>
 #include <cstdint>
 #include "LLVMIR/BuiltIn.h"
-void setUpBuildIn(llvm::Module& module, llvm::LLVMContext& context)
+#include "XSharp/SymbolTable.h"
+void setUpBuildIn(llvm::Module& module, llvm::LLVMContext& context,
+                  XSharp::SymbolTable& symbols)
 {
     using namespace llvm;
     // IO

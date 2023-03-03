@@ -55,8 +55,8 @@ class TypeNode
    public:
     TypeNode();
     TypeNode(const TypeNode& other);
-    ~TypeNode();
     bool equals(const TypeNode& other) const;
+    bool operator==(const TypeNode& other) const { return equals(other); }
 
     // Basic type
     BasicType basicType() const;
@@ -94,20 +94,14 @@ class TypeNode
         typeSpecifiedInfo;
 };
 
-TypeNode* getBasicType(BasicType type);
-
-TypeNode* getReferenceType(TypeNode* innerType);
-
-// params' memory is managed by TypeSystem
-TypeNode* getFunctionType(TypeNode* returnValueType,
-                          std::vector<TypeNode*> paramsType);
-
-TypeNode* getArrayType(TypeNode* elementType, uint dimension);
-
-TypeNode* getClassType(const XString& baseName);
-
-TypeNode* getClosureType();
-
-TypeNode* getTypeFor(const XString& baseName);
-
 }  // namespace XSharp
+
+namespace std {
+template <>
+struct hash<XSharp::BasicType> {
+    size_t operator()(const XSharp::BasicType& xstr) const
+    {
+        return uint(xstr);
+    }
+};
+};  // namespace std

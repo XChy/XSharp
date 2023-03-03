@@ -37,7 +37,7 @@ class XSharp_EXPORT Parser
     ASTNode* operand();
 
     // end after <type-name>
-    TypeNode type();
+    TypeNode* type();
 
     static int priority(BinaryOperatorNode* oper);
     static int priority(UnaryOperatorNode* oper);

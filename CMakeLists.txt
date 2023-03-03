@@ -31,7 +31,7 @@ if(BUILD_SHARED_LIBRARY)
   add_library(XSharp_SHARED SHARED ${SRC})
   set_target_properties(XSharp_SHARED PROPERTIES OUTPUT_NAME "XSharp")
   set_target_properties(XSharp_SHARED PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                                 "shared")
+                                                 "${PROJECT_SOURCE_DIR}/shared")
   # target_link_libraries(XSharp_SHARED ${llvm_libs})
 
 endif()
@@ -42,7 +42,8 @@ if(BUILD_STATIC_LIBRARY)
 
   add_library(XSharp_STATIC STATIC ${SRC})
   set_target_properties(XSharp_STATIC PROPERTIES OUTPUT_NAME "XSharp")
-  set_target_properties(XSharp_STATIC PROPERTIES LIBRARY_OUTPUT_DIRECTORY "lib")
+  set_target_properties(XSharp_STATIC PROPERTIES LIBRARY_OUTPUT_DIRECTORY
+                                                 "${PROJECT_SOURCE_DIR}/lib")
 
   # target_link_libraries(XSharp_STATIC ${llvm_libs})
 endif()

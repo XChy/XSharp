@@ -29,7 +29,6 @@ class TypeContext
     uint registerNum = 0;
 };
 
-static TypeContext GlobalTypeContext;
 static std::unordered_map<XString, BasicType> nameToBasicType = {
     {"void", BasicType::Void},       {"i32", BasicType::I32},
     {"i64", BasicType::I64},         {"ui32", BasicType::UI32},
@@ -45,6 +44,8 @@ static std::unordered_map<BasicType, XString> basicTypeToName = {
     {BasicType::Double, "double"},   {BasicType::Char, "char"},
     {BasicType::Boolean, "boolean"},
 };
+
+static TypeContext GlobalTypeContext;
 
 TypeNode* getBasicType(BasicType type);
 
@@ -62,4 +63,13 @@ TypeNode* getClosureType();
 
 TypeNode* getTypeFor(const XString& baseName);
 
+static TypeNode* getVoidType() { return getBasicType(BasicType::Void); }
+static TypeNode* getI64Type() { return getBasicType(BasicType::I64); }
+static TypeNode* getI32Type() { return getBasicType(BasicType::I32); }
+static TypeNode* getUI32Type() { return getBasicType(BasicType::UI32); }
+static TypeNode* getUI64Type() { return getBasicType(BasicType::UI64); }
+static TypeNode* getFloatType() { return getBasicType(BasicType::Float); }
+static TypeNode* getDoubleType() { return getBasicType(BasicType::Double); }
+static TypeNode* getBooleanType() { return getBasicType(BasicType::Boolean); }
+static TypeNode* getCharType() { return getBasicType(BasicType::Char); }
 }  // namespace XSharp

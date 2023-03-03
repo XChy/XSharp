@@ -1,17 +1,25 @@
-#include "TypeSystem.h"
-#include <algorithm>
+#include "TypeSystem.h" #include < algorithm> #include "XSharp/Type.h"
 #include "XSharp/Type.h"
 
 using namespace XSharp;
 
 TypeContext::TypeContext()
 {
+    std::unordered_map<BasicType, XString> basicTypeToName = {
+        {BasicType::Void, "void"},       {BasicType::I32, "i32"},
+        {BasicType::I64, "i64"},         {BasicType::UI32, "ui32"},
+        {BasicType::UI64, "ui64"},       {BasicType::Float, "float"},
+        {BasicType::Double, "double"},   {BasicType::Char, "char"},
+        {BasicType::Boolean, "boolean"},
+    };
+
     // fill a useless node so that typeID start with 1
     for (int i = 0; i < int(BasicType::ENDTYPE); ++i) {
         TypeNode* node = new TypeNode;
         node->category = TypeNode::Basic;
         node->typeSpecifiedInfo = BasicType(i);
-        node->baseName = basicTypeToName[BasicType(i)];
+        BasicType type = BasicType(i);
+        node->baseName = basicTypeToName[type];
         registerType(node);
     }
 }
@@ -22,13 +30,11 @@ TypeContext::~TypeContext()
 }
 TypeNode* TypeContext::registerType(XSharp::TypeNode* type)
 {
-    registerNum++;
-
-    typesMap[type->typeName()] = registerNum;
+    // typesMap[type->typeName()] = registerNum;
 
     typesList.push_back(type);
     typesList[registerNum]->typeID = registerNum;
-    return typesList[registerNum];
+    return typesList[registerNum++];
 }
 
 TypeNode* TypeContext::typeOf(int typeId) { return typesList[typeId]; }

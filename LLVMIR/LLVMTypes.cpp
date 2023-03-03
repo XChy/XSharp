@@ -40,8 +40,9 @@ llvm::Type* llvmTypeFor(XSharp::TypeNode* type, llvm::LLVMContext& context)
                 llvmTypesForParams.push_back(
                     llvmTypeFor(paramTypeNode, context));
 
-            return llvm::FunctionType::get(llvmTypeFor(type, context),
-                                           llvmTypesForParams, false);
+            return llvm::FunctionType::get(
+                llvmTypeFor(type->returnValueType(), context),
+                llvmTypesForParams, false);
         }
         case TypeNode::Array:
             // Allocate XSharp's array on heap
