@@ -41,6 +41,8 @@ Symbol& SymbolTable::operator[](const XString& name)
     return findSymbol(name)->second;
 }
 
+Symbol SymbolTable::at(const XString& name) { return findSymbol(name)->second; }
+
 SymbolTable::~SymbolTable()
 {
     for (SymbolTable* child : children) {

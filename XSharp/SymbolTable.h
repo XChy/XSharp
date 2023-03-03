@@ -22,6 +22,7 @@ class SymbolTable
     bool hasSymbol(const XString& name);
 
     Symbol& operator[](const XString& name);
+    Symbol at(const XString& name);
 
     ~SymbolTable();
 

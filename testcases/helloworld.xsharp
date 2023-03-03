@@ -1,15 +1,15 @@
 i64 add(){
     printI64(0b101 + 4);
-    add();
     return 11;
 }
 
 void main(){
     i64 a;
+    i64 b;
     a=10;
-    printI64(121);
-    add();
-    add();
+    b=6;
+    b = a + b;
+    printI64(a+b);
     return;
 }
 

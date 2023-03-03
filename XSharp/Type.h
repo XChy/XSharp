@@ -56,6 +56,7 @@ class TypeNode
     TypeNode();
     TypeNode(const TypeNode& other);
     bool equals(const TypeNode& other) const;
+    bool equals(const TypeNode* other) const { return equals(*other); };
     bool operator==(const TypeNode& other) const { return equals(other); }
 
     // Basic type

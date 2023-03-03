@@ -1,7 +1,8 @@
 #pragma once
 #include <cstddef>
+#include <tuple>
 #include <vector>
-#include <llvm-14/llvm/IR/DerivedTypes.h>
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/GlobalVariable.h>
 #include <llvm/IR/Value.h>
@@ -15,28 +16,34 @@
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include <llvm/Support/TargetSelect.h>
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Type.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 #include "XSharp/SymbolTable.h"
 #include "XSharp/TypeSystem.h"
 #include "LLVMIR/LLVMTypes.h"
 
+typedef std::tuple<llvm::Value*, TypeNode*> ValueAndType;
 class LLVMHelper
 {
    public:
     LLVMHelper();
     // generate LLVM IR for the ast
-    // error saved in LLVMHelper's error
+    // error saved in LLVMHelper's errors
     std::vector<std::byte> generateLLVMIR(ASTNode* ast,
                                           const XString& filename);
 
-    llvm::GlobalVariable* genGlobalVariable(VariableDeclarationNode* var);
-    llvm::AllocaInst* genLocalVariable(VariableDeclarationNode* var);
-    llvm::Function* genFunction(FunctionDeclarationNode* func);
-    llvm::CallInst* genCall(FunctionCallNode* call);
-    llvm::Value* genBinaryOp(BinaryOperatorNode* op);
-    llvm::Value* genUnaryOp(UnaryOperatorNode* op);
-    llvm::Value* codegen(ASTNode* node);
+    ValueAndType genGlobalVariable(VariableDeclarationNode* var);
+    ValueAndType genLocalVariable(VariableDeclarationNode* var);
+    ValueAndType genFunction(FunctionDeclarationNode* func);
+    ValueAndType genCall(FunctionCallNode* call);
+    ValueAndType genBinaryOp(BinaryOperatorNode* op);
+    ValueAndType genUnaryOp(UnaryOperatorNode* op);
+
+    // universal code generation for XSharp's AST
+    // return [LLVM-IR's Value, XSharp's Type]
+    ValueAndType codegen(ASTNode* node);
+    ValueAndType deReferenceIf(ASTNode* ast);
 
     XSharp::SymbolTable symbolTable() const;
 

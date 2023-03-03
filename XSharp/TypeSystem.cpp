@@ -56,7 +56,7 @@ TypeNode* XSharp::getBasicType(BasicType type)
 }
 
 TypeNode* XSharp::getFunctionType(TypeNode* returnValueType,
-                                  std::vector<TypeNode*> paramsType)
+                                  const std::vector<TypeNode*>& paramsType)
 {
     TypeNode* node = new TypeNode;
     node->category = TypeNode::Function;
@@ -69,8 +69,9 @@ TypeNode* XSharp::getFunctionType(TypeNode* returnValueType,
 TypeNode* XSharp::getReferenceType(TypeNode* innerType)
 {
     TypeNode* node = new TypeNode;
-    node->category = TypeNode::Function;
+    node->category = TypeNode::Reference;
     node->typeSpecifiedInfo = ReferenceType{.innerType = innerType};
+    GlobalTypeContext.registerType(node);
     return node;
 }
 
@@ -80,6 +81,7 @@ TypeNode* XSharp::getArrayType(TypeNode* elementType, uint dimension)
     node->category = TypeNode::Array;
     node->typeSpecifiedInfo =
         ArrayType{.arrayDimension = dimension, .elementType = elementType};
+    GlobalTypeContext.registerType(node);
     return node;
 }
 
@@ -88,6 +90,7 @@ TypeNode* XSharp::getClassType(const XString& baseName)
     TypeNode* node = new TypeNode;
     node->category = TypeNode::Class;
     node->typeSpecifiedInfo = ClassType{};
+    GlobalTypeContext.registerType(node);
     return node;
 }
 
@@ -96,6 +99,7 @@ TypeNode* XSharp::getClosureType()
     TypeNode* node = new TypeNode;
     node->category = TypeNode::Closure;
     node->typeSpecifiedInfo = ClosureType{};
+    GlobalTypeContext.registerType(node);
     return node;
 }
 

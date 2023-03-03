@@ -16,6 +16,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <algorithm>
+#include <tuple>
 #include <vector>
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/BuiltIn.h"
@@ -24,6 +25,8 @@
 #include "XSharp/TypeSystem.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
+
+using std::make_tuple;
 
 LLVMHelper::LLVMHelper() : module("XSharp", context), builder(context)
 {
@@ -61,55 +64,54 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
     return bytecodes;
 }
 
-llvm::GlobalVariable* LLVMHelper::genGlobalVariable(
-    VariableDeclarationNode* varNode)
+ValueAndType LLVMHelper::genGlobalVariable(VariableDeclarationNode* varNode)
 {
     if (globalSymbols.hasSymbol(varNode->name())) {
         errors.push_back(
-            {XSharpErrorType::SemanticsError, "Redefinition of variable"});
-        return nullptr;
+            {XSharpErrorType::SemanticsError, "Redefinition of variable {}"});
+        return {nullptr, nullptr};
     }
 
-    TypeNode* typenode =
-        XSharp::GlobalTypeContext.registerType(varNode->type());
+    TypeNode* type = varNode->type();
 
     // TODO: variable's initValue's processing
     llvm::GlobalVariable* global = new llvm::GlobalVariable(
-        module, llvmTypeFor(typenode, context), typenode->isConst,
+        module, llvmTypeFor(type, context), type->isConst,
         llvm::GlobalVariable::ExternalLinkage, nullptr,
         varNode->name().toStdString());
 
     globalSymbols.addSymbol({.name = varNode->name(),
                              .symbolType = XSharp::SymbolType::GlobalVariable,
-                             .valueType = typenode,
+                             .valueType = type,
                              .definition = global});
+    return {global, type};
 }
 
-llvm::AllocaInst* LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
+ValueAndType LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
 {
     // TODO: FIX BUGS of Var
     if (currentSymbols->hasSymbol(varNode->name())) {
         errors.push_back(
             {XSharpErrorType::SemanticsError, "Redefinition of variable"});
-        return nullptr;
+        return {nullptr, nullptr};
     }
 
-    TypeNode* typenode =
-        XSharp::GlobalTypeContext.registerType(varNode->type());
+    TypeNode* xsharpType = XSharp::getReferenceType(varNode->type());
 
     // TODO: variable's initValue's processing
-    auto xsharpType = varNode->type();
-    auto llvmValue =
-        builder.CreateAlloca(llvmTypeFor(xsharpType, context), nullptr,
-                             varNode->name().toStdString());
+    auto alloca =
+        builder.CreateAlloca(llvmTypeFor(xsharpType->innerType(), context),
+                             nullptr, varNode->name().toStdString());
 
     currentSymbols->addSymbol({.name = varNode->name(),
                                .symbolType = XSharp::SymbolType::LocalVariable,
-                               .valueType = typenode,
-                               .definition = llvmValue});
+                               .valueType = xsharpType,
+                               .definition = alloca});
+
+    return {alloca, xsharpType};
 }
 
-llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
+ValueAndType LLVMHelper::genFunction(FunctionDeclarationNode* node)
 {
     // TODO: SymbolTable-related
     using llvm::BasicBlock;
@@ -119,7 +121,7 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
     if (currentSymbols->hasSymbol(node->name())) {
         errors.push_back(
             {XSharpErrorType::SemanticsError, "Redefinition of function:{}"});
-        return nullptr;
+        return {nullptr, nullptr};
     }
 
     std::vector<llvm::Type*> paramsType;
@@ -149,47 +151,56 @@ llvm::Function* LLVMHelper::genFunction(FunctionDeclarationNode* node)
     }
 
     std::vector<TypeNode*> xParamsType;
+    TypeNode* type = XSharp::getFunctionType(node->returnType(), xParamsType);
     for (auto var : node->params()) xParamsType.push_back(var->type());
-    // TODO: complete type for function
-    currentSymbols->addSymbol(
-        {.name = node->name(),
-         .symbolType = XSharp::SymbolType::Function,
-         .valueType = XSharp::getFunctionType(node->returnType(), xParamsType),
-         .definition = func});
+    currentSymbols->addSymbol({.name = node->name(),
+                               .symbolType = XSharp::SymbolType::Function,
+                               .valueType = type,
+                               .definition = func});
 
-    return func;
+    return {func, type};
 }
 
-llvm::CallInst* LLVMHelper::genCall(FunctionCallNode* call)
+ValueAndType LLVMHelper::genCall(FunctionCallNode* call)
 {
     // TODO: Call's LLVMIR generation
     // Normal Function Call
     if (call->function()->is<VariableNode>()) {
         VariableNode* calleeNode = call->function()->to<VariableNode>();
         XString calleeName = calleeNode->name();
-        // TODO: args's typecheck
         std::vector<llvm::Value*> args;
-        for (auto ast : call->params()) args.push_back(codegen(ast));
+        for (auto ast : call->params()) {
+            auto [arg_val, arg_type] = codegen(ast);
+            // TODO: args's typecheck
 
-        // std::for_each(call->params().begin(), call->params().end(),
-        //[&](ASTNode* var) { args.push_back(codegen(var)); });
+            // BasicType argument is passed as value
+            if (arg_type->category == XSharp::TypeNode::Reference &&
+                arg_type->innerType()->category == XSharp::TypeNode::Basic)
+                args.push_back(builder.CreateLoad(
+                    llvmTypeFor(arg_type->innerType(), context), arg_val));
+            else
+                args.push_back(arg_val);
+        }
+
         // customed
         if (currentSymbols->hasSymbol(calleeName)) {
             auto symbol = currentSymbols->findSymbol(calleeName)->second;
             // TODO:typecheck
-            builder.CreateCall(
-                (llvm::FunctionType*)llvmTypeFor(symbol.valueType, context),
-                symbol.definition, args);
+            return {builder.CreateCall((llvm::FunctionType*)llvmTypeFor(
+                                           symbol.valueType, context),
+                                       symbol.definition, args),
+                    symbol.valueType->returnValueType()};
         }
         // builtin
         else if (module.getFunction(calleeName.toStdString())) {
             auto llvmFunction = module.getFunction(calleeName.toStdString());
-            return builder.CreateCall(llvmFunction->getFunctionType(),
-                                      llvmFunction, args);
+            return {builder.CreateCall(llvmFunction->getFunctionType(),
+                                       llvmFunction, args),
+                    nullptr};
         } else {
             errors.push_back({XSharpErrorType::SemanticsError,
                               "The function '{}' doesn't exist"});
-            return nullptr;
+            return {nullptr, nullptr};
         }
     }
     // This Call
@@ -197,63 +208,83 @@ llvm::CallInst* LLVMHelper::genCall(FunctionCallNode* call)
     }
 }
 
-llvm::Value* LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
+ValueAndType LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
 {
     // TODO: Type reasoning, truncuation and verifying
 
     // Add
     if (op->operatorStr() == "+") {
-        auto lhs = codegen(op->left());
-        auto rhs = codegen(op->right());
-        return builder.CreateAdd(lhs, rhs);
+        auto [lhs, lhs_type] = deReferenceIf(op->left());
+        auto [rhs, rhs_type] = deReferenceIf(op->right());
+        return {builder.CreateAdd(lhs, rhs), XSharp::getI64Type()};
     }
 
     // Sub
     if (op->operatorStr() == "-") {
-        return builder.CreateSub(codegen(op->left()), codegen(op->right()));
+        auto [lhs, lhs_type] = codegen(op->left());
+        auto [rhs, rhs_type] = codegen(op->right());
+        return {builder.CreateAdd(lhs, rhs), XSharp::getI64Type()};
     }
 
     // Div
     if (op->operatorStr() == "/") {
-        return builder.CreateSDiv(codegen(op->left()), codegen(op->right()));
+        auto [lhs, lhs_type] = codegen(op->left());
+        auto [rhs, rhs_type] = codegen(op->right());
+        return {builder.CreateAdd(lhs, rhs), XSharp::getI64Type()};
     }
 
     // Mul
     if (op->operatorStr() == "*") {
-        return builder.CreateMul(codegen(op->left()), codegen(op->right()));
+        auto [lhs, lhs_type] = codegen(op->left());
+        auto [rhs, rhs_type] = codegen(op->right());
+        return {builder.CreateAdd(lhs, rhs), XSharp::getI64Type()};
     }
 
     // Assign
     if (op->operatorStr() == "=") {
-        return builder.CreateStore(codegen(op->right()), codegen(op->left()));
+        auto [lhs, lhs_type] = codegen(op->left());
+        auto [rhs, rhs_type] = deReferenceIf(op->right());
+        if (lhs_type->category == XSharp::TypeNode::Reference) {
+            return {builder.CreateStore(rhs, lhs), lhs_type};
+        } else {
+            errors.push_back(
+                {XSharpErrorType::SemanticsError,
+                 "The type of left operand of '=' must be reference"});
+            return {nullptr, nullptr};
+        }
     }
-    return nullptr;
+    return {nullptr, nullptr};
 }
 
-llvm::Value* LLVMHelper::genUnaryOp(UnaryOperatorNode* op)
+ValueAndType LLVMHelper::genUnaryOp(UnaryOperatorNode* op)
 {
     // TODO: UnaryOperatorNode to llvmIR
-    return nullptr;
+    return {nullptr, nullptr};
 }
 
-llvm::Value* LLVMHelper::codegen(ASTNode* node)
+ValueAndType LLVMHelper::codegen(ASTNode* node)
 {
     using namespace llvm;
-    if (node == nullptr) return nullptr;
+    if (node == nullptr) return {nullptr, nullptr};
 
     if (node->is<IntegerNode>()) {
-        return ConstantInt::get(context,
-                                APInt(64, node->to<IntegerNode>()->value()));
+        auto val = ConstantInt::get(
+            context, APInt(64, node->to<IntegerNode>()->value()));
+
+        return {val, XSharp::getI64Type()};
     }
 
     if (node->is<DecimalFractionNode>()) {
-        return ConstantFP::get(
+        auto val = ConstantFP::get(
             context, APFloat(node->to<DecimalFractionNode>()->value()));
+
+        return {val, XSharp::getI64Type()};
     }
 
     if (node->is<BooleanNode>()) {
-        return ConstantInt::get(context,
-                                APInt(1, node->to<BooleanNode>()->value()));
+        auto val = ConstantInt::get(context,
+                                    APInt(1, node->to<BooleanNode>()->value()));
+        return {val, XSharp::getBooleanType()};
     }
 
     if (node->is<StringNode>()) {
@@ -266,7 +297,7 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
     if (node->is<BlockNode>()) {
         // TODO: Jump to next layer of SymbolTable
         for (auto ast : node->to<BlockNode>()->contents()) codegen(ast);
-        return nullptr;
+        return {nullptr, XSharp::getVoidType()};
     }
     if (node->is<BinaryOperatorNode>()) {
         return genBinaryOp(node->to<BinaryOperatorNode>());
@@ -287,12 +318,13 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
     }
     if (node->is<VariableNode>()) {
         VariableNode* var = node->to<VariableNode>();
-        if (symbolTable().hasSymbol(var->name()))
-            return symbolTable()[var->name()].definition;
-        else {
+        if (currentSymbols->hasSymbol(var->name())) {
+            auto symbol = currentSymbols->at(var->name());
+            return {symbol.definition, symbol.valueType};
+        } else {
             errors.push_back(
                 {XSharpErrorType::SemanticsError, "Variable {} doesn't exist"});
-            return nullptr;
+            return {nullptr, nullptr};
         }
     }
     if (node->is<MemberNode>()) {
@@ -300,11 +332,23 @@ llvm::Value* LLVMHelper::codegen(ASTNode* node)
     if (node->is<IndexNode>()) {
     }
     if (node->is<ReturnNode>()) {
-        return builder.CreateRet(
-            codegen(node->to<ReturnNode>()->returnValue()));
+        auto [retVal, retType] = codegen(node->to<ReturnNode>()->returnValue());
+        return {builder.CreateRet(retVal), XSharp::getVoidType()};
     }
     // TODO LLVMIR generation for Value-like ASTNode
-    return nullptr;
+    return {nullptr, nullptr};
+}
+
+ValueAndType LLVMHelper::deReferenceIf(ASTNode* ast)
+{
+    auto [val, type] = codegen(ast);
+    if (type->category == XSharp::TypeNode::Reference) {
+        return {
+            builder.CreateLoad(llvmTypeFor(type->innerType(), context), val),
+            type->innerType()};
+    } else {
+        return {val, type};
+    }
 }
 
 XSharp::SymbolTable LLVMHelper::symbolTable() const { return globalSymbols; }

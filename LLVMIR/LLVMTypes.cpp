@@ -54,6 +54,9 @@ llvm::Type* llvmTypeFor(XSharp::TypeNode* type, llvm::LLVMContext& context)
             return llvm::StructType::get(context, std::vector<llvm::Type*>());
         case TypeNode::Closure:
             break;
+        case TypeNode::Reference:
+            return llvm::PointerType::get(
+                llvmTypeFor(type->innerType(), context), 0);
         default:
             return nullptr;
     }

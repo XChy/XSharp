@@ -53,7 +53,7 @@ TypeNode* getReferenceType(TypeNode* innerType);
 
 // params' memory is managed by TypeSystem
 TypeNode* getFunctionType(TypeNode* returnValueType,
-                          std::vector<TypeNode*> paramsType);
+                          const std::vector<TypeNode*>& paramsType);
 
 TypeNode* getArrayType(TypeNode* elementType, uint dimension);
 
@@ -72,4 +72,5 @@ static TypeNode* getFloatType() { return getBasicType(BasicType::Float); }
 static TypeNode* getDoubleType() { return getBasicType(BasicType::Double); }
 static TypeNode* getBooleanType() { return getBasicType(BasicType::Boolean); }
 static TypeNode* getCharType() { return getBasicType(BasicType::Char); }
+
 }  // namespace XSharp
