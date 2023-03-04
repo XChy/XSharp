@@ -24,12 +24,16 @@ class SymbolTable
     Symbol& operator[](const XString& name);
     Symbol at(const XString& name);
 
+    SymbolTable* parent();
+
+    SymbolTable* createChild();
+
     ~SymbolTable();
 
    private:
     std::vector<SymbolTable*> children;
     std::unordered_map<XString, Symbol> symbols;
-    SymbolTable* parent;
+    SymbolTable* _parent;
 };
 
 }  // namespace XSharp

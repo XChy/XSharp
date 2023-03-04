@@ -2,7 +2,7 @@
 
 using namespace XSharp;
 
-SymbolTable::SymbolTable() : parent(nullptr) {}
+SymbolTable::SymbolTable() : _parent(nullptr) {}
 
 void SymbolTable::addSymbol(const Symbol& symbol)
 {
@@ -17,9 +17,9 @@ SymbolTable::Iterator SymbolTable::findSymbol(const XString& name)
 
     Iterator currentIt = symbols.find(name);
     if (currentIt == this->end()) {
-        Iterator parentIt = parent->findSymbol(name);
+        Iterator parentIt = _parent->findSymbol(name);
 
-        if (parentIt == parent->end())
+        if (parentIt == _parent->end())
             return this->end();
         else
             return parentIt;
@@ -43,11 +43,19 @@ Symbol& SymbolTable::operator[](const XString& name)
 
 Symbol SymbolTable::at(const XString& name) { return findSymbol(name)->second; }
 
+SymbolTable* SymbolTable::parent() { return _parent; }
+
+SymbolTable* SymbolTable::createChild()
+{
+    SymbolTable* child = new SymbolTable;
+    child->_parent = this;
+    children.push_back(child);
+    return child;
+}
+
 SymbolTable::~SymbolTable()
 {
     for (SymbolTable* child : children) {
-        if (child) {
-            delete child;
-        }
+        if (child) delete child;
     }
 }

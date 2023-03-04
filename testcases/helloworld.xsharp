@@ -1,6 +1,5 @@
-i64 add(){
-    printI64(0b101 + 4);
-    return 11;
+i64 add(i64 g){
+    return g+g;
 }
 
 void main(){
@@ -9,7 +8,7 @@ void main(){
     a=10;
     b=6;
     b = a + b;
-    printI64(a+b);
+    printI64(a+b+b+add(2+a));
     return;
 }
 

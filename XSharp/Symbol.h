@@ -26,7 +26,7 @@ struct Symbol {
     SymbolType symbolType;
 
     // X# Type
-    TypeNode* valueType;
+    TypeNode* type;
 
     // if we apply LLVM as the backend,
     // the symbol also needs to save LLVM-related information

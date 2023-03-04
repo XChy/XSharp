@@ -6,7 +6,7 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Type.h"
 
-llvm::Type* llvmTypeFor(XSharp::TypeNode* type, llvm::LLVMContext& context)
+llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
 {
     using XSharp::BasicType;
     // TODO complete XSharp's Type to Variable
@@ -38,17 +38,17 @@ llvm::Type* llvmTypeFor(XSharp::TypeNode* type, llvm::LLVMContext& context)
             std::vector<llvm::Type*> llvmTypesForParams;
             for (TypeNode* paramTypeNode : type->paramsType())
                 llvmTypesForParams.push_back(
-                    llvmTypeFor(paramTypeNode, context));
+                    castToLLVM(paramTypeNode, context));
 
             return llvm::FunctionType::get(
-                llvmTypeFor(type->returnValueType(), context),
+                castToLLVM(type->returnValueType(), context),
                 llvmTypesForParams, false);
         }
         case TypeNode::Array:
             // Allocate XSharp's array on heap
             // So the type of array is the pointer type of its element
             return llvm::PointerType::get(
-                llvmTypeFor(type->elementType(), context), 0);
+                castToLLVM(type->elementType(), context), 0);
         case TypeNode::Class:
             // TODO: Complete the related definition of class
             return llvm::StructType::get(context, std::vector<llvm::Type*>());
@@ -56,8 +56,9 @@ llvm::Type* llvmTypeFor(XSharp::TypeNode* type, llvm::LLVMContext& context)
             break;
         case TypeNode::Reference:
             return llvm::PointerType::get(
-                llvmTypeFor(type->innerType(), context), 0);
+                castToLLVM(type->innerType(), context), 0);
         default:
             return nullptr;
     }
+    return nullptr;
 }

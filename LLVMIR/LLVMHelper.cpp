@@ -1,4 +1,5 @@
 #include "LLVMIR/LLVMHelper.h"
+#include <llvm/IR/Argument.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/Value.h>
 #include <llvm/Support/Alignment.h>
@@ -21,14 +22,14 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/BuiltIn.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Symbol.h"
 #include "XSharp/Type.h"
 #include "XSharp/TypeSystem.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 
-using std::make_tuple;
-
-LLVMHelper::LLVMHelper() : module("XSharp", context), builder(context)
+LLVMHelper::LLVMHelper()
+    : module("XSharp", context), builder(context), optimizer(&module)
 {
     // module.setDataLayout("");
     // module.setTargetTriple("i386-pc-linux-gnu");
@@ -45,7 +46,7 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
     if (ast->is<DefinitionsNode>()) {
         DefinitionsNode* definitions = ast->to<DefinitionsNode>();
         for (auto var : definitions->variableDeclarations()) {
-            genGlobalVariable(var);
+            auto [val, type] = genGlobalVariable(var);
         }
         for (auto funcNode : definitions->functionDeclarations()) {
             genFunction(funcNode);
@@ -76,13 +77,13 @@ ValueAndType LLVMHelper::genGlobalVariable(VariableDeclarationNode* varNode)
 
     // TODO: variable's initValue's processing
     llvm::GlobalVariable* global = new llvm::GlobalVariable(
-        module, llvmTypeFor(type, context), type->isConst,
+        module, castToLLVM(type, context), type->isConst,
         llvm::GlobalVariable::ExternalLinkage, nullptr,
         varNode->name().toStdString());
 
     globalSymbols.addSymbol({.name = varNode->name(),
                              .symbolType = XSharp::SymbolType::GlobalVariable,
-                             .valueType = type,
+                             .type = XSharp::getReferenceType(type),
                              .definition = global});
     return {global, type};
 }
@@ -100,12 +101,12 @@ ValueAndType LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
 
     // TODO: variable's initValue's processing
     auto alloca =
-        builder.CreateAlloca(llvmTypeFor(xsharpType->innerType(), context),
+        builder.CreateAlloca(castToLLVM(xsharpType->innerType(), context),
                              nullptr, varNode->name().toStdString());
 
     currentSymbols->addSymbol({.name = varNode->name(),
                                .symbolType = XSharp::SymbolType::LocalVariable,
-                               .valueType = xsharpType,
+                               .type = xsharpType,
                                .definition = alloca});
 
     return {alloca, xsharpType};
@@ -127,12 +128,12 @@ ValueAndType LLVMHelper::genFunction(FunctionDeclarationNode* node)
     std::vector<llvm::Type*> paramsType;
     for (auto param : node->params()) {
         auto paramType = param->type();
-        paramsType.push_back(llvmTypeFor(paramType, context));
+        paramsType.push_back(castToLLVM(paramType, context));
     }
 
     auto retType = node->returnType();
     llvm::FunctionType* functionType = llvm::FunctionType::get(
-        llvmTypeFor(retType, context), paramsType, false);
+        castToLLVM(retType, context), paramsType, false);
 
     Function* func = Function::Create(functionType, Function::ExternalLinkage,
                                       node->name().toStdString(), module);
@@ -142,7 +143,15 @@ ValueAndType LLVMHelper::genFunction(FunctionDeclarationNode* node)
 
     auto iter = func->arg_begin();
     for (int i = 0; i < func->arg_size(); ++i) {
+        auto arg_alloca = builder.CreateAlloca(iter->getType());
+        builder.CreateStore(iter, arg_alloca);
+
         iter->setName(node->params()[i]->name().toStdString());
+        currentSymbols->addSymbol(
+            {.name = node->params()[i]->name(),
+             .symbolType = XSharp::SymbolType::Argument,
+             .type = XSharp::getReferenceType(node->params()[i]->type()),
+             .definition = arg_alloca});
         iter++;
     }
 
@@ -155,9 +164,10 @@ ValueAndType LLVMHelper::genFunction(FunctionDeclarationNode* node)
     for (auto var : node->params()) xParamsType.push_back(var->type());
     currentSymbols->addSymbol({.name = node->name(),
                                .symbolType = XSharp::SymbolType::Function,
-                               .valueType = type,
+                               .type = type,
                                .definition = func});
 
+    optimizer.functionPassManager.run(*func);
     return {func, type};
 }
 
@@ -177,7 +187,7 @@ ValueAndType LLVMHelper::genCall(FunctionCallNode* call)
             if (arg_type->category == XSharp::TypeNode::Reference &&
                 arg_type->innerType()->category == XSharp::TypeNode::Basic)
                 args.push_back(builder.CreateLoad(
-                    llvmTypeFor(arg_type->innerType(), context), arg_val));
+                    castToLLVM(arg_type->innerType(), context), arg_val));
             else
                 args.push_back(arg_val);
         }
@@ -186,10 +196,10 @@ ValueAndType LLVMHelper::genCall(FunctionCallNode* call)
         if (currentSymbols->hasSymbol(calleeName)) {
             auto symbol = currentSymbols->findSymbol(calleeName)->second;
             // TODO:typecheck
-            return {builder.CreateCall((llvm::FunctionType*)llvmTypeFor(
-                                           symbol.valueType, context),
-                                       symbol.definition, args),
-                    symbol.valueType->returnValueType()};
+            return {builder.CreateCall(
+                        ((llvm::Function*)symbol.definition)->getFunctionType(),
+                        symbol.definition, args),
+                    symbol.type->returnValueType()};
         }
         // builtin
         else if (module.getFunction(calleeName.toStdString())) {
@@ -320,7 +330,7 @@ ValueAndType LLVMHelper::codegen(ASTNode* node)
         VariableNode* var = node->to<VariableNode>();
         if (currentSymbols->hasSymbol(var->name())) {
             auto symbol = currentSymbols->at(var->name());
-            return {symbol.definition, symbol.valueType};
+            return {symbol.definition, symbol.type};
         } else {
             errors.push_back(
                 {XSharpErrorType::SemanticsError, "Variable {} doesn't exist"});
@@ -343,9 +353,8 @@ ValueAndType LLVMHelper::deReferenceIf(ASTNode* ast)
 {
     auto [val, type] = codegen(ast);
     if (type->category == XSharp::TypeNode::Reference) {
-        return {
-            builder.CreateLoad(llvmTypeFor(type->innerType(), context), val),
-            type->innerType()};
+        return {builder.CreateLoad(castToLLVM(type->innerType(), context), val),
+                type->innerType()};
     } else {
         return {val, type};
     }

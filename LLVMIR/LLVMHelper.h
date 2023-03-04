@@ -1,5 +1,4 @@
 #pragma once
-#include <cstddef>
 #include <tuple>
 #include <vector>
 #include <llvm/IR/DerivedTypes.h>
@@ -12,9 +11,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/TypeFinder.h>
-#include <llvm/ExecutionEngine/Interpreter.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
-#include <llvm/Support/TargetSelect.h>
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Type.h"
 #include "XSharp/XSharpUtils.h"
@@ -22,6 +19,7 @@
 #include "XSharp/SymbolTable.h"
 #include "XSharp/TypeSystem.h"
 #include "LLVMIR/LLVMTypes.h"
+#include "LLVMIR/Optimizer.h"
 
 typedef std::tuple<llvm::Value*, TypeNode*> ValueAndType;
 class LLVMHelper
@@ -53,6 +51,8 @@ class LLVMHelper
     llvm::LLVMContext context;
     llvm::Module module;
     llvm::IRBuilder<> builder;
+
+    Optimizer optimizer;
 
     XSharp::SymbolTable globalSymbols;
     XSharp::SymbolTable* currentSymbols;
