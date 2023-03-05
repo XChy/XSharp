@@ -6,6 +6,4 @@ set_target_properties(XSharp_RUNTIME_DYNAMIC PROPERTIES OUTPUT_NAME
 set_target_properties(
   XSharp_RUNTIME_DYNAMIC PROPERTIES LIBRARY_OUTPUT_DIRECTORY
                                     "${PROJECT_SOURCE_DIR}/lib")
-# set_target_properties(XSharp_RUNTIME_DYNAMIC PROPERTIES COMPILE_FLAGS
-# "-std=c++17 -O2")
 set(CMAKE_CXX_FLAGS "-std=c++20 -O2")

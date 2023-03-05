@@ -31,3 +31,9 @@ testcases/helloworld.xsharp.bc
 testcases/helloworld.xsharp.o
 testcases/helloworld
 _deps
+test/CMakeFiles
+CTestTestfile.cmake
+test/Makefile
+test/test
+test/test_llvm
+test/test_utils

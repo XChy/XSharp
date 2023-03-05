@@ -8,6 +8,7 @@ void main(){
     a = 10086;
     b = 100;
     printI64(add(a,b)+add(b,a));
+    printI64(add(b,b)+add(b,b));
     return;
 }
 
