@@ -1,5 +1,5 @@
 project(XSharp)
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)
 
 option(BUILD_TEST "Set to complie the test sample" ON)
 option(BUILD_SHARED_LIBRARY "Set to switch to build shared library" OFF)
@@ -14,13 +14,25 @@ file(GLOB_RECURSE SRC "XSharp/*.cpp" "XSharp/*.h")
 file(GLOB_RECURSE RUNTIME_SRC "XSharpRuntime/*.cpp" "XSharpRuntime/*.c"
      "XSharpRuntime/*.h")
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+# TODO: compliment cmake's setting
+set(CMAKE_BUILD_TYPE Debug)
+
 make_directory(${PROJECT_SOURCE_DIR}/bin)
 make_directory(${PROJECT_SOURCE_DIR}/test/bin)
 make_directory(${PROJECT_SOURCE_DIR}/lib)
 
-# include(FetchContent) FetchContent_Declare( fmt URL
-# https://github.com/fmtlib/fmt/archive/refs/tags/8.0.1.tar.gz)
-# FetchContent_MakeAvailable(fmt)
+include(FetchContent)
+
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG 9.1.0)
+
+FetchContent_MakeAvailable(fmt)
 
 if(SUPPORT_LLVMIR)
   aux_source_directory("LLVMIR" SRC)
@@ -36,7 +48,6 @@ if(SUPPORT_LLVMIR)
   add_definitions(${LLVM_DEFINITIONS_LIST})
 
   llvm_map_components_to_libnames(llvm_libs all support core codegen irreader)
-  # execute_process(COMMAND llvm-config --libfiles OUTPUT_VARIABLE llvm_libs)
 
   message(STATUS "LLVM LIBS: ${llvm_libs}")
 
@@ -68,7 +79,7 @@ if(BUILD_STATIC_LIBRARY)
                                                  "${PROJECT_SOURCE_DIR}/lib")
 
   if(SUPPORT_LLVMIR)
-    target_link_libraries(XSharp_STATIC ${llvm_libs})
+    target_link_libraries(XSharp_STATIC ${llvm_libs} fmt)
   endif()
 endif()
 
@@ -112,13 +123,6 @@ if(BUILD_XSharpCLI)
     target_link_libraries(XSharpC ${llvm_libs})
   endif()
 endif()
-
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
-
-# TODO: compliment cmake's setting
-set(CMAKE_BUILD_TYPE Debug)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS_DEBUG

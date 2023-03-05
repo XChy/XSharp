@@ -5,6 +5,7 @@
 #include "XSharp/Type.h"
 #include "XSharp/TypeSystem.h"
 #include "XSharp/XString.h"
+#include "fmt/format.h"
 
 using namespace XSharp;
 
@@ -28,10 +29,7 @@ BooleanNode::BooleanNode(bool value) : _value(value) {}
 
 XString BooleanNode::dump() const
 {
-    if (_value)
-        return "true";
-    else
-        return "false";
+    return XString::fromStdString(fmt::format("{}", _value));
 }
 
 void BooleanNode::setValue(bool value) { _value = value; }

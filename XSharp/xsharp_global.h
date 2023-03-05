@@ -6,7 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <stack>
-//#include <fmt>
+#include <fmt/format.h>
 
 typedef unsigned short ushort;
 typedef unsigned char uchar;
