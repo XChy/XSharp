@@ -25,6 +25,7 @@ make_directory(${PROJECT_SOURCE_DIR}/bin)
 make_directory(${PROJECT_SOURCE_DIR}/test/bin)
 make_directory(${PROJECT_SOURCE_DIR}/lib)
 
+# Third Parties
 include(FetchContent)
 
 FetchContent_Declare(
@@ -101,6 +102,7 @@ if(BUILD_TEST)
   set_target_properties(
     XSharp_TEST_LLVM PROPERTIES OUTPUT_NAME
                                 "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST_LLVM")
+
   if(SUPPORT_LLVMIR)
     target_link_libraries(XSharp_TEST ${llvm_libs} XSharp_STATIC)
     target_link_libraries(XSharp_TEST_UTILS ${llvm_libs} XSharp_STATIC)

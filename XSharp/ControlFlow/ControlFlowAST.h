@@ -15,12 +15,12 @@ class XSharp_EXPORT IfNode
 
     ASTNode* condition();
     void setCondition(ASTNode* cond);
-    ASTNode* block();
-    void setBlock(ASTNode* block);
+    BlockNode* block();
+    void setBlock(BlockNode* block);
 
    private:
     ASTNode* _condition;
-    ASTNode* _block;
+    BlockNode* _block;
 };
 
 class XSharp_EXPORT ElseIfNode
@@ -32,8 +32,8 @@ class XSharp_EXPORT ElseIfNode
     ASTNode* condition();
     void setCondition(ASTNode* cond);
 
-    ASTNode* block();
-    void setBlock(ASTNode* block);
+    BlockNode* block();
+    void setBlock(BlockNode* block);
 
     ASTNode* lastIf();
     void setLastIf(ASTNode* lastIf);
@@ -41,7 +41,7 @@ class XSharp_EXPORT ElseIfNode
    private:
     ASTNode* _lastIf;
     ASTNode* _condition;
-    ASTNode* _block;
+    BlockNode* _block;
 };
 
 class XSharp_EXPORT ElseNode
@@ -50,15 +50,15 @@ class XSharp_EXPORT ElseNode
     XString dump() const;
     ~ElseNode();
 
-    ASTNode* block();
-    void setBlock(ASTNode* block);
+    BlockNode* block();
+    void setBlock(BlockNode* block);
 
     ASTNode* lastIf();
     void setLastIf(ASTNode* lastIf);
 
    private:
     ASTNode* _lastIf;
-    ASTNode* _block;
+    BlockNode* _block;
 };
 
 class XSharp_EXPORT ForNode
@@ -76,7 +76,15 @@ class XSharp_EXPORT WhileNode
     XString dump() const;
     ~WhileNode();
 
+    ASTNode* condition();
+    void setCondition(ASTNode* cond);
+
+    ASTNode* block();
+    void setBlock(BlockNode* block);
+
    private:
+    ASTNode* _condition;
+    BlockNode* _block;
 };
 
 class XSharp_EXPORT ContinueNode

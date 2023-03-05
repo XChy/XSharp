@@ -1,4 +1,3 @@
-#include "LLVMIR/LLVMHelper.h"
 #include <llvm/IR/Argument.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/Value.h>
@@ -16,9 +15,7 @@
 #include <llvm/IR/Function.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
-#include <algorithm>
-#include <tuple>
-#include <vector>
+#include "LLVMIR/LLVMHelper.h"
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/BuiltIn.h"
 #include "XSharp/ASTNodes.h"
