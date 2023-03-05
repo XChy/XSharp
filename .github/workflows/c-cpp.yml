@@ -14,11 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: CMake Configure
-        run: cmake .
+      run: cmake .
       - name: Build
-        run: make
+      run: make
+
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - run: /home/runner/work/XSharp/XSharp/test.sh
+      - uses: actions/checkout@v3
+      - run: ./test.sh
