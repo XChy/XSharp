@@ -13,7 +13,7 @@ jobs:
 
     steps:
 
-- name: Install LLVM and Clang
+      - name: "Install LLVM and Clang"
   uses: KyleMayes/install-llvm-action@v1
   with:
     version: "10.0"
