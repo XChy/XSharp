@@ -50,6 +50,12 @@ class XSharp_EXPORT ElseNode
     XString dump() const;
     ~ElseNode();
 
+    ASTNode* block();
+    void setBlock(ASTNode* block);
+
+    ASTNode* lastIf();
+    void setLastIf(ASTNode* lastIf);
+
    private:
     ASTNode* _lastIf;
     ASTNode* _block;

@@ -1,6 +1,9 @@
 #include "ASTNodes.h"
+#include <bits/ranges_algo.h>
 #include <math.h>
+#include <algorithm>
 #include <cmath>
+#include <string>
 #include <vector>
 #include "XSharp/Type.h"
 #include "XSharp/TypeSystem.h"
@@ -27,10 +30,7 @@ double DecimalFractionNode::value() const { return _value; }
 
 BooleanNode::BooleanNode(bool value) : _value(value) {}
 
-XString BooleanNode::dump() const
-{
-    return XString::fromStdString(fmt::format("{}", _value));
-}
+XString BooleanNode::dump() const { return fmt::format("{}", _value); }
 
 void BooleanNode::setValue(bool value) { _value = value; }
 
@@ -51,10 +51,8 @@ BinaryOperatorNode::BinaryOperatorNode()
 
 XString BinaryOperatorNode::dump() const
 {
-    return _operatorStr + "{ left:" + _left->dump() +
-           "\n"
-           "right:" +
-           _right->dump() + "}";
+    return fmt::format("[{}] {} [{}]", _left->dump(), _operatorStr,
+                       _right->dump());
 }
 
 void BinaryOperatorNode::setLeft(ASTNode* left)
@@ -99,7 +97,7 @@ BinaryOperatorNode::~BinaryOperatorNode()
 
 XString ClassDeclarationNode::dump() const
 {
-    return "Class{name:" + _name + "\n " + "}";
+    return fmt::format("Class\n{{ \nname:{}\n }}", _name);
 }
 
 XString DefinitionsNode::dump() const
@@ -107,12 +105,15 @@ XString DefinitionsNode::dump() const
     XString result;
     for (auto i : _classDeclarations) {
         result.append(i->dump());
+        result.append('\n');
     }
     for (auto i : _functionDeclarations) {
         result.append(i->dump());
+        result.append('\n');
     }
     for (auto i : _variableDeclarations) {
         result.append(i->dump());
+        result.append('\n');
     }
     return result;
 }
@@ -160,18 +161,18 @@ FunctionDeclarationNode::FunctionDeclarationNode() : _impl(nullptr) {}
 
 XString FunctionDeclarationNode::dump() const
 {
-    XString paramsDump;
+    std::vector<std::string> paramDumps;
     for (VariableDeclarationNode* param : _params) {
-        paramsDump.append(param->dump()).append("\n");
+        paramDumps.push_back(param->dump().toStdString());
     }
 
-    XString implDump = "no";
+    XString implDump = "No implementation";
     if (_impl) {
         implDump = _impl->dump();
     }
-    return "Function{name:" + _name +
-           "\nreturnType:" + _returnType->typeName() + "\nparams:{" +
-           paramsDump + "}\nblock:{" + implDump + "}\n}\n";
+    return fmt::format("func [{}]({})->[{}] {}", _name,
+                       fmt::join(paramDumps, ","), _returnType->typeName(),
+                       implDump);
 }
 
 void FunctionDeclarationNode::setName(const XString& name) { _name = name; }
@@ -217,12 +218,12 @@ VariableDeclarationNode::VariableDeclarationNode() : _initValue(nullptr) {}
 
 XString VariableDeclarationNode::dump() const
 {
-    XString initDump = "No";
     if (_initValue) {
-        initDump = _initValue->dump();
+        return fmt::format("Var {}:{} = {}", _name, _type->typeName(),
+                           _initValue->dump());
+    } else {
+        return fmt::format("Var {}:{}", _name, _type->typeName());
     }
-    return "Variable{name:" + _name + "\ntype:" + _type->typeName() +
-           "\ninitValue:" + initDump + "}\n";
 }
 
 void VariableDeclarationNode::setType(TypeNode* type) { _type = type; }
@@ -244,13 +245,13 @@ VariableDeclarationNode::~VariableDeclarationNode() { delete _initValue; }
 
 XString BlockNode::dump() const
 {
-    XString result;
+    std::vector<std::string> dumps;
     for (auto i : _contents) {
         if (i) {
-            result.append(i->dump()).append("\n");
+            dumps.push_back(i->dump().toStdString());
         }
     }
-    return result;
+    return fmt::format("{{\n{}\n}}", fmt::join(dumps, "\n"));
 }
 
 void BlockNode::addContent(ASTNode* content) { _contents.push_back(content); }
@@ -269,13 +270,13 @@ BlockNode::~BlockNode()
 
 XString FunctionCallNode::dump() const
 {
-    XString paramsDump;
+    std::vector<std::string> paramDumps;
     for (auto param : _params) {
-        paramsDump.append(param->dump()).append(',');
+        paramDumps.push_back(param->dump().toStdString());
     }
 
-    return "FunctionCall{function:" + _function->dump() + "\nparams:{" +
-           paramsDump + "}\n}";
+    return fmt::format("call {}({})", _function->dump(),
+                       fmt::join(paramDumps, ","));
 }
 
 void FunctionCallNode::setFunction(ASTNode* func) { _function = func; }
@@ -299,7 +300,7 @@ FunctionCallNode::~FunctionCallNode()
 
 XString UnaryOperatorNode::dump() const
 {
-    return _operatorStr + "{ operand:" + _operand->dump() + "\n}";
+    return fmt::format("{}[{}]", _operatorStr, _operand->dump());
 }
 
 void UnaryOperatorNode::setOperand(ASTNode* operand) { _operand = operand; }
@@ -317,7 +318,7 @@ UnaryOperatorNode::~UnaryOperatorNode() { delete _operand; }
 
 VariableNode::VariableNode(const XString name) : _name(name) {}
 
-XString VariableNode::dump() const { return "Variable{name:" + _name + "}"; }
+XString VariableNode::dump() const { return fmt::format("<{}>", _name); }
 
 void VariableNode::setName(const XString& name) { _name = name; }
 
@@ -333,13 +334,18 @@ ASTNode* BoxNode::child() { return _child; }
 
 BoxNode::~BoxNode() { delete _child; }
 
-MemberNode::MemberNode(const XString name) : _name(name), _object(nullptr) {}
+MemberNode::MemberNode(const XString name) : _memberName(name), _object(nullptr)
+{
+}
 
-XString MemberNode::dump() const { return _object->dump() + "." + _name; }
+XString MemberNode::dump() const
+{
+    return fmt::format("{}.{}", _object->dump(), _memberName);
+}
 
-void MemberNode::setName(const XString& name) { _name = name; }
+void MemberNode::setMemberName(const XString& name) { _memberName = name; }
 
-XString MemberNode::name() const { return _name; }
+XString MemberNode::memberName() const { return _memberName; }
 
 void MemberNode::setObject(ASTNode* object) { _object = object; }
 
@@ -363,7 +369,10 @@ ReturnNode::ReturnNode(ASTNode* expr) : retVal(expr) {}
 
 XString ReturnNode::dump() const
 {
-    return "Return " + (retVal ? retVal->dump() : "") + "\n";
+    if (retVal)
+        return fmt::format("return {}", retVal->dump());
+    else
+        return "";
 }
 
 void ReturnNode::setReturnValue(ASTNode* retVal) { this->retVal = retVal; }

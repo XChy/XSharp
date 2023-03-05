@@ -169,6 +169,7 @@ ASTNode* Parser::statement()
                 forward();
                 stmt = new ReturnNode(expression({SentenceEnd}));
                 forward();
+            } else if (current->value == "if") {
             }
             break;
         case Identifier:

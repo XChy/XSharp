@@ -69,7 +69,8 @@ ValueAndType LLVMHelper::genGlobalVariable(VariableDeclarationNode* varNode)
 {
     if (globalSymbols.hasSymbol(varNode->name())) {
         errors.push_back(
-            {XSharpErrorType::SemanticsError, "Redefinition of variable {}"});
+            {XSharpErrorType::SemanticsError,
+             fmt::format("Redefinition of variable {}", varNode->name())});
         return {nullptr, nullptr};
     }
 
@@ -93,7 +94,8 @@ ValueAndType LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
     // TODO: FIX BUGS of Var
     if (currentSymbols->hasSymbol(varNode->name())) {
         errors.push_back(
-            {XSharpErrorType::SemanticsError, "Redefinition of variable"});
+            {XSharpErrorType::SemanticsError,
+             fmt::format("Redefinition of variable {}", varNode->name())});
         return {nullptr, nullptr};
     }
 
@@ -121,7 +123,8 @@ ValueAndType LLVMHelper::genFunction(FunctionDeclarationNode* node)
 
     if (currentSymbols->hasSymbol(node->name())) {
         errors.push_back(
-            {XSharpErrorType::SemanticsError, "Redefinition of function:{}"});
+            {XSharpErrorType::SemanticsError,
+             fmt::format("Redefinition of function {}", node->name())});
         return {nullptr, nullptr};
     }
 
@@ -208,8 +211,9 @@ ValueAndType LLVMHelper::genCall(FunctionCallNode* call)
                                        llvmFunction, args),
                     nullptr};
         } else {
-            errors.push_back({XSharpErrorType::SemanticsError,
-                              "The function '{}' doesn't exist"});
+            errors.push_back(
+                {XSharpErrorType::SemanticsError,
+                 fmt::format("The function '{}' doesn't exist", calleeName)});
             return {nullptr, nullptr};
         }
     }

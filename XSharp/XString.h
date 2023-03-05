@@ -1,9 +1,9 @@
 #pragma once
 
-#include "xsharp_global.h"
-#include "SharedData.h"
 #include <cstring>
 #include <string>
+#include "xsharp_global.h"
+#include "SharedData.h"
 
 class XSharp_EXPORT XChar
 {
@@ -63,6 +63,7 @@ class XSharp_EXPORT XString
     XString(const char* utf8);
     XString(const wchar_t* wstr);
     XString(const char16_t* ustr);
+    XString(const std::string& str);
     XString(uint allocSize, Initialization init);
 
     const XChar* data() const;
@@ -174,6 +175,29 @@ class XSharp_EXPORT XString
 };
 
 XString operator+(const char* utf8, const XString& xstr);
+
+template <>
+struct fmt::formatter<XString> {
+    constexpr auto parse(format_parse_context& ctx)
+    {
+        auto it = ctx.begin(), end = ctx.end();
+        // Check if reached the end of the range:
+        if (it != end && *it != '}') throw format_error("invalid format");
+        // Return an iterator past the end of the parsed range:
+        return it;
+    }
+
+    // Formats the point p using the parsed format specification (presentation)
+    // stored in this formatter.
+    template <typename FormatContext>
+    auto format(const XString& str, FormatContext& ctx)
+    {
+        // auto format(const point &p, FormatContext &ctx) ->
+        // decltype(ctx.out()) // c++11 ctx.out() is an output iterator to write
+        // to.
+        return format_to(ctx.out(), "{}", str.toStdString());
+    }
+};
 
 namespace std {
 

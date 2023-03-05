@@ -281,8 +281,8 @@ class XSharp_EXPORT MemberNode : public ASTNode
 
     XString dump() const;
 
-    void setName(const XString& name);
-    XString name() const;
+    void setMemberName(const XString& name);
+    XString memberName() const;
 
     void setObject(ASTNode* object);
     ASTNode* object();
@@ -290,7 +290,7 @@ class XSharp_EXPORT MemberNode : public ASTNode
     ~MemberNode();
 
    private:
-    XString _name;
+    XString _memberName;
     ASTNode* _object;
 };
 

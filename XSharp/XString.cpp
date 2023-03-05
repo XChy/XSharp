@@ -110,6 +110,8 @@ XString::XString(const char16_t* ustr)
     xstrcpy(d.data()->str, ustr, len + 1);
 }
 
+XString::XString(const std::string& str) : XString(fromStdString(str)) {}
+
 XString::XString(uint allocSize, Initialization init)
     : d(new StringData(allocSize))
 {

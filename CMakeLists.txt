@@ -120,7 +120,7 @@ if(BUILD_XSharpCLI)
   set_target_properties(XSharpC PROPERTIES OUTPUT_NAME
                                            "${CMAKE_SOURCE_DIR}/bin/xsharpc")
   if(SUPPORT_LLVMIR)
-    target_link_libraries(XSharpC ${llvm_libs})
+    target_link_libraries(XSharpC ${llvm_libs} XSharp_STATIC)
   endif()
 endif()
 
