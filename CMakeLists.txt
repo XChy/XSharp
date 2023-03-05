@@ -36,7 +36,7 @@ if(SUPPORT_LLVMIR)
   add_definitions(${LLVM_DEFINITIONS_LIST})
 
   execute_process(
-    COMMAND llvm-config --libs
+    COMMAND llvm-config --libfiles
     OUTPUT_VARIABLE llvm_libs
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
