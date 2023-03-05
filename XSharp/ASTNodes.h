@@ -25,7 +25,6 @@ class XSharp_EXPORT ASTNode
     }
 
     virtual ~ASTNode() = default;  // The children are managed by the parent
-    virtual TypeNode* exprType() { return nullptr; };
 };
 
 class XSharp_EXPORT IntegerNode : public ASTNode
@@ -36,8 +35,6 @@ class XSharp_EXPORT IntegerNode : public ASTNode
 
     void setValue(int64_t value);
     int64_t value() const;
-
-    TypeNode* exprType() { return XSharp::getI64Type(); }
 
    private:
     int64_t _value;
@@ -52,8 +49,6 @@ class XSharp_EXPORT DecimalFractionNode : public ASTNode
     void setValue(double value);
     double value() const;
 
-    TypeNode* exprType() { return XSharp::getDoubleType(); }
-
    private:
     double _value;
 };
@@ -67,8 +62,6 @@ class XSharp_EXPORT BooleanNode : public ASTNode
     void setValue(bool value);
     bool value() const;
 
-    TypeNode* exprType() { return XSharp::getBooleanType(); }
-
    private:
     bool _value;
 };
@@ -81,12 +74,6 @@ class XSharp_EXPORT StringNode : public ASTNode
 
     void setValue(XString value);
     XString value() const;
-
-    TypeNode* exprType()
-    {
-        // TODO Builtin String Type
-        return nullptr;
-    };
 
    private:
     XString _value;
@@ -102,8 +89,6 @@ class XSharp_EXPORT BoxNode : public ASTNode
     ASTNode* child();
 
     ~BoxNode();
-
-    TypeNode* exprType() { return _child->exprType(); }
 
    private:
     ASTNode* _child;
@@ -127,7 +112,6 @@ class XSharp_EXPORT BinaryOperatorNode : public ASTNode
     void setOperatorStr(const XString& operatorStr);
     XString operatorStr() const;
 
-    TypeNode* exprType();
     ~BinaryOperatorNode();
 
    private:
@@ -189,8 +173,6 @@ class XSharp_EXPORT VariableDeclarationNode : public ASTNode
     ASTNode* initValue() const;
 
     ~VariableDeclarationNode();
-
-    TypeNode* exprType() { return type(); }
 
    private:
     TypeNode* _type;
@@ -322,8 +304,6 @@ class XSharp_EXPORT IndexNode : public ASTNode
 
     void setIndexExpr(ASTNode* indexExpr);
     ASTNode* indexExpr();
-
-    // TypeNode* exprType();
 
    private:
     ASTNode* _operand;

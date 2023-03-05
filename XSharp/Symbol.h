@@ -29,9 +29,12 @@ struct Symbol {
     TypeNode* type;
 
     // if we apply LLVM as the backend,
-    // the symbol also needs to save LLVM-related information
+    // the symbol also save LLVM-related information
 #ifdef XSharp_LLVMIR_SUPPORT
-    llvm::Value* definition;
+    union {
+        llvm::Value* definition;
+        llvm::Function* function;
+    };
 #endif
 
 #ifdef XSharp_XSharpIR_SUPPORT

@@ -43,10 +43,9 @@ struct FunctionType {
     TypeNode* returnValueType;
 };
 
-// Function
+// Closure
 struct ClosureType {
-    std::vector<uint> paramTypeIDs;
-    uint returnValueTypeID;
+    std::vector<TypeNode*> paramTypeIDs;
 };
 
 // TypeNode has no destructor, for which TypeContext have to manage its memory
@@ -95,14 +94,4 @@ class TypeNode
         typeSpecifiedInfo;
 };
 
-}  // namespace XSharp
-
-namespace std {
-template <>
-struct hash<XSharp::BasicType> {
-    size_t operator()(const XSharp::BasicType& xstr) const
-    {
-        return uint(xstr);
-    }
-};
-};  // namespace std
+};  // namespace XSharp

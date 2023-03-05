@@ -49,7 +49,7 @@ class XSharp_EXPORT StringData
     uint allocSize;
 };
 
-// XString
+//  XString
 //  Encoding:UCS2
 //  Copy on write
 

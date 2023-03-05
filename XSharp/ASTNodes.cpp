@@ -93,15 +93,6 @@ void BinaryOperatorNode::setOperatorStr(const XString& operatorStr)
 
 XString BinaryOperatorNode::operatorStr() const { return _operatorStr; }
 
-TypeNode* BinaryOperatorNode::exprType()
-{
-    if (left()->exprType()->equals(*getI64Type()) &&
-        right()->exprType()->equals(*getI64Type())) {
-        return getI64Type();
-    }
-    return nullptr;
-}
-
 BinaryOperatorNode::~BinaryOperatorNode()
 {
     delete _left;

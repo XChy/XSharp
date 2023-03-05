@@ -56,4 +56,5 @@ class LLVMHelper
 
     XSharp::SymbolTable globalSymbols;
     XSharp::SymbolTable* currentSymbols;
+    XSharp::Symbol* current;
 };

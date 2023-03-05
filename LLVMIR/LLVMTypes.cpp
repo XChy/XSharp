@@ -1,7 +1,7 @@
 #include "LLVMIR/LLVMTypes.h"
-#include <llvm-14/llvm/IR/DerivedTypes.h>
-#include <llvm-14/llvm/IR/LLVMContext.h>
-#include <llvm-14/llvm/IR/Type.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Type.h>
 #include <vector>
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Type.h"

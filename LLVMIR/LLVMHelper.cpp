@@ -76,7 +76,7 @@ ValueAndType LLVMHelper::genGlobalVariable(VariableDeclarationNode* varNode)
     TypeNode* type = varNode->type();
 
     // TODO: variable's initValue's processing
-    llvm::GlobalVariable* global = new llvm::GlobalVariable(
+    llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(
         module, castToLLVM(type, context), type->isConst,
         llvm::GlobalVariable::ExternalLinkage, nullptr,
         varNode->name().toStdString());
@@ -84,8 +84,8 @@ ValueAndType LLVMHelper::genGlobalVariable(VariableDeclarationNode* varNode)
     globalSymbols.addSymbol({.name = varNode->name(),
                              .symbolType = XSharp::SymbolType::GlobalVariable,
                              .type = XSharp::getReferenceType(type),
-                             .definition = global});
-    return {global, type};
+                             .definition = globalVar});
+    return {globalVar, type};
 }
 
 ValueAndType LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
@@ -226,6 +226,7 @@ ValueAndType LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
     if (op->operatorStr() == "+") {
         auto [lhs, lhs_type] = deReferenceIf(op->left());
         auto [rhs, rhs_type] = deReferenceIf(op->right());
+        builder.CreateArithmeticFence(nullptr, nullptr);
         return {builder.CreateAdd(lhs, rhs), XSharp::getI64Type()};
     }
 
