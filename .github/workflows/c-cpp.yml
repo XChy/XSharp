@@ -8,8 +8,10 @@ on:
 
 jobs:
   install_llvm:
-    - name: Install LLVM and Clang
-    - uses: KyleMayes/install-llvm-action@v1.7.0
+    runs-on: ubuntu-latest
+    name: "Install LLVM and Clang"
+    steps:
+      - uses: KyleMayes/install-llvm-action@v1.7.0
 
   build:
     name: "Ubuntu Build"
