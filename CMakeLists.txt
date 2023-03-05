@@ -28,11 +28,6 @@ if(SUPPORT_LLVMIR)
 
   find_package(LLVM REQUIRED CONFIG)
 
-  # execute_process( COMMAND llvm-config --cppflags OUTPUT_VARIABLE
-  # llvm_cppflags OUTPUT_STRIP_TRAILING_WHITESPACE) execute_process( COMMAND
-  # llvm-config --libs OUTPUT_VARIABLE llvm_libflags
-  # OUTPUT_STRIP_TRAILING_WHITESPACE)
-
   message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
   message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
@@ -44,6 +39,8 @@ if(SUPPORT_LLVMIR)
     COMMAND llvm-config --libs all
     OUTPUT_VARIABLE llvm_libs
     OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  message(STATUS "LLVM LIBS: ${llvm_libs}")
 
 endif()
 
@@ -133,4 +130,4 @@ if(CMAKE_COMPILER_IS_GNUCXX)
       "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20  -O2 -pthread -fopenmp")
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
