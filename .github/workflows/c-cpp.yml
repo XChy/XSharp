@@ -7,12 +7,17 @@ on:
     branches: ["main"]
 
 jobs:
+  install_llvm:
+    - name: Install LLVM and Clang
+  uses: KyleMayes/install-llvm-action@v1.7.0
   build:
     name: "Ubuntu Build"
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+      - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v1.7.0
       - name: Configure
         run: cmake .
       - name: Build
