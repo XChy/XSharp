@@ -14,6 +14,10 @@ file(GLOB_RECURSE SRC "XSharp/*.cpp" "XSharp/*.h")
 file(GLOB_RECURSE RUNTIME_SRC "XSharpRuntime/*.cpp" "XSharpRuntime/*.c"
      "XSharpRuntime/*.h")
 
+make_directory(${PROJECT_SOURCE_DIR}/bin)
+make_directory(${PROJECT_SOURCE_DIR}/test/bin)
+make_directory(${PROJECT_SOURCE_DIR}/lib)
+
 if(SUPPORT_LLVMIR)
   aux_source_directory("LLVMIR" SRC)
   add_definitions(-DXSharp_LLVMIR_SUPPORT)
@@ -31,7 +35,7 @@ if(BUILD_SHARED_LIBRARY)
   add_library(XSharp_SHARED SHARED ${SRC})
   set_target_properties(XSharp_SHARED PROPERTIES OUTPUT_NAME "XSharp")
   set_target_properties(XSharp_SHARED PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                                 "${PROJECT_SOURCE_DIR}/shared")
+                                                 "${PROJECT_SOURCE_DIR}/lib")
   # target_link_libraries(XSharp_SHARED ${llvm_libs})
 
 endif()
