@@ -88,7 +88,6 @@ ValueAndType LLVMHelper::genGlobalVariable(VariableDeclarationNode* varNode)
 
 ValueAndType LLVMHelper::genLocalVariable(VariableDeclarationNode* varNode)
 {
-    // TODO: FIX BUGS of Var
     if (currentSymbols->hasSymbol(varNode->name())) {
         errors.push_back(
             {XSharpErrorType::SemanticsError,

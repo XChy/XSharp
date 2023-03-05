@@ -1,0 +1,142 @@
+Start testing: Mar 06 00:52 CST
+----------------------------------------------------------
+1/4 Testing: test1
+1/4 Test: test1
+Command: "/home/xchy/Projects/XSharp/test/test_utils"
+Directory: /home/xchy/Projects/XSharp
+"test1" start time: Mar 06 00:52 CST
+Output:
+----------------------------------------------------------
+Running main() from /home/xchy/Projects/XSharp/_deps/googletest-src/googletest/src/gtest_main.cc
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from XStringTest
+[ RUN      ] XStringTest.FromCString
+[       OK ] XStringTest.FromCString (0 ms)
+[ RUN      ] XStringTest.Append
+[       OK ] XStringTest.Append (0 ms)
+[----------] 2 tests from XStringTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"test1" end time: Mar 06 00:52 CST
+"test1" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/4 Testing: test2
+2/4 Test: test2
+Command: "/home/xchy/Projects/XSharp/test/test_llvm"
+Directory: /home/xchy/Projects/XSharp
+"test2" start time: Mar 06 00:52 CST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test2" end time: Mar 06 00:52 CST
+"test2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/4 Testing: test3
+3/4 Test: test3
+Command: "/home/xchy/Projects/XSharp/test/test"
+Directory: /home/xchy/Projects/XSharp
+"test3" start time: Mar 06 00:52 CST
+Output:
+----------------------------------------------------------
+; ModuleID = 'XSharp'
+source_filename = "XSharp"
+
+declare i8 @printI64(i64 %0)
+
+define i64 @add(i64 %g, i64 %h) {
+entry:
+  %0 = add i64 %h, %g
+  ret i64 %0
+}
+
+define void @main() {
+entry:
+  %0 = call i64 @add(i64 10086, i64 100)
+  %1 = call i64 @add(i64 100, i64 10086)
+  %2 = add i64 %1, %0
+  %3 = call i8 @printI64(i64 %2)
+  %4 = call i64 @add(i64 100, i64 100)
+  %5 = call i64 @add(i64 100, i64 100)
+  %6 = add i64 %5, %4
+  %7 = call i8 @printI64(i64 %6)
+  ret void
+}
+Compliation Result of ./testcases/helloworld.xsharp:
+func [add](Var g:i64,Var h:i64)->[i64] {
+return [<g>] + [<h>]
+}
+func [main]()->[void] {
+Var a:i64
+Var b:i64
+[<a>] = [10086]
+[<b>] = [100]
+call <printI64>([call <add>(<a>,<b>)] + [call <add>(<b>,<a>)])
+call <printI64>([call <add>(<b>,<b>)] + [call <add>(<b>,<b>)])
+
+}
+
+; ModuleID = 'XSharp'
+source_filename = "XSharp"
+
+@a = external externally_initialized global i32
+
+declare i8 @printI64(i64 %0)
+
+define i32 @main() {
+entry:
+}
+Compliation Result of ./testcases/arithmetic.xsharp:
+func [main]()->[i32] {
+Var b:i32
+}
+Var a:i32
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"test3" end time: Mar 06 00:52 CST
+"test3" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/4 Testing: googletest
+4/4 Test: googletest
+Command: "/home/xchy/Projects/XSharp/test/test_utils"
+Directory: /home/xchy/Projects/XSharp/test
+"googletest" start time: Mar 06 00:52 CST
+Output:
+----------------------------------------------------------
+Running main() from /home/xchy/Projects/XSharp/_deps/googletest-src/googletest/src/gtest_main.cc
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from XStringTest
+[ RUN      ] XStringTest.FromCString
+[       OK ] XStringTest.FromCString (0 ms)
+[ RUN      ] XStringTest.Append
+[       OK ] XStringTest.Append (0 ms)
+[----------] 2 tests from XStringTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"googletest" end time: Mar 06 00:52 CST
+"googletest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Mar 06 00:52 CST

@@ -8,7 +8,6 @@
 #include "XSharpUtils.h"
 #include "OperInfo.h"
 
-// TODO: Fix bug of parsing function
 class XSharp_EXPORT Parser
 {
    public:
@@ -31,6 +30,7 @@ class XSharp_EXPORT Parser
 
     BlockNode* block();
     ASTNode* statement();
+    ASTNode* ifStatement();
 
     // end at the pos of stopwords
     ASTNode* expression(std::vector<TokenType> stopwords);

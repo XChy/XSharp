@@ -17,3 +17,8 @@ jobs:
         run: cmake .
       - name: Build
         run: make
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: ./test.sh

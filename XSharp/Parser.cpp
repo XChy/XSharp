@@ -190,6 +190,11 @@ ASTNode* Parser::statement()
     return stmt;
 }
 
+ASTNode* ifStatement()
+{
+    // TODO: complete if
+}
+
 ASTNode* Parser::expression(std::vector<TokenType> stopwords)
 {
     if (isStopwords(current, stopwords)) {
