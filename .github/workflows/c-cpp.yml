@@ -21,4 +21,4 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      run: /home/runner/work/XSharp/XSharp/test.sh
+      - run: /home/runner/work/XSharp/XSharp/test.sh
