@@ -226,7 +226,6 @@ ValueAndType LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
     if (op->operatorStr() == "+") {
         auto [lhs, lhs_type] = deReferenceIf(op->left());
         auto [rhs, rhs_type] = deReferenceIf(op->right());
-        builder.CreateArithmeticFence(nullptr, nullptr);
         return {builder.CreateAdd(lhs, rhs), XSharp::getI64Type()};
     }
 

@@ -5,10 +5,6 @@ i64 add(i64 g){
 void main(){
     i64 a;
     i64 b;
-    a=10;
-    b=6;
-    b = a + b;
-    printI64(a+b+b+add(2+a));
     return;
 }
 

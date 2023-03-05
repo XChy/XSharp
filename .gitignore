@@ -30,3 +30,4 @@ testcases/arithmetic.xsharp.bc
 testcases/helloworld.xsharp.bc
 testcases/helloworld.xsharp.o
 testcases/helloworld
+_deps

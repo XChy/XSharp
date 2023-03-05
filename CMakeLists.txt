@@ -18,9 +18,33 @@ make_directory(${PROJECT_SOURCE_DIR}/bin)
 make_directory(${PROJECT_SOURCE_DIR}/test/bin)
 make_directory(${PROJECT_SOURCE_DIR}/lib)
 
+# include(FetchContent) FetchContent_Declare( fmt URL
+# https://github.com/fmtlib/fmt/archive/refs/tags/8.0.1.tar.gz)
+# FetchContent_MakeAvailable(fmt)
+
 if(SUPPORT_LLVMIR)
   aux_source_directory("LLVMIR" SRC)
   add_definitions(-DXSharp_LLVMIR_SUPPORT)
+
+  find_package(LLVM REQUIRED CONFIG)
+
+  # execute_process( COMMAND llvm-config --cppflags OUTPUT_VARIABLE
+  # llvm_cppflags OUTPUT_STRIP_TRAILING_WHITESPACE) execute_process( COMMAND
+  # llvm-config --libs OUTPUT_VARIABLE llvm_libflags
+  # OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+  message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+
+  include_directories(${LLVM_INCLUDE_DIRS})
+  separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
+  add_definitions(${LLVM_DEFINITIONS_LIST})
+
+  execute_process(
+    COMMAND llvm-config --libs all
+    OUTPUT_VARIABLE llvm_libs
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 endif()
 
 if(SUPPORT_XSharpIR)
@@ -36,7 +60,6 @@ if(BUILD_SHARED_LIBRARY)
   set_target_properties(XSharp_SHARED PROPERTIES OUTPUT_NAME "XSharp")
   set_target_properties(XSharp_SHARED PROPERTIES LIBRARY_OUTPUT_DIRECTORY
                                                  "${PROJECT_SOURCE_DIR}/lib")
-  # target_link_libraries(XSharp_SHARED ${llvm_libs})
 
 endif()
 
@@ -49,27 +72,34 @@ if(BUILD_STATIC_LIBRARY)
   set_target_properties(XSharp_STATIC PROPERTIES LIBRARY_OUTPUT_DIRECTORY
                                                  "${PROJECT_SOURCE_DIR}/lib")
 
-  # target_link_libraries(XSharp_STATIC ${llvm_libs})
+  if(SUPPORT_LLVMIR)
+    target_link_libraries(XSharp_STATIC ${llvm_libs})
+  endif()
 endif()
 
 if(BUILD_TEST)
   message(STATUS "Build test samples")
 
   make_directory(test/bin)
-  add_executable(XSharp_TEST test/test.cpp ${SRC})
+  add_executable(XSharp_TEST test/test.cpp)
   set_target_properties(
     XSharp_TEST PROPERTIES OUTPUT_NAME
                            "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST")
 
-  add_executable(XSharp_TEST_UTILS test/test_utils.cpp ${SRC})
+  add_executable(XSharp_TEST_UTILS test/test_utils.cpp)
   set_target_properties(
     XSharp_TEST_UTILS
     PROPERTIES OUTPUT_NAME "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST_UTILS")
 
-  add_executable(XSharp_TEST_LLVM test/test_llvm.cpp ${SRC})
+  add_executable(XSharp_TEST_LLVM test/test_llvm.cpp)
   set_target_properties(
     XSharp_TEST_LLVM PROPERTIES OUTPUT_NAME
                                 "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST_LLVM")
+  if(SUPPORT_LLVMIR)
+    target_link_libraries(XSharp_TEST ${llvm_libs} XSharp_STATIC)
+    target_link_libraries(XSharp_TEST_UTILS ${llvm_libs} XSharp_STATIC)
+    target_link_libraries(XSharp_TEST_LLVM ${llvm_libs} XSharp_STATIC)
+  endif()
 endif()
 
 # Shared Library is necessary
@@ -80,9 +110,12 @@ endif()
 if(BUILD_XSharpCLI)
   message(STATUS "Build XSharp's CLI")
 
-  add_executable(XSharpC XSharpCLI/xsharpc.cpp ${SRC})
+  add_executable(XSharpC XSharpCLI/xsharpc.cpp)
   set_target_properties(XSharpC PROPERTIES OUTPUT_NAME
                                            "${CMAKE_SOURCE_DIR}/bin/xsharpc")
+  if(SUPPORT_LLVMIR)
+    target_link_libraries(XSharpC ${llvm_libs})
+  endif()
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -94,10 +127,10 @@ set(CMAKE_BUILD_TYPE Debug)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS_DEBUG
-      "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -fsanitize=address -Wall -Wno-unused-variable -pthread -O0 -g -ggdb -I/usr/lib/llvm-14/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/lib/llvm-14/lib -lLLVM-14"
+      "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -Wall -Wno-unused-variable -pthread -O0 -g -ggdb -std=c++20"
   )
   set(CMAKE_CXX_FLAGS_RELEASE
-      "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O2 -pthread -fopenmp")
+      "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20  -O2 -pthread -fopenmp")
 endif()
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)

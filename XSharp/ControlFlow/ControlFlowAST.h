@@ -12,10 +12,11 @@ class XSharp_EXPORT IfNode
    public:
     XString dump() const;
     ~IfNode();
+
     ASTNode* condition();
-    ASTNode* setCondition(ASTNode* cond);
+    void setCondition(ASTNode* cond);
     ASTNode* block();
-    ASTNode* setBlock(ASTNode* block);
+    void setBlock(ASTNode* block);
 
    private:
     ASTNode* _condition;
@@ -29,13 +30,13 @@ class XSharp_EXPORT ElseIfNode
     ~ElseIfNode();
 
     ASTNode* condition();
-    ASTNode* setCondition(ASTNode* cond);
+    void setCondition(ASTNode* cond);
 
     ASTNode* block();
-    ASTNode* setBlock(ASTNode* block);
+    void setBlock(ASTNode* block);
 
     ASTNode* lastIf();
-    ASTNode* setLastIf(ASTNode* lastIf);
+    void setLastIf(ASTNode* lastIf);
 
    private:
     ASTNode* _lastIf;
@@ -46,8 +47,8 @@ class XSharp_EXPORT ElseIfNode
 class XSharp_EXPORT ElseNode
 {
    public:
-    virtual XString dump() const;
-    virtual ~ElseNode();
+    XString dump() const;
+    ~ElseNode();
 
    private:
     ASTNode* _lastIf;
@@ -57,8 +58,8 @@ class XSharp_EXPORT ElseNode
 class XSharp_EXPORT ForNode
 {
    public:
-    virtual XString dump() const;
-    virtual ~ForNode();
+    XString dump() const;
+    ~ForNode();
 
    private:
 };
@@ -66,8 +67,8 @@ class XSharp_EXPORT ForNode
 class XSharp_EXPORT WhileNode
 {
    public:
-    virtual XString dump() const;
-    virtual ~WhileNode();
+    XString dump() const;
+    ~WhileNode();
 
    private:
 };
@@ -75,8 +76,8 @@ class XSharp_EXPORT WhileNode
 class XSharp_EXPORT ContinueNode
 {
    public:
-    virtual XString dump() const;
-    virtual ~ContinueNode();
+    XString dump() const;
+    ~ContinueNode();
 
    private:
 };
@@ -84,8 +85,8 @@ class XSharp_EXPORT ContinueNode
 class XSharp_EXPORT BreakNode
 {
    public:
-    virtual XString dump() const;
-    virtual ~BreakNode();
+    XString dump() const;
+    ~BreakNode();
 
    private:
 };
