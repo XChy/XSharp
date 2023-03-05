@@ -1,3 +1,4 @@
+#pragma once
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/SymbolTable.h"
 

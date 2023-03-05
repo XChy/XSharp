@@ -1,3 +1,4 @@
+#pragma once
 #include <llvm/IR/LegacyPassManager.h>
 
 class Optimizer
