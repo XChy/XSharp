@@ -13,8 +13,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name:
-        run: sudo apt install llvm-14-dev
       - name: CMake Configure
         run: cmake .
       - name: Build

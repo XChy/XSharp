@@ -35,10 +35,8 @@ if(SUPPORT_LLVMIR)
   separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
   add_definitions(${LLVM_DEFINITIONS_LIST})
 
-  execute_process(
-    COMMAND llvm-config --libfiles
-    OUTPUT_VARIABLE llvm_libs
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  llvm_map_components_to_libnames(llvm_libs all support core codegen irreader)
+  # execute_process(COMMAND llvm-config --libfiles OUTPUT_VARIABLE llvm_libs)
 
   message(STATUS "LLVM LIBS: ${llvm_libs}")
 
