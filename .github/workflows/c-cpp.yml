@@ -9,9 +9,12 @@ on:
 jobs:
   install_llvm:
     runs-on: ubuntu-latest
-    name: "Install LLVM and Clang"
     steps:
-      - uses: KyleMayes/install-llvm-action@v1.7.0
+      - name: "Install LLVM and Clang"
+        uses: KyleMayes/install-llvm-action@v1.7.0
+        with:
+          version: "10.0"
+          directory: ${{ runner.temp }}/llvm
 
   build:
     name: "Ubuntu Build"
