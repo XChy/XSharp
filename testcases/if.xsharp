@@ -1,0 +1,6 @@
+i64 main()
+{
+    if(1){
+        printI64(add(a,b)+add(b,a));
+    }
+}

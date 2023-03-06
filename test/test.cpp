@@ -9,7 +9,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <unistd.h>
 
 void test(const char *path);
 
@@ -54,6 +53,7 @@ void test(const char *path)
     Lexer lexer;
     auto tokens = lexer.tokenize(code);
 
+    using XSharp::Parser;
     Parser parser;
     auto ast = parser.parse(tokens);
     std::cout << ast->dump().toStdString();

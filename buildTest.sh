@@ -6,7 +6,7 @@ projectDir=$(dirname $0)
 
 targetName=$1
 
-${projectDir}/test/bin/XSharp_TEST
+${projectDir}/test/test
 
 llc -filetype=obj ${projectDir}/testcases/${targetName}.xsharp.bc
 
