@@ -22,5 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: ls -la
+      - run: cd /home/runner/work/XSharp/XSharp
+      - run: ls -la
       - uses: actions/checkout@v3
       - run: ./test.sh
