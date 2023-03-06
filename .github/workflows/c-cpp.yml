@@ -21,5 +21,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - run: ls -la
       - uses: actions/checkout@v3
       - run: ./test.sh

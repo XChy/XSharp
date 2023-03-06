@@ -1,7 +1,0 @@
-googletest 6 0.000911615
-googletest 6 0.000911615
-googletest 6 0.000911615
-test1 5 0.0011121
-test2 5 0.000813208
-test3 5 0.00235716
----

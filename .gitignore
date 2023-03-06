@@ -37,3 +37,5 @@ test/Makefile
 test/test
 test/test_llvm
 test/test_utils
+Testing/Temporary
+Testing/Temporary
