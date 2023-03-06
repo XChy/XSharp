@@ -21,8 +21,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - run: ls -la
-      - run: cd /home/runner/work/XSharp/XSharp
-      - run: ls -la
+      - run: |
+          ls -la
+          cd /home/runner/work/XSharp/XSharp
+          ls -la
       - uses: actions/checkout@v3
-      - run: ./test.sh
+      - name: GTest
+        working-directory: ${{github.workspace}}
+        run: ./test.sh
