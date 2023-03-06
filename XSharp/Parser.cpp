@@ -2,10 +2,13 @@
 #include <algorithm>
 #include <vector>
 #include "XSharp/ASTNodes.h"
+#include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Tokens.h"
 #include "XSharp/Type.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
+
+using namespace XSharp;
 
 ASTNode* Parser::parse(const std::vector<Token>& tokenList)
 {
@@ -170,6 +173,7 @@ ASTNode* Parser::statement()
                 stmt = new ReturnNode(expression({SentenceEnd}));
                 forward();
             } else if (current->value == "if") {
+                stmt = ifStatement();
             }
             break;
         case Identifier:
@@ -190,9 +194,38 @@ ASTNode* Parser::statement()
     return stmt;
 }
 
-ASTNode* ifStatement()
+ASTNode* Parser::ifStatement()
 {
-    // TODO: complete if
+    ASTNode* root;
+    ASTNode* condition;
+    ASTNode* codeblock;
+    if (current->value != "if") {
+        throw XSharpError(ParsingError, "No 'if' matched");
+        return nullptr;
+    }
+    forward();
+
+    // Condtion
+    if (current->type == OpenParenthesis) {
+        forward();
+        condition = expression({CloseParenthesis});
+        forward();
+    } else {
+        throw XSharpError(ParsingError, "No 'if' matched");
+        return nullptr;
+    }
+
+    // Code Block
+    if (current->type == OpenBrace) {
+        codeblock = block();
+    } else {
+        codeblock = statement();
+    }
+
+    IfNode* ifNode = new IfNode{condition, codeblock};
+    root = ifNode;
+
+    return root;
 }
 
 ASTNode* Parser::expression(std::vector<TokenType> stopwords)

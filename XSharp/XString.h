@@ -1,7 +1,10 @@
 #pragma once
 
+#include <math.h>
+#include <cmath>
 #include <cstring>
 #include <string>
+#include <type_traits>
 #include "xsharp_global.h"
 #include "SharedData.h"
 
@@ -118,37 +121,43 @@ class XSharp_EXPORT XString
     static XString fromAscii(const char* asciiStr);
     static XString fromUtf8(const char* utf8Str);
 
-    template <typename Interger>
-    static XString fromInterger(Interger v, int base = 10)
+    template <typename Integer>
+    static XString fromInterger(Integer integer, int base = 10)
     {
         XString result;
-        bool isMinus = v < 0;
-        v = llabs(v);
+        bool isMinus;
+        Integer absValue;
+
+        if (std::is_signed<Integer>::value) {
+            isMinus = integer < 0;
+            absValue = llabs(integer);
+        } else {
+            isMinus = false;
+        }
+
         switch (base) {
             case 2:
-                if (isMinus) {
-                    result.append('-');
-                }
-                while (v != 0) {
-                    result.append((v & 1) ? '1' : '0');
-                    v >>= 1;
+                if (isMinus) result.append('-');
+
+                while (absValue != 0) {
+                    result.append((absValue & 1) ? '1' : '0');
+                    absValue >>= 1;
                 }
                 break;
             case 10:
-                result = std::to_string(v).data();
+                result.append(std::to_string(integer));
                 break;
             case 16:
-                if (isMinus) {
-                    result.append('-');
-                }
-                while (v != 0) {
-                    int base16 = v & 0xf;
+                if (isMinus) result.append('-');
+
+                while (absValue != 0) {
+                    int base16 = absValue & 0xf;
                     if (base16 >= 0 && base16 <= 9) {
                         result.append(char(base16 + '0'));
                     } else {
                         result.append(char(base16 - 10 + 'a'));
                     }
-                    v >>= 4;
+                    absValue >>= 4;
                 }
                 break;
         }

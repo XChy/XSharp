@@ -7,6 +7,7 @@
 #include "Tokens.h"
 #include "XSharpUtils.h"
 #include "OperInfo.h"
+namespace XSharp {
 
 class XSharp_EXPORT Parser
 {
@@ -51,3 +52,4 @@ class XSharp_EXPORT Parser
     Iterator current;
     Iterator end;
 };
+}  // namespace XSharp

@@ -8,20 +8,14 @@ using namespace XSharp;
 // If
 XString IfNode::dump() const
 {
-    return fmt::format("If({}){}", _condition->dump(), _block->dump());
+    return fmt::format("If({}){}", condition->dump(), block->dump());
 }
 
 IfNode::~IfNode()
 {
-    delete _condition;
-    delete _block;
+    delete condition;
+    delete block;
 }
-
-ASTNode* IfNode::condition() { return _condition; }
-void IfNode::setCondition(ASTNode* cond) { _condition = cond; }
-BlockNode* IfNode::block() { return _block; }
-void IfNode::setBlock(BlockNode* block) { _block = block; }
-
 // Else if
 XString ElseIfNode::dump() const
 {
@@ -81,17 +75,11 @@ ASTNode* WhileNode::block() { return _block; }
 void WhileNode::setBlock(BlockNode* block) { _block = block; }
 
 // Continue
-XString ContinueNode::dump() const
-{
-    return fmt::format("continue");
-}
+XString ContinueNode::dump() const { return fmt::format("continue"); }
 
 ContinueNode::~ContinueNode() {}
 
 // Break
-XString BreakNode::dump() const
-{
-    return fmt::format("break");
-}
+XString BreakNode::dump() const { return fmt::format("break"); }
 
 BreakNode::~BreakNode() {}

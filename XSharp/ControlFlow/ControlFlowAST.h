@@ -7,23 +7,23 @@ namespace XSharp {
 
 // TODO: implement the AST below
 
-class XSharp_EXPORT IfNode
+class XSharp_EXPORT IfNode : public ASTNode
 {
    public:
+    IfNode() : condition(nullptr), block(nullptr) {}
+    IfNode(ASTNode* cond, ASTNode* codeblock)
+        : condition(cond), block(codeblock)
+    {
+    }
     XString dump() const;
     ~IfNode();
 
-    ASTNode* condition();
-    void setCondition(ASTNode* cond);
-    BlockNode* block();
-    void setBlock(BlockNode* block);
-
-   private:
-    ASTNode* _condition;
-    BlockNode* _block;
+    // Children
+    ASTNode* condition;
+    ASTNode* block;
 };
 
-class XSharp_EXPORT ElseIfNode
+class XSharp_EXPORT ElseIfNode : public ASTNode
 {
    public:
     XString dump() const;
@@ -44,7 +44,7 @@ class XSharp_EXPORT ElseIfNode
     BlockNode* _block;
 };
 
-class XSharp_EXPORT ElseNode
+class XSharp_EXPORT ElseNode : public ASTNode
 {
    public:
     XString dump() const;
@@ -61,7 +61,7 @@ class XSharp_EXPORT ElseNode
     BlockNode* _block;
 };
 
-class XSharp_EXPORT ForNode
+class XSharp_EXPORT ForNode : public ASTNode
 {
    public:
     XString dump() const;
@@ -70,7 +70,7 @@ class XSharp_EXPORT ForNode
    private:
 };
 
-class XSharp_EXPORT WhileNode
+class XSharp_EXPORT WhileNode : public ASTNode
 {
    public:
     XString dump() const;
@@ -87,7 +87,7 @@ class XSharp_EXPORT WhileNode
     BlockNode* _block;
 };
 
-class XSharp_EXPORT ContinueNode
+class XSharp_EXPORT ContinueNode : public ASTNode
 {
    public:
     XString dump() const;
@@ -96,7 +96,7 @@ class XSharp_EXPORT ContinueNode
    private:
 };
 
-class XSharp_EXPORT BreakNode
+class XSharp_EXPORT BreakNode : public ASTNode
 {
    public:
     XString dump() const;

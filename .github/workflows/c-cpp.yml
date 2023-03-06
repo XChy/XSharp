@@ -18,6 +18,8 @@ jobs:
         run: make
       - name: Test
         run: ./test.sh
+      - name: Test Result
+        run: cat ./Testing/Temporary/LastTest.log
 
   #test:
   #needs: build
