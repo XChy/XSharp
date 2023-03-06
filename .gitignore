@@ -40,3 +40,5 @@ test/test_utils
 Testing/Temporary
 Testing/Temporary
 testcases/if.xsharp.bc
+testcases/if
+testcases/if.xsharp.o

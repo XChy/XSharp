@@ -11,6 +11,7 @@
 #include <llvm/IR/TypeFinder.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include "XSharp/ASTNodes.h"
+#include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Type.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
@@ -35,6 +36,7 @@ class LLVMHelper
     ValueAndType genCall(FunctionCallNode* call);
     ValueAndType genBinaryOp(BinaryOperatorNode* op);
     ValueAndType genUnaryOp(UnaryOperatorNode* op);
+    ValueAndType genIf(XSharp::IfNode* ifNode);
 
     // universal code generation for XSharp's AST
     // return [LLVM-IR's Value, XSharp's Type]

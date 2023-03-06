@@ -272,6 +272,36 @@ ValueAndType LLVMHelper::genUnaryOp(UnaryOperatorNode* op)
     return {nullptr, nullptr};
 }
 
+ValueAndType LLVMHelper::genIf(XSharp::IfNode* ifNode)
+{
+    using llvm::BasicBlock;
+    llvm::Function* currentFunc = builder.GetInsertBlock()->getParent();
+
+    BasicBlock* thenBlock =
+        BasicBlock::Create(context, "true_case", currentFunc);
+    BasicBlock* elseBlock =
+        BasicBlock::Create(context, "false_case", currentFunc);
+    BasicBlock* endBlock = BasicBlock::Create(context, "endif", currentFunc);
+
+    auto [cond_val, cond_type] = deReferenceIf(ifNode->condition);
+    builder.CreateCondBr(cond_val, thenBlock, elseBlock);
+
+    // then
+    builder.SetInsertPoint(thenBlock);
+    auto [then_val, then_type] = codegen(ifNode->block);
+    builder.CreateBr(endBlock);
+
+    // else
+    builder.SetInsertPoint(elseBlock);
+    if (ifNode->elseAst) auto [else_val, else_type] = codegen(ifNode->elseAst);
+    builder.CreateBr(endBlock);
+
+    // end
+    builder.SetInsertPoint(endBlock);
+
+    return {nullptr, XSharp::getVoidType()};
+}
+
 ValueAndType LLVMHelper::codegen(ASTNode* node)
 {
     using namespace llvm;
@@ -336,6 +366,9 @@ ValueAndType LLVMHelper::codegen(ASTNode* node)
                 {XSharpErrorType::SemanticsError, "Variable {} doesn't exist"});
             return {nullptr, nullptr};
         }
+    }
+    if (node->is<XSharp::IfNode>()) {
+        genIf(node->to<XSharp::IfNode>());
     }
     if (node->is<MemberNode>()) {
     }

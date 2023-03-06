@@ -1,9 +1,13 @@
+i64 add(i64 g,i64 h){
+    return g+h;
+}
+
 i64 main()
 {
-    if(1+2*a){
-        printI64(add(a,b)+add(b,a));
-    }else if(1){
-        printI64(add(a,b)+add(b,a));
-
+    if(false){
+        printI64(add(0,2)+add(2,0));
+    }else if(true){
+        printI64(add(0,3)+add(3,0));
     }
+    return 12;
 }
