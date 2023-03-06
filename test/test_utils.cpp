@@ -13,7 +13,8 @@ std::vector<const char*> corpus = {
     "123112",
     "Nothing is better than programming",
     "Test Test Test Test Test Test Test Test Test Test Test Test Test Test "
-    "Test Test Test Test",
+    "Test Test Test Test Test Test Test Test Test Test Test Test Test Test "
+    "Test Test Test Test Test Test Test Test Test Test Test Test Test Test ",
     "\0 1\0 1\0 4\0 5\0 1\0 4\0"
     "控制台，终端和tty是密切相关的。原本它们都表示一台可以和计算机交互的设备"};
 

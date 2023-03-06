@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <iostream>
 #include "XSharp/XString.h"
+#include "fmt/core.h"
 
 #include <dirent.h>
 #include <string.h>
@@ -30,7 +31,7 @@ int main()
         closedir(working_dir);
 
     } catch (XSharpError e) {
-        std::cout << e.errorInfo.toStdString();
+        fmt::print("{}", e.errorInfo);
     }
     return 0;
 }
@@ -56,7 +57,7 @@ void test(const char *path)
     using XSharp::Parser;
     Parser parser;
     auto ast = parser.parse(tokens);
-    std::cout << ast->dump().toStdString();
+    fmt::print("{}", ast->dump());
 
     LLVMHelper helper;
     helper.generateLLVMIR(ast, XString(path).append(".bc"));

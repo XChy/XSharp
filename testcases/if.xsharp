@@ -1,6 +1,9 @@
 i64 main()
 {
-    if(1){
+    if(1+2*a){
         printI64(add(a,b)+add(b,a));
+    }else if(1){
+        printI64(add(a,b)+add(b,a));
+
     }
 }

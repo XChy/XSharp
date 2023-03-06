@@ -1,4 +1,6 @@
 #include "Lexer.h"
+#include <cstdint>
+#include "XSharp/Tokens.h"
 
 Lexer::Lexer() {}
 
@@ -94,6 +96,9 @@ std::vector<Token> Lexer::tokenize(const XString &source) const
         } else if (*it == '.') {
             ++it;
             result.push_back(Token(Dot, "."));
+        } else if (*it == ':') {
+            ++it;
+            result.push_back(Token(Colon, ":"));
         } else if (it->isSpace() || *it == '\n' || *it == '\r') {
             ++it;
         } else {
@@ -111,7 +116,7 @@ XString Lexer::hex(XString::const_iterator &it) const
         result.append(*it);
         ++it;
     }
-    return XString::fromInterger(result.toInteger<long long>(16), 10);
+    return XString::fromInterger(result.toInteger<int64_t>(16), 10);
 }
 
 XString Lexer::bin(XString::const_iterator &it) const
@@ -121,7 +126,7 @@ XString Lexer::bin(XString::const_iterator &it) const
         result.append(*it);
         ++it;
     }
-    return XString::fromInterger(result.toInteger<long long>(2), 10);
+    return XString::fromInterger(result.toInteger<int64_t>(2), 10);
 }
 
 Token Lexer::dec(XString::const_iterator &it) const

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/TypeSystem.h"
 #include "xsharp_global.h"
 #include "ASTNodes.h"
@@ -31,7 +32,7 @@ class XSharp_EXPORT Parser
 
     BlockNode* block();
     ASTNode* statement();
-    ASTNode* ifStatement();
+    IfNode* ifStatement();
 
     // end at the pos of stopwords
     ASTNode* expression(std::vector<TokenType> stopwords);

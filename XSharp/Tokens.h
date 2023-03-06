@@ -42,6 +42,7 @@ enum TokenType {
     Operator,
     Comma,
     Dot,
+    Colon,
     OpenParenthesis,
     CloseParenthesis,
     OpenBracket,
@@ -60,6 +61,10 @@ class XSharp_EXPORT Token
     Token(TokenType type, const XString& value);
 
     XString dump() const;
+
+    bool is(TokenType type) const;
+    bool isOperator(const XString& op) const;
+    bool isKeyword(const XString& keyword) const;
 
     TokenType type;
     XString value;

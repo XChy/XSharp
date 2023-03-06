@@ -21,11 +21,9 @@ DefinitionsNode* Parser::definitions()
 {
     DefinitionsNode* root = new DefinitionsNode;
     while (current != end) {
-        if (current->type == Keyword) {
-            if (current->value == "class") {
-                root->addClass(classDeclaration());
-            }
-        } else if (current->type == Identifier) {
+        if (current->isKeyword("class")) {
+            root->addClass(classDeclaration());
+        } else if (current->is(Identifier)) {
             forward();
             // TODO: Identify the variable and function when parsing
             if (current->type == Identifier) {  // Function or variable
@@ -34,9 +32,8 @@ DefinitionsNode* Parser::definitions()
                     backward();
                     backward();
                     root->addFunction(functionDeclaration());
-                } else if ((current->type == SentenceEnd) ||
-                           (current->type == Operator &&
-                            current->value == "=")) {  // define variable
+                } else if (current->is(SentenceEnd) ||
+                           current->isOperator("=")) {  // define variable
                     backward();
                     backward();
                     root->addVariable(variableDeclaration({SentenceEnd}));
@@ -91,7 +88,7 @@ VariableDeclarationNode* Parser::variableDeclaration(
     if (isStopwords(current, stopwords)) {
         root->setInitValue(nullptr);
         forward();
-    } else if (current->type == Operator && current->value == "=") {
+    } else if (current->isOperator("=")) {
         forward();
         root->setInitValue(expression(stopwords));
         forward();
@@ -112,9 +109,9 @@ std::vector<VariableDeclarationNode*> Parser::paramsDefinition()
         paramsDef.push_back(variableDeclaration({Comma, CloseParenthesis}));
         backward();
 
-        if (current->type == CloseParenthesis)
+        if (current->is(CloseParenthesis))
             break;
-        else if (current->type == Comma)
+        else if (current->is(Comma))
             forward();
         else
             throw XSharpError("')' expected is missing");
@@ -125,13 +122,13 @@ std::vector<VariableDeclarationNode*> Parser::paramsDefinition()
 std::vector<ASTNode*> Parser::paramsList()
 {
     std::vector<ASTNode*> results;
-    if (current->type == CloseParenthesis) return results;
+    if (current->is(CloseParenthesis)) return results;
 
     while (true) {
         results.push_back(expression({CloseParenthesis, Comma}));
-        if (current->type == CloseParenthesis)
+        if (current->is(CloseParenthesis))
             break;
-        else if (current->type == Comma)
+        else if (current->is(Comma))
             current++;
     }
     return results;
@@ -194,12 +191,12 @@ ASTNode* Parser::statement()
     return stmt;
 }
 
-ASTNode* Parser::ifStatement()
+IfNode* Parser::ifStatement()
 {
-    ASTNode* root;
+    IfNode* ifNode = nullptr;
     ASTNode* condition;
     ASTNode* codeblock;
-    if (current->value != "if") {
+    if (!current->isKeyword("if")) {
         throw XSharpError(ParsingError, "No 'if' matched");
         return nullptr;
     }
@@ -222,10 +219,18 @@ ASTNode* Parser::ifStatement()
         codeblock = statement();
     }
 
-    IfNode* ifNode = new IfNode{condition, codeblock};
-    root = ifNode;
+    ifNode = new IfNode{condition, codeblock};
 
-    return root;
+    while (current->isKeyword("else")) {
+        forward();
+        if (current->type == OpenBrace) {
+            ifNode->elseAst = block();
+        } else {
+            ifNode->elseAst = statement();
+        }
+    }
+
+    return ifNode;
 }
 
 ASTNode* Parser::expression(std::vector<TokenType> stopwords)
@@ -326,8 +331,7 @@ ASTNode* Parser::operand()
     if (current->type == Operator) {
         before = new UnaryOperatorNode;
         before->setOperatorStr(current->value);
-
-        current++;
+        forward();
     }
 
     if (current->type == Integer) {

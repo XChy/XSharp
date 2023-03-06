@@ -65,6 +65,17 @@ XString Token::dump() const
     return result;
 }
 
+bool Token::is(TokenType type) const { return this->type == type; }
+
+bool Token::isOperator(const XString &op) const
+{
+    return type == Operator && value == op;
+}
+bool Token::isKeyword(const XString &keyword) const
+{
+    return type == Keyword && value == keyword;
+}
+
 bool XSharp::isKeyword(const XString &keyword)
 {
     if (keywords.find(keyword) == keywords.end())

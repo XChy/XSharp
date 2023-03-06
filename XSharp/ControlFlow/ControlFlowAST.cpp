@@ -8,13 +8,18 @@ using namespace XSharp;
 // If
 XString IfNode::dump() const
 {
-    return fmt::format("If({}){}", condition->dump(), block->dump());
+    if (!elseAst)
+        return fmt::format("If({}){}", condition->dump(), block->dump());
+    else
+        return fmt::format("If ({}) {} Else {}", condition->dump(),
+                           block->dump(), elseAst->dump());
 }
 
 IfNode::~IfNode()
 {
     delete condition;
     delete block;
+    if (elseAst) delete elseAst;
 }
 // Else if
 XString ElseIfNode::dump() const

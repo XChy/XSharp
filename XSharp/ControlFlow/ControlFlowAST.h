@@ -10,17 +10,22 @@ namespace XSharp {
 class XSharp_EXPORT IfNode : public ASTNode
 {
    public:
-    IfNode() : condition(nullptr), block(nullptr) {}
+    IfNode() : condition(nullptr), block(nullptr), elseAst(nullptr) {}
     IfNode(ASTNode* cond, ASTNode* codeblock)
-        : condition(cond), block(codeblock)
+        : condition(cond), block(codeblock), elseAst(nullptr)
     {
     }
     XString dump() const;
     ~IfNode();
 
     // Children
+
+    // <if> ( <condition> ) <statements> [else...]
     ASTNode* condition;
     ASTNode* block;
+
+    // <if> or <else> following <if>
+    ASTNode* elseAst;
 };
 
 class XSharp_EXPORT ElseIfNode : public ASTNode
