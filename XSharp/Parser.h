@@ -32,7 +32,9 @@ class XSharp_EXPORT Parser
 
     BlockNode* block();
     ASTNode* statement();
+
     IfNode* ifStatement();
+    WhileNode* whileStatement();
 
     // end at the pos of stopwords
     ASTNode* expression(std::vector<TokenType> stopwords);

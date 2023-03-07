@@ -78,18 +78,14 @@ class XSharp_EXPORT ForNode : public ASTNode
 class XSharp_EXPORT WhileNode : public ASTNode
 {
    public:
+    WhileNode() : condition(nullptr), block(nullptr){};
+    WhileNode(ASTNode* condition, ASTNode* block)
+        : condition(condition), block(block){};
     XString dump() const;
     ~WhileNode();
 
-    ASTNode* condition();
-    void setCondition(ASTNode* cond);
-
-    ASTNode* block();
-    void setBlock(BlockNode* block);
-
-   private:
-    ASTNode* _condition;
-    BlockNode* _block;
+    ASTNode* condition;
+    ASTNode* block;
 };
 
 class XSharp_EXPORT ContinueNode : public ASTNode

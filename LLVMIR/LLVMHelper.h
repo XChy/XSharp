@@ -37,6 +37,7 @@ class LLVMHelper
     ValueAndType genBinaryOp(BinaryOperatorNode* op);
     ValueAndType genUnaryOp(UnaryOperatorNode* op);
     ValueAndType genIf(XSharp::IfNode* ifNode);
+    ValueAndType genWhile(XSharp::WhileNode* whileNode);
 
     // universal code generation for XSharp's AST
     // return [LLVM-IR's Value, XSharp's Type]

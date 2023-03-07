@@ -19,6 +19,7 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/BuiltIn.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Symbol.h"
 #include "XSharp/Type.h"
 #include "XSharp/TypeSystem.h"
@@ -302,6 +303,29 @@ ValueAndType LLVMHelper::genIf(XSharp::IfNode* ifNode)
     return {nullptr, XSharp::getVoidType()};
 }
 
+ValueAndType LLVMHelper::genWhile(XSharp::WhileNode* whileNode)
+{
+    using llvm::BasicBlock;
+    llvm::Function* currentFunc = builder.GetInsertBlock()->getParent();
+
+    BasicBlock* loopBlock =
+        BasicBlock::Create(context, "while_loop", currentFunc);
+    BasicBlock* endBlock = BasicBlock::Create(context, "endWhile", currentFunc);
+
+    builder.SetInsertPoint(loopBlock);
+
+    // Loop inner
+    auto [cond_val, cond_type] = deReferenceIf(whileNode->condition);
+    builder.CreateCondBr(cond_val, loopBlock, endBlock);
+    auto [then_val, then_type] = codegen(whileNode->block);
+    builder.CreateBr(loopBlock);
+
+    // end loop
+    builder.SetInsertPoint(endBlock);
+
+    return {nullptr, XSharp::getVoidType()};
+}
+
 ValueAndType LLVMHelper::codegen(ASTNode* node)
 {
     using namespace llvm;
@@ -355,6 +379,9 @@ ValueAndType LLVMHelper::codegen(ASTNode* node)
     }
     if (node->is<FunctionCallNode>()) {
         return genCall(node->to<FunctionCallNode>());
+    }
+    if (node->is<XSharp::WhileNode>()) {
+        return genWhile(node->to<XSharp::WhileNode>());
     }
     if (node->is<VariableNode>()) {
         VariableNode* var = node->to<VariableNode>();

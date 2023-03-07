@@ -65,20 +65,13 @@ void ElseNode::setLastIf(ASTNode* lastIf) { _lastIf = lastIf; }
 // While
 XString WhileNode::dump() const
 {
-    return fmt::format("while({}){}", _condition->dump(), _block->dump());
+    return fmt::format("while({}){}", condition->dump(), block->dump());
 }
 WhileNode::~WhileNode()
 {
-    delete _condition;
-    delete _block;
+    delete condition;
+    delete block;
 }
-
-ASTNode* WhileNode::condition() { return _condition; }
-void WhileNode::setCondition(ASTNode* cond) { _condition = cond; }
-
-ASTNode* WhileNode::block() { return _block; }
-void WhileNode::setBlock(BlockNode* block) { _block = block; }
-
 // Continue
 XString ContinueNode::dump() const { return fmt::format("continue"); }
 

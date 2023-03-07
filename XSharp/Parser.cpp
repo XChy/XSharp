@@ -171,6 +171,8 @@ ASTNode* Parser::statement()
                 forward();
             } else if (current->value == "if") {
                 stmt = ifStatement();
+            } else if (current->value == "while") {
+                stmt = whileStatement();
             }
             break;
         case Identifier:
@@ -231,6 +233,37 @@ IfNode* Parser::ifStatement()
     }
 
     return ifNode;
+}
+
+WhileNode* Parser::whileStatement()
+{
+    WhileNode* whileNode = nullptr;
+    ASTNode* condition;
+    ASTNode* codeblock;
+    if (!current->isKeyword("while")) {
+        throw XSharpError(ParsingError, "No 'while' matched");
+        return nullptr;
+    }
+    forward();
+
+    // Condtion
+    if (current->type == OpenParenthesis) {
+        forward();
+        condition = expression({CloseParenthesis});
+        forward();
+    } else {
+        throw XSharpError(ParsingError, "No 'while' matched");
+        return nullptr;
+    }
+
+    // Code Block
+    if (current->type == OpenBrace) {
+        codeblock = block();
+    } else {
+        codeblock = statement();
+    }
+
+    return new WhileNode{condition, codeblock};
 }
 
 ASTNode* Parser::expression(std::vector<TokenType> stopwords)
