@@ -1,17 +1,8 @@
-i64 add(i64 g,i64 h){
-    return g+h;
-}
 
 i64 main()
 {
-    if(false){
-        printI64(add(0,2)+add(2,0));
-    }else if(true){
-        printI64(add(0,3)+add(3,0));
-    }
-    while(true){
-        printI64(1+2);
-        printI64(1+3);
-        }
-    return 12;
+    double a;
+    a = 1.1;
+    print(a);
+    return 10;
 }

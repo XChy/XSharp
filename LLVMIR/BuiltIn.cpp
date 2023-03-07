@@ -7,12 +7,34 @@
 #include <cstdint>
 #include "LLVMIR/BuiltIn.h"
 #include "XSharp/SymbolTable.h"
+#include "XSharp/Types/TypeSystem.h"
 void setUpBuildIn(llvm::Module& module, llvm::LLVMContext& context,
                   XSharp::SymbolTable& symbols)
 {
     using namespace llvm;
-    // IO
     module.getOrInsertFunction(
-        "printI64", FunctionType::get(Type::getInt8Ty(context),
-                                      {Type::getInt64Ty(context)}, false));
+        "printI64",
+        FunctionType::get(Type::getInt8Ty(context), {Type::getInt64Ty(context)},
+                          false));  // IO
+    module.getOrInsertFunction(
+        "printI32",
+        FunctionType::get(Type::getInt8Ty(context), {Type::getInt32Ty(context)},
+                          false));  // IO
+    module.getOrInsertFunction("printDouble",
+                               FunctionType::get(Type::getInt8Ty(context),
+                                                 {Type::getDoubleTy(context)},
+                                                 false));  // IO
+
+    symbols.addSymbol(
+        XSharp::Symbol{.name = "print",
+                       .symbolType = XSharp::SymbolType::Function,
+                       .type = XSharp::getFunctionType(XSharp::getBooleanType(),
+                                                       {XSharp::getI32Type()}),
+                       .definition = module.getFunction("printI32")});
+    symbols.addSymbol(
+        XSharp::Symbol{.name = "print",
+                       .symbolType = XSharp::SymbolType::Function,
+                       .type = XSharp::getFunctionType(
+                           XSharp::getBooleanType(), {XSharp::getDoubleType()}),
+                       .definition = module.getFunction("printDouble")});
 }

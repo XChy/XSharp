@@ -1,5 +1,4 @@
-#include "TypeSystem.h" #include < algorithm> #include "XSharp/Type.h"
-#include "XSharp/Type.h"
+#include "TypeSystem.h"
 
 using namespace XSharp;
 
@@ -111,3 +110,4 @@ TypeNode* XSharp::getTypeFor(const XString& baseName)
     } else {
         return getClassType(baseName);
     }
+}

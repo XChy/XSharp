@@ -15,6 +15,7 @@ enum class SymbolType {
     Function,
     BuiltInFunction,
     Class,
+    NoneSymbol
 };
 
 struct Symbol {

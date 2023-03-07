@@ -23,7 +23,7 @@ TypeNode::TypeNode(const TypeNode& other)
         case Function: {
             FunctionType function;
             function.returnValueType = new TypeNode(*other.returnValueType());
-            for (TypeNode* param : other.paramsType())
+            for (TypeNode* param : other.parameterTypes())
                 function.paramTypes.push_back(new TypeNode(*param));
             typeSpecifiedInfo = function;
         } break;
@@ -54,9 +54,10 @@ bool TypeNode::equals(const TypeNode& other) const
         case Function:
             if (!returnValueType()->equals(*other.returnValueType()))
                 return false;
-            if (paramsType().size() != other.paramsType().size()) return false;
-            for (int i = 0; i < paramsType().size(); ++i) {
-                if (!paramsType()[i]->equals(*other.paramsType()[i])) {
+            if (parameterTypes().size() != other.parameterTypes().size())
+                return false;
+            for (int i = 0; i < parameterTypes().size(); ++i) {
+                if (!parameterTypes()[i]->equals(*other.parameterTypes()[i])) {
                     return false;
                 }
             }
@@ -74,7 +75,7 @@ TypeNode* TypeNode::returnValueType() const
 {
     return std::get<FunctionType>(typeSpecifiedInfo).returnValueType;
 }
-std::vector<TypeNode*> TypeNode::paramsType() const
+std::vector<TypeNode*> TypeNode::parameterTypes() const
 {
     return std::get<FunctionType>(typeSpecifiedInfo).paramTypes;
 }
@@ -106,7 +107,8 @@ XString TypeNode::typeName() const
         case Function:
             XString name = returnValueType()->typeName();
             name.append('(');
-            for (TypeNode* param : paramsType()) name.append(param->typeName());
+            for (TypeNode* param : parameterTypes())
+                name.append(param->typeName());
             name.append(')');
             return name;
     }

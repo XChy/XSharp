@@ -7,8 +7,6 @@
 
 namespace XSharp {
 
-}
-
 class XSharp_EXPORT Lexer
 {
    public:
@@ -20,3 +18,4 @@ class XSharp_EXPORT Lexer
     XString bin(XString::const_iterator& it) const;  // Binary
     Token dec(XString::const_iterator& it) const;    // Decimal
 };
+}  // namespace XSharp

@@ -48,7 +48,6 @@ struct ClosureType {
     std::vector<TypeNode*> paramTypeIDs;
 };
 
-// TypeNode has no destructor, for which TypeContext have to manage its memory
 class TypeNode
 {
    public:
@@ -69,7 +68,7 @@ class TypeNode
 
     // Function type, TODO complete below
     TypeNode* returnValueType() const;
-    std::vector<TypeNode*> paramsType() const;
+    std::vector<TypeNode*> parameterTypes() const;
 
     // Array type, TODO complete below
     uint arrayDimension() const;
@@ -98,3 +97,19 @@ class TypeNode
 };
 
 };  // namespace XSharp
+
+template <>
+struct fmt::formatter<XSharp::TypeNode> {
+    constexpr auto parse(format_parse_context& ctx)
+    {
+        auto it = ctx.begin(), end = ctx.end();
+        if (it != end && *it != '}') throw format_error("invalid format");
+        return it;
+    }
+
+    template <typename FormatContext>
+    auto format(XSharp::TypeNode& type, FormatContext& ctx)
+    {
+        return format_to(ctx.out(), "{}", type.typeName().toStdString());
+    }
+};

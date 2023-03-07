@@ -22,16 +22,6 @@ make_directory(${PROJECT_SOURCE_DIR}/bin)
 make_directory(${PROJECT_SOURCE_DIR}/test/bin)
 make_directory(${PROJECT_SOURCE_DIR}/lib)
 
-# Third Parties
-include(FetchContent)
-
-FetchContent_Declare(
-  fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 9.1.0)
-
-FetchContent_MakeAvailable(fmt)
-
 if(SUPPORT_LLVMIR)
   aux_source_directory("LLVMIR" SRC)
   add_definitions(-DXSharp_LLVMIR_SUPPORT)
@@ -50,6 +40,16 @@ if(SUPPORT_LLVMIR)
   message(STATUS "LLVM LIBS: ${llvm_libs}")
 
 endif()
+
+# Third Parties
+include(FetchContent)
+
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG 9.1.0)
+
+FetchContent_MakeAvailable(fmt)
 
 if(SUPPORT_XSharpIR)
   aux_source_directory("XSharpIR" SRC)
@@ -77,7 +77,7 @@ if(BUILD_STATIC_LIBRARY)
                                                  "${PROJECT_SOURCE_DIR}/lib")
 
   if(SUPPORT_LLVMIR)
-    target_link_libraries(XSharp_STATIC ${llvm_libs} fmt)
+    target_link_libraries(XSharp_STATIC fmt ${llvm_libs})
   endif()
 endif()
 
@@ -124,7 +124,7 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS_DEBUG
-      "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -Wall -Wno-unused-variable -pthread -O0 -g -ggdb -std=c++20"
+      "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address  -Wall -Wno-unused-variable -pthread -O0 -g -ggdb -std=c++20"
   )
   set(CMAKE_CXX_FLAGS_RELEASE
       "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20  -O2 -pthread -fopenmp")

@@ -1,5 +1,7 @@
 #include "XSharp/Types/TypeAdapter.h"
+#include "XSharp/Types/TypeConverter.h"
 using namespace XSharp;
+static std::vector<TypeConverter*> converters;
 bool TypeAdapter::canConvert(TypeNode* from, TypeNode* to)
 {
     for (auto converter : converters) {

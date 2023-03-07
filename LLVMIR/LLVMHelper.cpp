@@ -21,8 +21,8 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Symbol.h"
-#include "XSharp/Type.h"
-#include "XSharp/TypeSystem.h"
+#include "XSharp/Types/Type.h"
+#include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 
@@ -160,8 +160,10 @@ ValueAndType LLVMHelper::genFunction(FunctionDeclarationNode* node)
     }
 
     std::vector<TypeNode*> xParamsType;
+    for (auto var : node->params()) {
+        xParamsType.push_back(var->type());
+    }
     TypeNode* type = XSharp::getFunctionType(node->returnType(), xParamsType);
-    for (auto var : node->params()) xParamsType.push_back(var->type());
     currentSymbols->addSymbol({.name = node->name(),
                                .symbolType = XSharp::SymbolType::Function,
                                .type = type,
@@ -173,15 +175,16 @@ ValueAndType LLVMHelper::genFunction(FunctionDeclarationNode* node)
 
 ValueAndType LLVMHelper::genCall(FunctionCallNode* call)
 {
-    // TODO: Call's LLVMIR generation
     // Normal Function Call
     if (call->function()->is<VariableNode>()) {
         VariableNode* calleeNode = call->function()->to<VariableNode>();
         XString calleeName = calleeNode->name();
         std::vector<llvm::Value*> args;
+
+        std::vector<TypeNode*> argumentTypes;
         for (auto ast : call->params()) {
-            auto [arg_val, arg_type] = codegen(ast);
-            // TODO: args's typecheck
+            auto [arg_val, arg_type] = deReferenceIf(ast);
+            argumentTypes.push_back(arg_type);
 
             // BasicType argument is passed as value
             if (arg_type->category == XSharp::TypeNode::Reference &&
@@ -194,8 +197,15 @@ ValueAndType LLVMHelper::genCall(FunctionCallNode* call)
 
         // customed
         if (currentSymbols->hasSymbol(calleeName)) {
-            auto symbol = currentSymbols->findSymbol(calleeName)->second;
-            // TODO:typecheck
+            auto symbol =
+                currentSymbols->findFunctionFor(calleeName, argumentTypes);
+            if (symbol.symbolType == XSharp::SymbolType::NoneSymbol) {
+                errors.push_back(XSharpError{
+                    SemanticsError,
+                    fmt::format("No matching function for '{} (...)'",
+                                calleeName)});
+                return {nullptr, nullptr};
+            }
             return {builder.CreateCall(
                         ((llvm::Function*)symbol.definition)->getFunctionType(),
                         symbol.definition, args),
@@ -227,7 +237,7 @@ ValueAndType LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
     if (op->operatorStr() == "+") {
         auto [lhs, lhs_type] = deReferenceIf(op->left());
         auto [rhs, rhs_type] = deReferenceIf(op->right());
-        return {builder.CreateAdd(lhs, rhs), XSharp::getI64Type()};
+        return {builder.CreateAdd(lhs, rhs), lhs_type};
     }
 
     // Sub
@@ -290,11 +300,13 @@ ValueAndType LLVMHelper::genIf(XSharp::IfNode* ifNode)
     // then
     builder.SetInsertPoint(thenBlock);
     auto [then_val, then_type] = codegen(ifNode->block);
+    builder.SetInsertPoint(thenBlock);
     builder.CreateBr(endBlock);
 
     // else
     builder.SetInsertPoint(elseBlock);
     if (ifNode->elseAst) auto [else_val, else_type] = codegen(ifNode->elseAst);
+    builder.SetInsertPoint(elseBlock);
     builder.CreateBr(endBlock);
 
     // end
@@ -386,7 +398,7 @@ ValueAndType LLVMHelper::codegen(ASTNode* node)
     if (node->is<VariableNode>()) {
         VariableNode* var = node->to<VariableNode>();
         if (currentSymbols->hasSymbol(var->name())) {
-            auto symbol = currentSymbols->at(var->name());
+            auto symbol = currentSymbols->findVariable(var->name());
             return {symbol.definition, symbol.type};
         } else {
             errors.push_back(

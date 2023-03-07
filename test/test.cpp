@@ -38,6 +38,8 @@ int main()
 
 void test(const char *path)
 {
+    using XSharp::Lexer;
+    using XSharp::Parser;
     if (XString(path).subStringIndex("xsharp") !=
         strlen(path) - strlen("xsharp")) {
         return;
@@ -54,7 +56,6 @@ void test(const char *path)
     Lexer lexer;
     auto tokens = lexer.tokenize(code);
 
-    using XSharp::Parser;
     Parser parser;
     auto ast = parser.parse(tokens);
     fmt::print("{}", ast->dump());

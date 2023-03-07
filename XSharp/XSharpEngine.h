@@ -15,7 +15,6 @@ class XSharp_EXPORT XSharpEngine
     XSharpEngine();
 
    private:
-    Lexer Lexer;
     Parser parser;
 };
 }  // namespace XSharp

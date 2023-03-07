@@ -4,7 +4,6 @@
 #include <llvm/IR/Type.h>
 #include <vector>
 #include "XSharp/ASTNodes.h"
-#include "XSharp/Type.h"
 
 llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
 {
@@ -36,7 +35,7 @@ llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
 
         case TypeNode::Function: {
             std::vector<llvm::Type*> llvmTypesForParams;
-            for (TypeNode* paramTypeNode : type->paramsType())
+            for (TypeNode* paramTypeNode : type->parameterTypes())
                 llvmTypesForParams.push_back(
                     castToLLVM(paramTypeNode, context));
 

@@ -2,6 +2,8 @@
 #include <cstdint>
 #include "XSharp/Tokens.h"
 
+using namespace XSharp;
+
 Lexer::Lexer() {}
 
 std::vector<Token> Lexer::tokenize(const XString &source) const

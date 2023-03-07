@@ -1,5 +1,5 @@
 #pragma once
-#include "XSharp/Types/TypeConverter.h"
+#include "XSharp/xsharp_global.h"
 
 #ifdef XSharp_LLVMIR_SUPPORT
 #include <llvm/IR/Value.h>
@@ -9,8 +9,9 @@
 namespace XSharp {
 
 class TypeNode;
+class TypeConverter;
 
-class TypeAdapter
+class XSharp_EXPORT TypeAdapter
 {
    public:
     static bool canConvert(TypeNode* from, TypeNode* to);
@@ -25,7 +26,6 @@ class TypeAdapter
 #endif
 
    private:
-    static std::vector<TypeConverter*> converters;
 };
 
 }  // namespace XSharp
