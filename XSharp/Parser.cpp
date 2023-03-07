@@ -4,7 +4,6 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Tokens.h"
-#include "XSharp/Type.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 

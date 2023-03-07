@@ -5,6 +5,6 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/TypeFinder.h>
-#include "XSharp/TypeSystem.h"
+#include "XSharp/Types/TypeSystem.h"
 
 llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context);

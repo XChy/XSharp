@@ -2,8 +2,8 @@
 
 #include <unordered_map>
 #include <vector>
-#include "xsharp_global.h"
-#include "XString.h"
+#include "XSharp/xsharp_global.h"
+#include "XSharp/XString.h"
 #include "Type.h"
 
 namespace XSharp {

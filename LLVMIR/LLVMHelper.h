@@ -12,11 +12,10 @@
 #include <llvm/Bitcode/BitcodeWriter.h>
 #include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
-#include "XSharp/Type.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 #include "XSharp/SymbolTable.h"
-#include "XSharp/TypeSystem.h"
+#include "XSharp/Types/TypeSystem.h"
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/Optimizer.h"
 

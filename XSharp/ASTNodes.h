@@ -1,9 +1,8 @@
 #pragma once
 
-#include "XSharp/Type.h"
+#include "XSharp/Types/Type.h"
 #include "xsharp_global.h"
 #include "XString.h"
-#include "TypeSystem.h"
 
 using XSharp::TypeNode;
 

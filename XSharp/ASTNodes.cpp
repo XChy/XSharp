@@ -5,8 +5,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
-#include "XSharp/Type.h"
-#include "XSharp/TypeSystem.h"
+#include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"
 #include "fmt/format.h"
 

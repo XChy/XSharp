@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "XSharp/ControlFlow/ControlFlowAST.h"
-#include "XSharp/TypeSystem.h"
+#include "XSharp/Types/TypeSystem.h"
 #include "xsharp_global.h"
 #include "ASTNodes.h"
 #include "Tokens.h"

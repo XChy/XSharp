@@ -28,44 +28,6 @@ class XSharp_EXPORT IfNode : public ASTNode
     ASTNode* elseAst;
 };
 
-class XSharp_EXPORT ElseIfNode : public ASTNode
-{
-   public:
-    XString dump() const;
-    ~ElseIfNode();
-
-    ASTNode* condition();
-    void setCondition(ASTNode* cond);
-
-    BlockNode* block();
-    void setBlock(BlockNode* block);
-
-    ASTNode* lastIf();
-    void setLastIf(ASTNode* lastIf);
-
-   private:
-    ASTNode* _lastIf;
-    ASTNode* _condition;
-    BlockNode* _block;
-};
-
-class XSharp_EXPORT ElseNode : public ASTNode
-{
-   public:
-    XString dump() const;
-    ~ElseNode();
-
-    BlockNode* block();
-    void setBlock(BlockNode* block);
-
-    ASTNode* lastIf();
-    void setLastIf(ASTNode* lastIf);
-
-   private:
-    ASTNode* _lastIf;
-    BlockNode* _block;
-};
-
 class XSharp_EXPORT ForNode : public ASTNode
 {
    public:

@@ -111,4 +111,3 @@ TypeNode* XSharp::getTypeFor(const XString& baseName)
     } else {
         return getClassType(baseName);
     }
-}

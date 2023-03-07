@@ -60,6 +60,9 @@ class TypeNode
 
     // Basic type
     BasicType basicType() const;
+    bool isInteger() const;
+    bool isSigned() const;
+    bool isUnsigned() const;
 
     // Reference type, as variable
     TypeNode* innerType() const;

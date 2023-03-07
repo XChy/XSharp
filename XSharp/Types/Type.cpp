@@ -117,3 +117,22 @@ BasicType TypeNode::basicType() const
 {
     return std::get<BasicType>(typeSpecifiedInfo);
 }
+
+bool TypeNode::isInteger() const
+{
+    return category == Basic &&
+           (basicType() == BasicType::I32 || basicType() == BasicType::I64 ||
+            basicType() == BasicType::UI32 || basicType() == BasicType::UI64);
+}
+
+bool TypeNode::isSigned() const
+{
+    return category == Basic &&
+           (basicType() == BasicType::I32 || basicType() == BasicType::I64);
+}
+
+bool TypeNode::isUnsigned() const
+{
+    return category == Basic &&
+           (basicType() == BasicType::UI32 || basicType() == BasicType::UI64);
+}
