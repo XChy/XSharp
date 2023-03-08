@@ -22,7 +22,6 @@
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Symbol.h"
 #include "XSharp/Types/Type.h"
-#include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 
@@ -227,6 +226,8 @@ ValueAndType LLVMHelper::genCall(FunctionCallNode* call)
     // This Call
     else if (call->function()->is<MemberNode>()) {
     }
+
+    return {nullptr, nullptr};
 }
 
 ValueAndType LLVMHelper::genBinaryOp(BinaryOperatorNode* op)

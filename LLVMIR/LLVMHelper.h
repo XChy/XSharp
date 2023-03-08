@@ -20,6 +20,7 @@
 #include "LLVMIR/Optimizer.h"
 
 typedef std::tuple<llvm::Value*, TypeNode*> ValueAndType;
+
 class LLVMHelper
 {
    public:
@@ -45,12 +46,12 @@ class LLVMHelper
 
     XSharp::SymbolTable symbolTable() const;
 
-   private:
-    std::vector<XSharpError> errors;
-
     llvm::LLVMContext context;
     llvm::Module module;
     llvm::IRBuilder<> builder;
+
+   private:
+    std::vector<XSharpError> errors;
 
     Optimizer optimizer;
 

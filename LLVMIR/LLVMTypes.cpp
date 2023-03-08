@@ -3,7 +3,6 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
 #include <vector>
-#include "XSharp/ASTNodes.h"
 
 llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
 {

@@ -3,7 +3,6 @@
 #include "XSharp/Symbol.h"
 #include "XSharp/Types/Type.h"
 #include "XSharp/Types/TypeAdapter.h"
-#include "XSharp/Types/TypeSystem.h"
 
 using namespace XSharp;
 
@@ -71,16 +70,13 @@ Symbol SymbolTable::findFunctionFor(
         }
     }
 
-    // for (auto funcSymbol : functions) {
-    // auto parameterTypes = funcSymbol.type->parameterTypes();
-    // bool adaptable = std::equal(
-    // parameterTypes.begin(), parameterTypes.end(), argumentTypes.begin(),
-    // argumentTypes.end(),
-    //[](auto parameterType, auto argumentType) -> bool {
-    // return TypeAdapter::canConvert(argumentType, parameterType);
-    //});
-    // if (adaptable) return funcSymbol;
-    //}
+    for (auto funcSymbol : functions) {
+        auto parameterTypes = funcSymbol.type->parameterTypes();
+        bool adaptable = std::equal(
+            parameterTypes.begin(), parameterTypes.end(), argumentTypes.begin(),
+            argumentTypes.end(), &TypeAdapter::canConvert);
+        if (adaptable) return funcSymbol;
+    }
     return Symbol{.symbolType = SymbolType::NoneSymbol};
 }
 
@@ -115,7 +111,6 @@ SymbolTable* SymbolTable::createChild()
 
 SymbolTable::~SymbolTable()
 {
-    for (SymbolTable* child : children) {
+    for (SymbolTable* child : children)
         if (child) delete child;
-    }
 }

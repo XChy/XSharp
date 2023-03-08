@@ -3,6 +3,7 @@
 #include <LLVMIR/LLVMHelper.h>
 #include <cstdio>
 #include <iostream>
+#include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/XString.h"
 #include "fmt/core.h"
 
@@ -40,6 +41,8 @@ void test(const char *path)
 {
     using XSharp::Lexer;
     using XSharp::Parser;
+    using XSharp::TypeAdapter;
+
     if (XString(path).subStringIndex("xsharp") !=
         strlen(path) - strlen("xsharp")) {
         return;
@@ -61,6 +64,8 @@ void test(const char *path)
     fmt::print("{}", ast->dump());
 
     LLVMHelper helper;
+    TypeAdapter::setLLVMBuilder(&helper.builder);
+    TypeAdapter::setLLVMContext(&helper.context);
     helper.generateLLVMIR(ast, XString(path).append(".bc"));
 
     delete ast;

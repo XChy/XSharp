@@ -15,8 +15,8 @@ class TypeConverter
 
 #ifdef XSharp_LLVMIR_SUPPORT
     virtual llvm::Value* convert(TypeNode* from, TypeNode* to,
-                                 llvm::IRBuilder<>& builder,
-                                 llvm::LLVMContext& context,
+                                 llvm::IRBuilder<>* builder,
+                                 llvm::LLVMContext* context,
                                  llvm::Value* val) = 0;
 #endif
 
@@ -34,7 +34,7 @@ class NumberConverter : public TypeConverter
 
 #ifdef XSharp_LLVMIR_SUPPORT
     llvm::Value* convert(TypeNode* from, TypeNode* to,
-                         llvm::IRBuilder<>& builder, llvm::LLVMContext& context,
+                         llvm::IRBuilder<>* builder, llvm::LLVMContext* context,
                          llvm::Value* val);
 #endif
 
