@@ -1,21 +1,6 @@
 #pragma once
-#include <llvm/IR/DerivedTypes.h>
-#include <llvm/IR/Instructions.h>
-#include <llvm/IR/GlobalVariable.h>
-#include <llvm/IR/Value.h>
-#include <llvm/IR/Module.h>
-#include <llvm/IR/LLVMContext.h>
-#include <llvm/IR/Function.h>
-#include <llvm/IR/BasicBlock.h>
-#include <llvm/IR/IRBuilder.h>
-#include <llvm/IR/TypeFinder.h>
-#include <llvm/Bitcode/BitcodeWriter.h>
-#include "XSharp/ASTNodes.h"
-#include "XSharp/ControlFlow/ControlFlowAST.h"
-#include "XSharp/XSharpUtils.h"
-#include "XSharp/XString.h"
-#include "XSharp/SymbolTable.h"
-#include "XSharp/Types/TypeSystem.h"
+
+#include "LLVMIR/CodeGenProxy.h"
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/Optimizer.h"
 
@@ -42,7 +27,6 @@ class LLVMHelper
     // universal code generation for XSharp's AST
     // return [LLVM-IR's Value, XSharp's Type]
     ValueAndType codegen(ASTNode* node);
-    ValueAndType deReferenceIf(ASTNode* ast);
 
     XSharp::SymbolTable symbolTable() const;
 
@@ -51,11 +35,18 @@ class LLVMHelper
     llvm::IRBuilder<> builder;
 
    private:
-    std::vector<XSharpError> errors;
+    template <typename... T>
+    void error(const char* info, T... formatargs)
+    {
+        _errors.push_back({XSharpErrorType::SemanticsError,
+                           fmt::format(info, formatargs...)});
+    }
 
+    std::vector<XSharpError> _errors;
     Optimizer optimizer;
 
     XSharp::SymbolTable globalSymbols;
     XSharp::SymbolTable* currentSymbols;
-    XSharp::Symbol* current;
+
+    XSharp::TypeNode* currentReturnType;
 };

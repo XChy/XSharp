@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <iostream>
 #include "XSharp/Types/TypeAdapter.h"
+#include "XSharp/Types/TypeConverter.h"
 #include "XSharp/XString.h"
 #include "fmt/core.h"
 
@@ -42,6 +43,8 @@ void test(const char *path)
     using XSharp::Lexer;
     using XSharp::Parser;
     using XSharp::TypeAdapter;
+
+    TypeAdapter::addConverter(new XSharp::NumberConverter);
 
     if (XString(path).subStringIndex("xsharp") !=
         strlen(path) - strlen("xsharp")) {

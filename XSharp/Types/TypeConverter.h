@@ -1,5 +1,7 @@
 #pragma once
 #include "XSharp/Types/Type.h"
+#include "XSharp/XString.h"
+#include "XSharp/xsharp_global.h"
 
 #ifdef XSharp_LLVMIR_SUPPORT
 #include "LLVMIR/LLVMTypes.h"
@@ -23,10 +25,10 @@ class TypeConverter
     virtual ~TypeConverter(){};
 };
 
-class NumberConverter : public TypeConverter
+class XSharp_EXPORT NumberConverter : public TypeConverter
 {
    public:
-    NumberConverter();
+    NumberConverter() {}
     bool convertable(TypeNode* from, TypeNode* to);
     bool implicitConvertable(TypeNode* from, TypeNode* to);
 

@@ -15,7 +15,7 @@ llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
                 case BasicType::Void:
                     return llvm::Type::getVoidTy(context);
                 case BasicType::Boolean:
-                    return llvm::Type::getInt1Ty(context);
+                    return llvm::Type::getInt8Ty(context);
                 case BasicType::Char:
                     return llvm::Type::getInt16Ty(context);
                 case BasicType::I32:

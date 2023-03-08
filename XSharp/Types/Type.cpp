@@ -42,7 +42,6 @@ TypeNode* TypeNode::innerType() const
 bool TypeNode::equals(const TypeNode& other) const
 {
     if (this == &other) return true;
-    if (this->typeID == other.typeID) return true;
     if (this->category != other.category) return false;
 
     switch (category) {
