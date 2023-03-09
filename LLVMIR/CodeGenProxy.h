@@ -21,7 +21,7 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/CodeGenHelper.h"
 
-typedef std::function<ValueAndType(ASTNode*, CodeGenContextHelper*)> Generator;
+typedef std::function<ValueAndType(ASTNode*)> Generator;
 
 class CodeGenBase
 {
@@ -52,8 +52,33 @@ class CodeGenProxy : public CodeGenBase
     virtual ~CodeGenProxy() = default;
 };
 
+template <typename T>
+class ASTVisitor : public CodeGenBase
+{
+   public:
+    ASTVisitor() = default;
+    virtual ValueAndType codeGen(ASTNode* ast, CodeGenContextHelper* helper,
+                                 const Generator& generator)
+    {
+        return ((CodeGenProxy<T>*)this)->codeGen((T*)ast, helper, generator);
+    }
+
+    virtual ValueAndType codeGen(T* ast, CodeGenContextHelper* helper,
+                                 const Generator& generator) = 0;
+
+    virtual ~ASTVisitor() = default;
+};
+
 template <>
-class CodeGenProxy<IntegerNode>
+class CodeGenProxy<DefinitionsNode> : public ASTVisitor<DefinitionsNode>
+{
+   public:
+    ValueAndType codeGen(DefinitionsNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
+};
+
+template <>
+class CodeGenProxy<IntegerNode> : public ASTVisitor<IntegerNode>
 {
    public:
     ValueAndType codeGen(IntegerNode* ast, CodeGenContextHelper* helper,
@@ -61,7 +86,7 @@ class CodeGenProxy<IntegerNode>
 };
 
 template <>
-class CodeGenProxy<DecimalFractionNode>
+class CodeGenProxy<DecimalFractionNode> : public ASTVisitor<DecimalFractionNode>
 {
    public:
     ValueAndType codeGen(DecimalFractionNode* ast, CodeGenContextHelper* helper,
@@ -69,9 +94,25 @@ class CodeGenProxy<DecimalFractionNode>
 };
 
 template <>
-class CodeGenProxy<BooleanNode>
+class CodeGenProxy<BooleanNode> : public ASTVisitor<BooleanNode>
 {
    public:
     ValueAndType codeGen(BooleanNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
+};
+
+template <>
+class CodeGenProxy<BoxNode> : public ASTVisitor<BoxNode>
+{
+   public:
+    ValueAndType codeGen(BoxNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
+};
+
+template <>
+class CodeGenProxy<VariableNode> : public ASTVisitor<VariableNode>
+{
+   public:
+    ValueAndType codeGen(VariableNode* ast, CodeGenContextHelper* helper,
                          const Generator& generator);
 };

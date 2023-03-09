@@ -67,8 +67,8 @@ void test(const char *path)
     fmt::print("{}", ast->dump());
 
     LLVMHelper helper;
-    TypeAdapter::setLLVMBuilder(&helper.builder);
-    TypeAdapter::setLLVMContext(&helper.context);
+    TypeAdapter::setLLVMBuilder(&helper.contextHelper.builder);
+    TypeAdapter::setLLVMContext(&helper.contextHelper.context);
     helper.generateLLVMIR(ast, XString(path).append(".bc"));
 
     delete ast;

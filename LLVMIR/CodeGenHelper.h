@@ -30,12 +30,15 @@ class CodeGenContextHelper
     XSharp::SymbolTable* toNewScope();
     XSharp::SymbolTable* toParentScope();
 
-    // template <typename... T>
-    // void error(const char* info, T... formatargs)
-    //{
-    //_errors.push_back({XSharpErrorType::SemanticsError,
-    // fmt::format(info, formatargs...)});
-    //}
+    bool isGlobalScope() const;
+
+    template <typename... T>
+    auto inline error(fmt::format_string<T...> info, T&&... formatargs)
+    {
+        _errors.push_back(
+            XSharpError(XSharpErrorType::SemanticsError,
+                        vformat(info, fmt::make_format_args(formatargs...))));
+    }
 
     llvm::LLVMContext context;
     llvm::Module module;
