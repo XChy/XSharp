@@ -20,8 +20,27 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/Optimizer.h"
 
-struct LLVMContextForXSharp {
+typedef std::tuple<llvm::Value*, TypeNode*> ValueAndType;
+
+class CodeGenContextHelper
+{
    public:
+    CodeGenContextHelper();
+
+    XSharp::SymbolTable* toNewScope();
+    XSharp::SymbolTable* toParentScope();
+
+    // template <typename... T>
+    // void error(const char* info, T... formatargs)
+    //{
+    //_errors.push_back({XSharpErrorType::SemanticsError,
+    // fmt::format(info, formatargs...)});
+    //}
+
+    llvm::LLVMContext context;
+    llvm::Module module;
+    llvm::IRBuilder<> builder;
+
     std::vector<XSharpError> _errors;
     Optimizer optimizer;
 

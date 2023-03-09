@@ -9,6 +9,19 @@ static std::vector<TypeConverter*> converters;
 bool TypeAdapter::canConvert(TypeNode* from, TypeNode* to)
 {
     for (auto converter : converters) {
+        if (from->category == TypeNode::Reference &&
+            to->category != TypeNode::Reference) {
+            if (converter->convertable(from->innerType(), to)) return true;
+            continue;
+        }
+
+        if (from->category == TypeNode::Reference &&
+            to->category == TypeNode::Reference) {
+            if (converter->convertable(from->innerType(), to->innerType()))
+                return true;
+            continue;
+        }
+
         if (converter->convertable(from, to)) return true;
     }
     return false;

@@ -73,8 +73,8 @@ Symbol SymbolTable::findFunctionFor(
     for (auto funcSymbol : functions) {
         auto parameterTypes = funcSymbol.type->parameterTypes();
         bool adaptable = std::equal(
-            parameterTypes.begin(), parameterTypes.end(), argumentTypes.begin(),
-            argumentTypes.end(), &TypeAdapter::canConvert);
+            argumentTypes.begin(), argumentTypes.end(), parameterTypes.begin(),
+            parameterTypes.end(), &TypeAdapter::canConvert);
         if (adaptable) return funcSymbol;
     }
     return Symbol{.symbolType = SymbolType::NoneSymbol};

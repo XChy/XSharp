@@ -47,6 +47,8 @@ bool TypeNode::equals(const TypeNode& other) const
     switch (category) {
         case Basic:
             return this->basicType() == other.basicType();
+        case Reference:
+            return this->innerType()->equals(other.innerType());
         case Array:
             return arrayDimension() == other.arrayDimension() &&
                    elementType()->equals(*other.elementType());
@@ -68,6 +70,7 @@ bool TypeNode::equals(const TypeNode& other) const
             // TODO Closure related
             return true;
     }
+    return false;
 }
 
 TypeNode* TypeNode::returnValueType() const

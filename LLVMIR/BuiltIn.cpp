@@ -34,6 +34,13 @@ void setUpBuildIn(llvm::Module& module, llvm::LLVMContext& context,
     symbols.addSymbol(
         XSharp::Symbol{.name = "print",
                        .symbolType = XSharp::SymbolType::Function,
+                       .type = XSharp::getFunctionType(XSharp::getBooleanType(),
+                                                       {XSharp::getI64Type()}),
+                       .definition = module.getFunction("printI64")});
+
+    symbols.addSymbol(
+        XSharp::Symbol{.name = "print",
+                       .symbolType = XSharp::SymbolType::Function,
                        .type = XSharp::getFunctionType(
                            XSharp::getBooleanType(), {XSharp::getDoubleType()}),
                        .definition = module.getFunction("printDouble")});

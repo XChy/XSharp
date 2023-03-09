@@ -10,6 +10,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/TypeFinder.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
+#include <functional>
 #include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Types/Type.h"
@@ -18,10 +19,59 @@
 #include "XSharp/SymbolTable.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "LLVMIR/LLVMTypes.h"
+#include "LLVMIR/CodeGenHelper.h"
 
-class CodeGenProxy
+typedef std::function<ValueAndType(ASTNode*, CodeGenContextHelper*)> Generator;
+
+class CodeGenBase
+{
+   public:
+    CodeGenBase() = default;
+    virtual ValueAndType codeGen(ASTNode* ast, CodeGenContextHelper* helper,
+                                 const Generator& generator) = 0;
+    virtual ~CodeGenBase() = default;
+};
+
+template <typename T>
+class CodeGenProxy : public CodeGenBase
 {
    public:
     CodeGenProxy() = default;
-    virtual ~CodeGenProxy();
+    virtual ValueAndType codeGen(ASTNode* ast, CodeGenContextHelper* helper,
+                                 const Generator& generator)
+    {
+        return codeGen((T*)ast, helper, generator);
+    }
+
+    ValueAndType codeGen(T* ast, CodeGenContextHelper* helper,
+                         const Generator& generator)
+    {
+        return {nullptr, nullptr};
+    }
+
+    virtual ~CodeGenProxy() = default;
+};
+
+template <>
+class CodeGenProxy<IntegerNode>
+{
+   public:
+    ValueAndType codeGen(IntegerNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
+};
+
+template <>
+class CodeGenProxy<DecimalFractionNode>
+{
+   public:
+    ValueAndType codeGen(DecimalFractionNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
+};
+
+template <>
+class CodeGenProxy<BooleanNode>
+{
+   public:
+    ValueAndType codeGen(BooleanNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
 };

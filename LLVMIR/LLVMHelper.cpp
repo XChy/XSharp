@@ -244,7 +244,7 @@ ValueAndType LLVMHelper::genBinaryOp(BinaryOperatorNode* op)
     // Assign
     if (op->operatorStr() == "=") {
         auto [lhs, lhs_type] = codegen(op->left());
-        auto [rhs, rhs_type] = deReferenceIf(op->right());
+        auto [rhs, rhs_type] = codegen(op->right());
         if (lhs_type->category == XSharp::TypeNode::Reference) {
             return {builder.CreateStore(rhs, lhs), lhs_type};
         } else {
