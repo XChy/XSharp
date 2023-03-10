@@ -22,4 +22,4 @@ target_link_libraries(TEST_LLVM gtest_main XSharp_STATIC)
 target_link_libraries(TEST_UTILS gtest_main XSharp_STATIC)
 target_link_libraries(TEST_ALL gtest_main XSharp_STATIC)
 
-set(CMAKE_CXX_FLAGS "-std=c++20 -O2  -fsanitize=address ")
+set(CMAKE_CXX_FLAGS "-std=c++20 -O2 -g  -fsanitize=address ")

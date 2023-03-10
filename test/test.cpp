@@ -13,10 +13,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+auto converter = new XSharp::NumberConverter;
 void test(const char *path);
 
 int main()
 {
+    TypeAdapter::addConverter(converter);
     try {
         char cases_path[1024] = "./testcases/";
         DIR *working_dir = opendir(cases_path);
@@ -35,6 +37,7 @@ int main()
     } catch (XSharpError e) {
         fmt::print("{}", e.errorInfo);
     }
+    delete converter;
     return 0;
 }
 
@@ -43,9 +46,6 @@ void test(const char *path)
     using XSharp::Lexer;
     using XSharp::Parser;
     using XSharp::TypeAdapter;
-
-    auto converter = new XSharp::NumberConverter;
-    TypeAdapter::addConverter(converter);
 
     if (XString(path).subStringIndex("xsharp") !=
         strlen(path) - strlen("xsharp")) {
@@ -73,7 +73,6 @@ void test(const char *path)
     helper.generateLLVMIR(ast, XString(path).append(".bc"));
 
     delete ast;
-    delete converter;
 
     std::cout << std::endl;
 }
