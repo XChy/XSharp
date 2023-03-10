@@ -30,6 +30,8 @@ class CodeGenContextHelper
     XSharp::SymbolTable* toNewScope();
     XSharp::SymbolTable* toParentScope();
 
+    void toNewFunctionScope(const XSharp::Symbol& funcSymbol);
+
     bool isGlobalScope() const;
 
     template <typename... T>

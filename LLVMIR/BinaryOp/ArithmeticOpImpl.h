@@ -14,4 +14,5 @@ ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
 ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
                      const Generator& generator);
 
+ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper);
 }  // namespace XSharp

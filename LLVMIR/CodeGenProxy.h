@@ -100,6 +100,14 @@ class CodeGenProxy<BoxNode>
 };
 
 template <>
+class CodeGenProxy<BlockNode>
+{
+   public:
+    ValueAndType codeGen(BlockNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
+};
+
+template <>
 class CodeGenProxy<VariableNode>
 {
    public:

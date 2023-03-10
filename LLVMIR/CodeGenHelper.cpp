@@ -6,9 +6,25 @@ CodeGenContextHelper::CodeGenContextHelper()
     currentSymbols = &globalSymbols;
 }
 
-XSharp::SymbolTable* CodeGenContextHelper::toNewScope() { return nullptr; }
+XSharp::SymbolTable* CodeGenContextHelper::toNewScope()
+{
+    auto newScopeSymbolTable = currentSymbols->createChild();
+    currentSymbols = newScopeSymbolTable;
+    return currentSymbols;
+}
 
-XSharp::SymbolTable* CodeGenContextHelper::toParentScope() { return nullptr; }
+XSharp::SymbolTable* CodeGenContextHelper::toParentScope()
+{
+    if (isGlobalScope()) return nullptr;
+    currentSymbols = currentSymbols->parent();
+    return currentSymbols;
+}
+
+void CodeGenContextHelper::toNewFunctionScope(const XSharp::Symbol& funcSymbol)
+{
+    currentReturnType = funcSymbol.type->returnValueType();
+    toNewScope();
+}
 
 bool CodeGenContextHelper::isGlobalScope() const
 {

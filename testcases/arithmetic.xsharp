@@ -1,4 +1,7 @@
 i32 main()
 {
     i32 b;
+    b = 1;
+    print(b+2);
+    return 1+b;
 }

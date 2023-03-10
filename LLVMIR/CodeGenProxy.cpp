@@ -66,6 +66,17 @@ ValueAndType CodeGenProxy<BoxNode>::codeGen(BoxNode* ast,
     return generator(ast->child());
 }
 
+ValueAndType CodeGenProxy<BlockNode>::codeGen(BlockNode* ast,
+                                              CodeGenContextHelper* helper,
+                                              const Generator& generator)
+{
+    for (ASTNode* content : ast->contents()) {
+        auto [val, type] = generator(content);
+        if (!type) return {nullptr, nullptr};
+    }
+    return {nullptr, XSharp::getVoidType()};
+}
+
 ValueAndType CodeGenProxy<VariableNode>::codeGen(VariableNode* ast,
                                                  CodeGenContextHelper* helper,
                                                  const Generator& generator)

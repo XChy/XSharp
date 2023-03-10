@@ -44,3 +44,5 @@ testcases/if
 testcases/if.xsharp.o
 testcases/types.xsharp.bc
 testcases/types.xsharp.bc
+testcases/arithmetic
+testcases/arithmetic.xsharp.o

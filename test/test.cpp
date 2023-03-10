@@ -44,7 +44,8 @@ void test(const char *path)
     using XSharp::Parser;
     using XSharp::TypeAdapter;
 
-    TypeAdapter::addConverter(new XSharp::NumberConverter);
+    auto converter = new XSharp::NumberConverter;
+    TypeAdapter::addConverter(converter);
 
     if (XString(path).subStringIndex("xsharp") !=
         strlen(path) - strlen("xsharp")) {
@@ -72,6 +73,7 @@ void test(const char *path)
     helper.generateLLVMIR(ast, XString(path).append(".bc"));
 
     delete ast;
+    delete converter;
 
     std::cout << std::endl;
 }

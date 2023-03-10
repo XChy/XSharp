@@ -63,6 +63,10 @@ class TypeNode
     bool isSigned() const;
     bool isUnsigned() const;
 
+    bool isNumber() const;
+
+    uint size() const;
+
     // Reference type, as variable
     TypeNode* innerType() const;
 

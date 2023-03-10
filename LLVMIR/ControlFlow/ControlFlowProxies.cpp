@@ -2,6 +2,8 @@
 #include "LLVMIR/CodeGenProxy.h"
 #include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
+#include "XSharp/Types/TypeAdapter.h"
+#include "XSharp/Types/TypeSystem.h"
 ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
                                            CodeGenContextHelper* helper,
                                            const Generator& generator)
@@ -94,9 +96,17 @@ ValueAndType CodeGenProxy<ReturnNode>::codeGen(ReturnNode* ast,
 
     if (ast->returnValue()) {
         auto [retVal, retType] = generator(ast->returnValue());
+        retVal = TypeAdapter::llvmConvert(retType, helper->currentReturnType,
+                                          retVal);
+        if (!retVal) {
+            helper->error("Cannot convert '{}' to '{}'", retType->typeName(),
+                          helper->currentReturnType->typeName());
+            return {nullptr, nullptr};
+        }
+
         return {builder.CreateRet(retVal), XSharp::getVoidType()};
     } else {
-        builder.CreateRetVoid();
+        return {builder.CreateRetVoid(), getVoidType()};
     }
     // TODO: check the type of return value is valid
 }

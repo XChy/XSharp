@@ -37,14 +37,6 @@ static std::unordered_map<XString, BasicType> nameToBasicType = {
     {"boolean", BasicType::Boolean},
 };
 
-static std::unordered_map<BasicType, XString> basicTypeToName = {
-    {BasicType::Void, "void"},       {BasicType::I32, "i32"},
-    {BasicType::I64, "i64"},         {BasicType::UI32, "ui32"},
-    {BasicType::UI64, "ui64"},       {BasicType::Float, "float"},
-    {BasicType::Double, "double"},   {BasicType::Char, "char"},
-    {BasicType::Boolean, "boolean"},
-};
-
 static TypeContext GlobalTypeContext;
 
 TypeNode* getBasicType(BasicType type);

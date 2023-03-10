@@ -101,6 +101,8 @@ XString TypeNode::typeName() const
     switch (category) {
         case Basic:
             return baseName;
+        case Reference:
+            return fmt::format("Ref<{}>", innerType()->typeName());
         case Class:
             return "Class";
         case Array:
@@ -139,4 +141,43 @@ bool TypeNode::isUnsigned() const
 {
     return category == Basic &&
            (basicType() == BasicType::UI32 || basicType() == BasicType::UI64);
+}
+
+bool TypeNode::isNumber() const
+{
+    if (category == TypeNode::Basic) {
+        if (basicType() == BasicType::I32 || basicType() == BasicType::I64 ||
+            basicType() == BasicType::UI32 || basicType() == BasicType::UI64 ||
+            basicType() == BasicType::Float ||
+            basicType() == BasicType::Double) {
+            return true;
+        }
+    }
+    return false;
+}
+uint TypeNode::size() const
+{
+    switch (category) {
+        case Basic:
+            switch (basicType()) {
+                case BasicType::Void:
+                case BasicType::Boolean:
+                    return 1;
+                case BasicType::Char:
+                    return 2;
+                case BasicType::I32:
+                case BasicType::UI32:
+                case BasicType::Float:
+                    return 4;
+                case BasicType::I64:
+                case BasicType::UI64:
+                case BasicType::Double:
+                    return 8;
+                default:
+                    return 0;
+            }
+            break;
+            // TODO: Complete size of other types
+    }
+    return 0;
 }

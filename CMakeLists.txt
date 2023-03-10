@@ -88,23 +88,6 @@ if(BUILD_TEST)
   add_test(NAME test1 COMMAND $<TARGET_FILE:TEST_UTILS>)
   add_test(NAME test2 COMMAND $<TARGET_FILE:TEST_LLVM>)
   add_test(NAME test3 COMMAND $<TARGET_FILE:TEST_ALL>)
-  # message(STATUS "Build test samples")
-
-  # make_directory(test/bin) add_executable(XSharp_TEST test/test.cpp)
-  # set_target_properties( XSharp_TEST PROPERTIES OUTPUT_NAME
-  # "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST")
-
-  # add_executable(XSharp_TEST_UTILS test/test_utils.cpp) set_target_properties(
-  # XSharp_TEST_UTILS PROPERTIES OUTPUT_NAME
-  # "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST_UTILS")
-
-  # add_executable(XSharp_TEST_LLVM test/test_llvm.cpp) set_target_properties(
-  # XSharp_TEST_LLVM PROPERTIES OUTPUT_NAME
-  # "${CMAKE_SOURCE_DIR}/test/bin/XSharp_TEST_LLVM")
-
-  # target_link_libraries(XSharp_TEST XSharp_STATIC)
-  # target_link_libraries(XSharp_TEST_UTILS XSharp_STATIC)
-  # target_link_libraries(XSharp_TEST_LLVM XSharp_STATIC)
 endif()
 
 # Shared Library is necessary

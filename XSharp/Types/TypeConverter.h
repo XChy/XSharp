@@ -32,8 +32,6 @@ class XSharp_EXPORT NumberConverter : public TypeConverter
     bool convertable(TypeNode* from, TypeNode* to);
     bool implicitConvertable(TypeNode* from, TypeNode* to);
 
-    bool isNumber(TypeNode* type) const;
-
 #ifdef XSharp_LLVMIR_SUPPORT
     llvm::Value* convert(TypeNode* from, TypeNode* to,
                          llvm::IRBuilder<>* builder, llvm::LLVMContext* context,

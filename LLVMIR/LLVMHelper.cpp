@@ -46,6 +46,8 @@ LLVMHelper::LLVMHelper()
     addProxy<VariableDeclarationNode>();
     addProxy<FunctionDeclarationNode>();
     addProxy<FunctionCallNode>();
+    addProxy<BoxNode>();
+    addProxy<BlockNode>();
     addProxy<IfNode>();
     addProxy<WhileNode>();
     addProxy<ReturnNode>();

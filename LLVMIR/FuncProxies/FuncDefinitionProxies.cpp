@@ -1,12 +1,18 @@
 #include "FuncDefinitionProxies.h"
+#include <llvm-14/llvm/IR/Function.h>
 #include <cstdio>
+#include "LLVMIR/LLVMTypes.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Symbol.h"
+#include "XSharp/Types/Type.h"
+#include "XSharp/Types/TypeSystem.h"
 
 ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
     FunctionDeclarationNode* ast, CodeGenContextHelper* helper,
     const Generator& generator)
 {
     using llvm::BasicBlock;
+    using XSharp::Symbol;
     auto& builder = helper->builder;
     auto& context = helper->context;
     auto& module = helper->module;
@@ -20,18 +26,26 @@ ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
         return {nullptr, nullptr};
     }
 
-    std::vector<llvm::Type*> paramsType;
-    for (auto param : ast->params()) {
-        auto paramType = param->type();
-        paramsType.push_back(castToLLVM(paramType, context));
-    }
+    Symbol functionSymbol{
+        .name = ast->name(),
+        .symbolType = XSharp::SymbolType::Function,
+    };
+
+    std::vector<TypeNode*> paramsType;
+    for (auto param : ast->params()) paramsType.push_back(param->type());
 
     auto retType = ast->returnType();
-    llvm::FunctionType* functionType = llvm::FunctionType::get(
-        castToLLVM(retType, context), paramsType, false);
+    TypeNode* functionType = XSharp::getFunctionType(retType, paramsType);
 
-    Function* func = Function::Create(functionType, Function::ExternalLinkage,
-                                      ast->name().toStdString(), module);
+    Function* func = Function::Create(
+        (llvm::FunctionType*)castToLLVM(functionType, context),
+        Function::ExternalLinkage, ast->name().toStdString(), module);
+
+    functionSymbol.type = functionType;
+    functionSymbol.function = func;
+
+    // TODO: maybe support function definition or lambda in function?
+    helper->toNewFunctionScope(functionSymbol);
 
     BasicBlock* block = BasicBlock::Create(context, "entry", func);
     builder.SetInsertPoint(block);
@@ -50,21 +64,12 @@ ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
         iter++;
     }
 
-    for (auto content : ast->impl()->contents()) {
-        generator(content);
-    }
+    generator(ast->impl());
 
-    std::vector<TypeNode*> xParamsType;
-    for (auto var : ast->params()) {
-        xParamsType.push_back(var->type());
-    }
-    TypeNode* type = XSharp::getFunctionType(ast->returnType(), xParamsType);
-    helper->currentSymbols->addSymbol(
-        {.name = ast->name(),
-         .symbolType = XSharp::SymbolType::Function,
-         .type = type,
-         .definition = func});
+    helper->toParentScope();
 
+    helper->currentSymbols->addSymbol(functionSymbol);
     helper->optimizer.functionPassManager.run(*func);
-    return {func, type};
+
+    return {func, functionType};
 }
