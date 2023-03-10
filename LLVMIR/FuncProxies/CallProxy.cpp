@@ -1,5 +1,6 @@
 #include "CallProxy.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Types/TypeAdapter.h"
 
 ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
     FunctionCallNode* ast, CodeGenContextHelper* helper,
@@ -33,6 +34,17 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
         if (symbol.symbolType == XSharp::SymbolType::NoneSymbol) {
             helper->error("No matching function for '{} (...)'", asteeName);
             return {nullptr, nullptr};
+        }
+
+        for (int i = 0; i < argumentValues.size(); ++i) {
+            auto arg = argumentValues[i];
+            auto arg_type = argumentTypes[i];
+            auto param_type = symbol.type->parameterTypes()[i];
+            argumentValues[i] =
+                XSharp::TypeAdapter::llvmConvert(arg_type, param_type, arg);
+            if (!arg) {
+                // TODO: error?
+            }
         }
 
         return {builder.CreateCall(symbol.function->getFunctionType(),

@@ -1,7 +1,7 @@
 #include "LLVMIR/CodeGenProxy.h"
 #include "XSharp/ASTNodes.h"
 template <>
-class CodeGenProxy<FunctionCallNode> : public ASTVisitor<FunctionCallNode>
+class CodeGenProxy<FunctionCallNode>
 {
    public:
     ValueAndType codeGen(FunctionCallNode* ast, CodeGenContextHelper* helper,

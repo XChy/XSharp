@@ -23,7 +23,8 @@ make_directory(${PROJECT_SOURCE_DIR}/test/bin)
 make_directory(${PROJECT_SOURCE_DIR}/lib)
 
 if(SUPPORT_LLVMIR)
-  aux_source_directory("LLVMIR" SRC)
+  file(GLOB_RECURSE LLVMSUPPORT_SRC "LLVMIR/*.cpp" "LLVMIR/*.h")
+  list(APPEND SRC ${LLVMSUPPORT_SRC})
   add_definitions(-DXSharp_LLVMIR_SUPPORT)
 
   find_package(LLVM REQUIRED CONFIG)

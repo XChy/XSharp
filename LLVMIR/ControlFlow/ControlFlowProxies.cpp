@@ -89,11 +89,14 @@ ValueAndType CodeGenProxy<ReturnNode>::codeGen(ReturnNode* ast,
                                                CodeGenContextHelper* helper,
                                                const Generator& generator)
 {
-    using llvm::BasicBlock;
     auto& builder = helper->builder;
     auto& context = helper->context;
 
-    auto [retVal, retType] = generator(ast->returnValue());
+    if (ast->returnValue()) {
+        auto [retVal, retType] = generator(ast->returnValue());
+        return {builder.CreateRet(retVal), XSharp::getVoidType()};
+    } else {
+        builder.CreateRetVoid();
+    }
     // TODO: check the type of return value is valid
-    return {builder.CreateRet(retVal), XSharp::getVoidType()};
 }

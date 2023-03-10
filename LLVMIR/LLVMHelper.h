@@ -4,6 +4,12 @@
 #include <typeindex>
 #include <unordered_map>
 #include "LLVMIR/CodeGenProxy.h"
+
+#include "LLVMIR/BinaryOp/BinaryOpProxy.h"
+#include "LLVMIR/ControlFlow/ControlFlowProxies.h"
+#include "LLVMIR/FuncProxies/CallProxy.h"
+#include "LLVMIR/VarDefinition/VarDefinitionProxies.h"
+
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/Optimizer.h"
 #include "XSharp/XSharpUtils.h"
@@ -13,6 +19,7 @@ class LLVMHelper
 {
    public:
     LLVMHelper();
+    ~LLVMHelper();
     // generate LLVM IR for the ast
     // error saved in LLVMHelper's errors
     std::vector<std::byte> generateLLVMIR(ASTNode* ast,
@@ -27,7 +34,7 @@ class LLVMHelper
     void addProxy()
     {
         // TODO: free these proxies
-        proxies[std::type_index(typeid(ASTType))] = new CodeGenProxy<ASTType>;
+        proxies[std::type_index(typeid(ASTType))] = new ASTVisitor<ASTType>;
     }
 
     std::unordered_map<std::type_index, CodeGenBase*> proxies;

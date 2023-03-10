@@ -1,5 +1,8 @@
+#pragma once
+#include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/CodeGenProxy.h"
 #include "XSharp/ASTNodes.h"
+
 template <>
 class CodeGenProxy<FunctionDeclarationNode>
 {

@@ -4,6 +4,7 @@
 
 CodeGenProxy<BinaryOperatorNode>::CodeGenProxy()
 {
+    processors["="] = XSharp::AssignImpl;
     processors["+"] = XSharp::AddImpl;
 }
 ValueAndType CodeGenProxy<BinaryOperatorNode>::codeGen(

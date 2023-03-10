@@ -23,6 +23,7 @@
 
 typedef std::function<ValueAndType(ASTNode*)> Generator;
 
+// interface for codegen
 class CodeGenBase
 {
    public:
@@ -33,44 +34,33 @@ class CodeGenBase
 };
 
 template <typename T>
-class CodeGenProxy : public CodeGenBase
+class CodeGenProxy
 {
    public:
     CodeGenProxy() = default;
-    virtual ValueAndType codeGen(ASTNode* ast, CodeGenContextHelper* helper,
-                                 const Generator& generator)
-    {
-        return codeGen((T*)ast, helper, generator);
-    }
 
     ValueAndType codeGen(T* ast, CodeGenContextHelper* helper,
                          const Generator& generator)
     {
         return {nullptr, nullptr};
     }
-
-    virtual ~CodeGenProxy() = default;
 };
-
 template <typename T>
 class ASTVisitor : public CodeGenBase
 {
    public:
     ASTVisitor() = default;
-    virtual ValueAndType codeGen(ASTNode* ast, CodeGenContextHelper* helper,
-                                 const Generator& generator)
+    ValueAndType codeGen(ASTNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator)
     {
-        return ((CodeGenProxy<T>*)this)->codeGen((T*)ast, helper, generator);
+        return proxy.codeGen((T*)ast, helper, generator);
     }
 
-    virtual ValueAndType codeGen(T* ast, CodeGenContextHelper* helper,
-                                 const Generator& generator) = 0;
-
-    virtual ~ASTVisitor() = default;
+   private:
+    CodeGenProxy<T> proxy;
 };
-
 template <>
-class CodeGenProxy<DefinitionsNode> : public ASTVisitor<DefinitionsNode>
+class CodeGenProxy<DefinitionsNode>
 {
    public:
     ValueAndType codeGen(DefinitionsNode* ast, CodeGenContextHelper* helper,
@@ -78,7 +68,7 @@ class CodeGenProxy<DefinitionsNode> : public ASTVisitor<DefinitionsNode>
 };
 
 template <>
-class CodeGenProxy<IntegerNode> : public ASTVisitor<IntegerNode>
+class CodeGenProxy<IntegerNode>
 {
    public:
     ValueAndType codeGen(IntegerNode* ast, CodeGenContextHelper* helper,
@@ -86,7 +76,7 @@ class CodeGenProxy<IntegerNode> : public ASTVisitor<IntegerNode>
 };
 
 template <>
-class CodeGenProxy<DecimalFractionNode> : public ASTVisitor<DecimalFractionNode>
+class CodeGenProxy<DecimalFractionNode>
 {
    public:
     ValueAndType codeGen(DecimalFractionNode* ast, CodeGenContextHelper* helper,
@@ -94,7 +84,7 @@ class CodeGenProxy<DecimalFractionNode> : public ASTVisitor<DecimalFractionNode>
 };
 
 template <>
-class CodeGenProxy<BooleanNode> : public ASTVisitor<BooleanNode>
+class CodeGenProxy<BooleanNode>
 {
    public:
     ValueAndType codeGen(BooleanNode* ast, CodeGenContextHelper* helper,
@@ -102,7 +92,7 @@ class CodeGenProxy<BooleanNode> : public ASTVisitor<BooleanNode>
 };
 
 template <>
-class CodeGenProxy<BoxNode> : public ASTVisitor<BoxNode>
+class CodeGenProxy<BoxNode>
 {
    public:
     ValueAndType codeGen(BoxNode* ast, CodeGenContextHelper* helper,
@@ -110,7 +100,7 @@ class CodeGenProxy<BoxNode> : public ASTVisitor<BoxNode>
 };
 
 template <>
-class CodeGenProxy<VariableNode> : public ASTVisitor<VariableNode>
+class CodeGenProxy<VariableNode>
 {
    public:
     ValueAndType codeGen(VariableNode* ast, CodeGenContextHelper* helper,

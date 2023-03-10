@@ -29,6 +29,7 @@
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 
+#include "LLVMIR/FuncProxies/FuncDefinitionProxies.h"
 LLVMHelper::LLVMHelper()
 {
     // module.setDataLayout("");
@@ -45,8 +46,18 @@ LLVMHelper::LLVMHelper()
     addProxy<VariableDeclarationNode>();
     addProxy<FunctionDeclarationNode>();
     addProxy<FunctionCallNode>();
+    addProxy<IfNode>();
+    addProxy<WhileNode>();
+    addProxy<ReturnNode>();
     addProxy<BinaryOperatorNode>();
     addProxy<UnaryOperatorNode>();
+}
+
+LLVMHelper::~LLVMHelper()
+{
+    for (auto pair : proxies) {
+        delete pair.second;
+    }
 }
 
 std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
@@ -71,5 +82,5 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
 ValueAndType LLVMHelper::codegen(ASTNode* node)
 {
     auto index = std::type_index(typeid(*node));
-    proxies[index]->codeGen(node, &contextHelper, generator);
+    return proxies[index]->codeGen(node, &contextHelper, generator);
 }

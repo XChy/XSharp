@@ -1,5 +1,7 @@
 #include "FuncDefinitionProxies.h"
+#include <cstdio>
 #include "XSharp/ASTNodes.h"
+
 ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
     FunctionDeclarationNode* ast, CodeGenContextHelper* helper,
     const Generator& generator)

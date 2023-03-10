@@ -5,7 +5,7 @@
 #include "XSharp/ASTNodes.h"
 
 template <>
-class CodeGenProxy<BinaryOperatorNode> : public ASTVisitor<BinaryOperatorNode>
+class CodeGenProxy<BinaryOperatorNode>
 {
    public:
     CodeGenProxy();
