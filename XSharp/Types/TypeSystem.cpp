@@ -111,3 +111,22 @@ TypeNode* XSharp::getTypeFor(const XString& baseName)
         return getClassType(baseName);
     }
 }
+
+TypeNode* XSharp::getMergedType(TypeNode* lhs_type, TypeNode* rhs_type)
+{
+    TypeNode* merged_type;
+    if (lhs_type->isInteger() && rhs_type->isInteger()) {
+        if ((lhs_type->isSigned() && rhs_type->isSigned()) ||
+            (lhs_type->isUnsigned() && rhs_type->isUnsigned())) {
+            merged_type =
+                lhs_type->size() > rhs_type->size() ? lhs_type : rhs_type;
+        } else {
+            merged_type = lhs_type->isSigned() ? lhs_type : rhs_type;
+        }
+    } else if (lhs_type->isInteger() || rhs_type->isInteger()) {
+        merged_type = lhs_type->isInteger() ? rhs_type : lhs_type;
+    } else {
+        merged_type = lhs_type->size() > rhs_type->size() ? lhs_type : rhs_type;
+    }
+    return merged_type;
+}

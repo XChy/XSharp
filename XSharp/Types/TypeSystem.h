@@ -55,6 +55,9 @@ TypeNode* getClosureType();
 
 TypeNode* getTypeFor(const XString& baseName);
 
+// To adapt the lhs number and rhs number for logical and arithmetic operator
+TypeNode* getMergedType(TypeNode* lhs_type, TypeNode* rhs_type);
+
 static TypeNode* getVoidType() { return getBasicType(BasicType::Void); }
 static TypeNode* getI64Type() { return getBasicType(BasicType::I64); }
 static TypeNode* getI32Type() { return getBasicType(BasicType::I32); }

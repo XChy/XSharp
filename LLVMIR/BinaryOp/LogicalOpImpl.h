@@ -4,7 +4,21 @@
 #include "XSharp/Types/TypeAdapter.h"
 
 namespace XSharp {
-// ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
-// const Generator& generator);
+
+ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                       const Generator& generator);
+
+ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                         const Generator& generator);
+
+ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                      const Generator& generator);
+
+ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op,
+                                CodeGenContextHelper* helper,
+                                const Generator& generator);
+ValueAndType LessOrEqualImpl(BinaryOperatorNode* op,
+                             CodeGenContextHelper* helper,
+                             const Generator& generator);
 
 }  // namespace XSharp

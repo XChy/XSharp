@@ -2,6 +2,7 @@
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/CodeGenProxy.h"
 #include "LLVMIR/BinaryOp/ArithmeticOpImpl.h"
+#include "LLVMIR/BinaryOp/LogicalOpImpl.h"
 #include "XSharp/ASTNodes.h"
 
 template <>

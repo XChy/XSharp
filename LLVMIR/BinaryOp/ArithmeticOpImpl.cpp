@@ -3,6 +3,7 @@
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/Types/Type.h"
+#include "XSharp/Types/TypeSystem.h"
 using namespace XSharp;
 
 ValueAndType XSharp::AssignImpl(BinaryOperatorNode* op,
@@ -34,42 +35,84 @@ ValueAndType XSharp::AddImpl(BinaryOperatorNode* op,
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
 
-    TypeNode* merged_type;
-
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
         helper->error("Cannot add non-numbers");
         return {nullptr, nullptr};
     }
 
-    if (lhs_type->isInteger() && rhs_type->isInteger()) {
-        if ((lhs_type->isSigned() && rhs_type->isSigned()) ||
-            (lhs_type->isUnsigned() && rhs_type->isUnsigned())) {
-            merged_type =
-                lhs_type->size() > rhs_type->size() ? lhs_type : rhs_type;
-        } else {
-            merged_type = lhs_type->isSigned() ? lhs_type : rhs_type;
-        }
-    } else if (lhs_type->isInteger() || rhs_type->isInteger()) {
-        merged_type = lhs_type->isInteger() ? rhs_type : lhs_type;
-    } else {
-        merged_type = lhs_type->size() > rhs_type->size() ? lhs_type : rhs_type;
-    }
+    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     return {helper->builder.CreateAdd(lhs, rhs), merged_type};
 }
 
-ValueAndType XSharp::deReference(ValueAndType ref, CodeGenContextHelper* helper)
+ValueAndType XSharp::SubImpl(BinaryOperatorNode* op,
+                             CodeGenContextHelper* helper,
+                             const Generator& generator)
 {
-    auto [ref_val, ref_type] = ref;
-    if (ref_type->category == XSharp::TypeNode::Reference) {
-        return {
-            helper->builder.CreateLoad(
-                castToLLVM(ref_type->innerType(), helper->context), ref_val),
-            ref_type->innerType()};
-    } else {
-        return ref;
+    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+
+    if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
+        // TODO: Support customed operator
+        helper->error("Cannot subtract non-numbers");
+        return {nullptr, nullptr};
     }
+
+    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+
+    lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
+    rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
+
+    return {helper->builder.CreateSub(lhs, rhs), merged_type};
+}
+
+ValueAndType XSharp::MulImpl(BinaryOperatorNode* op,
+                             CodeGenContextHelper* helper,
+                             const Generator& generator)
+{
+    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+
+    if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
+        // TODO: Support customed operator
+        helper->error("Cannot multiply non-numbers");
+        return {nullptr, nullptr};
+    }
+
+    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+
+    lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
+    rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
+
+    return {helper->builder.CreateMul(lhs, rhs), merged_type};
+}
+
+ValueAndType XSharp::DivImpl(BinaryOperatorNode* op,
+                             CodeGenContextHelper* helper,
+                             const Generator& generator)
+{
+    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+
+    if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
+        // TODO: Support customed operator
+        helper->error("Cannot divide non-numbers");
+        return {nullptr, nullptr};
+    }
+
+    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+
+    lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
+    rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
+
+    if (merged_type->isSigned())
+        return {helper->builder.CreateSDiv(lhs, rhs), merged_type};
+    else if (merged_type->isUnsigned())
+        return {helper->builder.CreateUDiv(lhs, rhs), merged_type};
+    else
+        return {helper->builder.CreateFDiv(lhs, rhs), merged_type};
 }

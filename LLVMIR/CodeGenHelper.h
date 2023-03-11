@@ -54,3 +54,5 @@ class CodeGenContextHelper
 
     XSharp::TypeNode* currentReturnType;
 };
+
+ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper);
