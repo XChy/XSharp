@@ -1,7 +1,12 @@
-i32 main()
+void main()
 {
     i32 b;
     b = 1;
     print(b+2);
-    return 1+b;
+    if (true){
+        i32 a;
+        a = inputI32();
+        print(a+3.3);
+    }
+    return;
 }

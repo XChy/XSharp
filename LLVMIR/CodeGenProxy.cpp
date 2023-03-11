@@ -45,7 +45,7 @@ ValueAndType CodeGenProxy<DecimalFractionNode>::codeGen(
     using llvm::ConstantFP;
     auto val = ConstantFP::get(helper->context, APFloat(ast->value()));
 
-    return {val, XSharp::getI64Type()};
+    return {val, XSharp::getDoubleType()};
 }
 
 ValueAndType CodeGenProxy<BooleanNode>::codeGen(BooleanNode* ast,
@@ -55,7 +55,7 @@ ValueAndType CodeGenProxy<BooleanNode>::codeGen(BooleanNode* ast,
     using llvm::APInt;
     using llvm::ConstantInt;
 
-    auto val = ConstantInt::get(helper->context, APInt(8, ast->value()));
+    auto val = ConstantInt::get(helper->context, APInt(1, ast->value()));
     return {val, XSharp::getBooleanType()};
 }
 

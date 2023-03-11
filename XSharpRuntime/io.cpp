@@ -1,10 +1,10 @@
 #include "io.h"
 #include <cstdio>
-bool printI32(__int32_t x) { return printf("%d", x); }
-bool printI64(__int64_t x) { return printf("%ld", x); }
+bool printI32(__int32_t x) { return printf("%d\n", x); }
+bool printI64(__int64_t x) { return printf("%ld\n", x); }
 
-bool printFloat(float x) { return printf("%f", x); }
-bool printDouble(double x) { return printf("%lf", x); }
+bool printFloat(float x) { return printf("%f\n", x); }
+bool printDouble(double x) { return printf("%lf\n", x); }
 
 __int32_t inputI32()
 {

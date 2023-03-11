@@ -19,7 +19,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 make_directory(${PROJECT_SOURCE_DIR}/bin)
-make_directory(${PROJECT_SOURCE_DIR}/test/bin)
 make_directory(${PROJECT_SOURCE_DIR}/lib)
 
 if(SUPPORT_LLVMIR)
@@ -62,6 +61,9 @@ if(BUILD_SHARED_LIBRARY)
   message(STATUS "Build shared library")
 
   add_library(XSharp_SHARED SHARED ${SRC})
+  if(SUPPORT_LLVMIR)
+    target_link_libraries(XSharp_SHARED_LIBRARY fmt ${llvm_libs})
+  endif()
   set_target_properties(XSharp_SHARED PROPERTIES OUTPUT_NAME "XSharp")
   set_target_properties(XSharp_SHARED PROPERTIES LIBRARY_OUTPUT_DIRECTORY
                                                  "${PROJECT_SOURCE_DIR}/lib")
@@ -73,13 +75,13 @@ if(BUILD_STATIC_LIBRARY)
   message(STATUS "Build static library")
 
   add_library(XSharp_STATIC STATIC ${SRC})
-  set_target_properties(XSharp_STATIC PROPERTIES OUTPUT_NAME "XSharp")
-  set_target_properties(XSharp_STATIC PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                                 "${PROJECT_SOURCE_DIR}/lib")
-
   if(SUPPORT_LLVMIR)
     target_link_libraries(XSharp_STATIC fmt ${llvm_libs})
   endif()
+
+  set_target_properties(XSharp_STATIC PROPERTIES OUTPUT_NAME "XSharp")
+  set_target_properties(XSharp_STATIC PROPERTIES ARCHIVE_OUTPUT_DIRECTORY
+                                                 "${PROJECT_SOURCE_DIR}/lib")
 endif()
 
 if(BUILD_TEST)
@@ -100,7 +102,7 @@ if(BUILD_XSharpCLI)
 
   add_executable(XSharpC XSharpCLI/xsharpc.cpp)
   set_target_properties(XSharpC PROPERTIES OUTPUT_NAME
-                                           "${CMAKE_SOURCE_DIR}/bin/xsharpc")
+                                           "${PROJECT_SOURCE_DIR}/bin/xsharpc")
   if(SUPPORT_LLVMIR)
     target_link_libraries(XSharpC ${llvm_libs} XSharp_STATIC)
   endif()
