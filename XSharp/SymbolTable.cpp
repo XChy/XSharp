@@ -64,7 +64,10 @@ Symbol SymbolTable::findFunctionFor(
         if (std::equal(argumentTypes.begin(), argumentTypes.end(),
                        parameterTypes.begin(), parameterTypes.end(),
                        [](TypeNode* a, TypeNode* b) -> bool {
-                           return a->equals(b);
+                           if (a->category == TypeNode::Reference)
+                               return a->innerType()->equals(b);
+                           else
+                               return a->equals(b);
                        })) {
             return funcSymbol;
         }
