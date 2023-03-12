@@ -28,6 +28,7 @@ ValueAndType CodeGenProxy<VariableDeclarationNode>::codeGen(
              .symbolType = XSharp::SymbolType::GlobalVariable,
              .type = XSharp::getReferenceType(var_type),
              .definition = globalVar});
+
         return {globalVar, var_type};
     } else {
         return genLocalVariable(ast, helper, generator);

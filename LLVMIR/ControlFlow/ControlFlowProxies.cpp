@@ -35,7 +35,7 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
     auto [then_val, then_type] = generator(ast->block);
     if (!then_type) return {nullptr, nullptr};
 
-    if (!thenBlock->getTerminator()) builder.CreateBr(endBlock);
+    if (!builder.GetInsertBlock()->getTerminator()) builder.CreateBr(endBlock);
 
     // else
     elseBlock->insertInto(currentFunc);
@@ -44,7 +44,7 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
         auto [else_val, else_type] = generator(ast->elseAst);
         if (!else_type) return {nullptr, nullptr};
     }
-    if (!elseBlock->getTerminator()) builder.CreateBr(endBlock);
+    if (!builder.GetInsertBlock()->getTerminator()) builder.CreateBr(endBlock);
 
     // end
     endBlock->insertInto(currentFunc);

@@ -73,8 +73,7 @@ ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
     helper->currentSymbols->addSymbol(functionSymbol);
 
     // for debug
-    // llvm::verifyFunction(*func);
-    // llvm::verifyModule(helper->module);
+    llvm::verifyFunction(*func);
 
     helper->optimizer.functionPassManager.run(*func);
 

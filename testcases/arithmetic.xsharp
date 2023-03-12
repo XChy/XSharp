@@ -1,4 +1,3 @@
-i32 e;
 void main()
 {
     i32 n;

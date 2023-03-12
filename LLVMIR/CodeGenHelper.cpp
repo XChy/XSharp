@@ -1,9 +1,13 @@
 #include "CodeGenHelper.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
 
 CodeGenContextHelper::CodeGenContextHelper()
     : module("XSharp", context), builder(context), optimizer(&module)
 {
     currentSymbols = &globalSymbols;
+
+    module.setTargetTriple(LLVM_DEFAULT_TARGET_TRIPLE);
 }
 
 XSharp::SymbolTable* CodeGenContextHelper::toNewScope()
