@@ -8,6 +8,7 @@ CodeGenProxy<BinaryOperatorNode>::CodeGenProxy()
     processors["-"] = XSharp::SubImpl;
     processors["*"] = XSharp::MulImpl;
     processors["/"] = XSharp::DivImpl;
+    processors["%"] = XSharp::ModImpl;
 
     processors["=="] = XSharp::EqualImpl;
     processors[">"] = XSharp::GreaterImpl;
@@ -15,9 +16,10 @@ CodeGenProxy<BinaryOperatorNode>::CodeGenProxy()
     processors[">="] = XSharp::GreaterOrEqualImpl;
     processors["<="] = XSharp::LessOrEqualImpl;
 
-    processors["&&"] = XSharp::AndImpl;
-    processors["||"] = XSharp::OrImpl;
+    processors["&&"] = XSharp::LogicalAndImpl;
+    processors["||"] = XSharp::LogicalOrImpl;
 }
+
 ValueAndType CodeGenProxy<BinaryOperatorNode>::codeGen(
     BinaryOperatorNode* ast, CodeGenContextHelper* helper,
     const Generator& generator)

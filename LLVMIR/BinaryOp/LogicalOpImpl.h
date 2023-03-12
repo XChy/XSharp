@@ -21,9 +21,10 @@ ValueAndType LessOrEqualImpl(BinaryOperatorNode* op,
                              CodeGenContextHelper* helper,
                              const Generator& generator);
 
-ValueAndType AndImpl(BinaryOperatorNode* op, CodeGenContextHelper* header,
-                     const Generator& generator);
+ValueAndType LogicalAndImpl(BinaryOperatorNode* op,
+                            CodeGenContextHelper* header,
+                            const Generator& generator);
 
-ValueAndType OrImpl(BinaryOperatorNode* op, CodeGenContextHelper* header,
-                    const Generator& generator);
+ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContextHelper* header,
+                           const Generator& generator);
 }  // namespace XSharp

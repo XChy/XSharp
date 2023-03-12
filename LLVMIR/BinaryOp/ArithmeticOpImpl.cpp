@@ -115,3 +115,28 @@ ValueAndType XSharp::DivImpl(BinaryOperatorNode* op,
     else
         return {helper->builder.CreateFDiv(lhs, rhs), merged_type};
 }
+ValueAndType XSharp::ModImpl(BinaryOperatorNode* op,
+                             CodeGenContextHelper* helper,
+                             const Generator& generator)
+{
+    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+
+    if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
+        // TODO: Support customed operator
+        helper->error("Cannot mod non-numbers");
+        return {nullptr, nullptr};
+    }
+
+    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+
+    lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
+    rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
+
+    if (merged_type->isSigned())
+        return {helper->builder.CreateSRem(lhs, rhs), merged_type};
+    else if (merged_type->isUnsigned())
+        return {helper->builder.CreateURem(lhs, rhs), merged_type};
+    else
+        return {helper->builder.CreateFRem(lhs, rhs), merged_type};
+}

@@ -1,5 +1,6 @@
 #include "FuncDefinitionProxies.h"
 #include <llvm-14/llvm/IR/Function.h>
+#include <llvm-14/llvm/IR/Verifier.h>
 #include <cstdio>
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/ASTNodes.h"
@@ -64,11 +65,17 @@ ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
         iter++;
     }
 
-    generator(ast->impl());
+    auto [impl, impl_type] = generator(ast->impl());
+    if (!impl_type) return {nullptr, nullptr};
 
     helper->toParentScope();
 
     helper->currentSymbols->addSymbol(functionSymbol);
+
+    // for debug
+    // llvm::verifyFunction(*func);
+    // llvm::verifyModule(helper->module);
+
     helper->optimizer.functionPassManager.run(*func);
 
     return {func, functionType};

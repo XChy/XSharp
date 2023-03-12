@@ -53,10 +53,10 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
                                    symbol.definition, argumentValues),
                 symbol.type->returnValueType()};
     }
-    // TODO: thisast
+    // TODO: thiscall
     else if (ast->function()->is<MemberNode>()) {
     }
-    // TODO: astable
+    // TODO: callable
     else {
     }
 

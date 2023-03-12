@@ -144,9 +144,9 @@ ValueAndType XSharp::LessOrEqualImpl(BinaryOperatorNode* op,
                 XSharp::getBooleanType()};
 }
 
-ValueAndType XSharp::AndImpl(BinaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
-                             const Generator& generator)
+ValueAndType XSharp::LogicalAndImpl(BinaryOperatorNode* op,
+                                    CodeGenContextHelper* helper,
+                                    const Generator& generator)
 {
     auto [lhs, lhs_type] = generator(op->left());
     auto [rhs, rhs_type] = generator(op->right());
@@ -162,9 +162,9 @@ ValueAndType XSharp::AndImpl(BinaryOperatorNode* op,
     return {helper->builder.CreateAnd(lhs, rhs), XSharp::getBooleanType()};
 }
 
-ValueAndType XSharp::OrImpl(BinaryOperatorNode* op,
-                            CodeGenContextHelper* helper,
-                            const Generator& generator)
+ValueAndType XSharp::LogicalOrImpl(BinaryOperatorNode* op,
+                                   CodeGenContextHelper* helper,
+                                   const Generator& generator)
 {
     auto [lhs, lhs_type] = generator(op->left());
     auto [rhs, rhs_type] = generator(op->right());

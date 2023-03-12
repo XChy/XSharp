@@ -1,8 +1,16 @@
 
 i64 main()
 {
-    double a;
-    a = 1.1;
-    print(a);
+    i32 i = inputI32();
+    if(i == 3){
+        print(0);
+        if(i > 4){
+            print(2);
+        }else{
+            print(3);
+        }
+    }else{
+        print(1);
+    }
     return 10;
 }

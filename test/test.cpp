@@ -72,6 +72,12 @@ void test(const char *path)
     TypeAdapter::setLLVMContext(&helper.contextHelper.context);
     helper.generateLLVMIR(ast, XString(path).append(".bc"));
 
+    if (!helper.contextHelper._errors.empty()) {
+        std::cout << "Semantic error:\n";
+        for (auto error : helper.contextHelper._errors)
+            std::cout << error.errorInfo.toStdString();
+    }
+
     delete ast;
 
     std::cout << std::endl;

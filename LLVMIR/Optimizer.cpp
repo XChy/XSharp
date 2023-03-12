@@ -13,7 +13,7 @@ Optimizer::Optimizer(llvm::Module* module) : functionPassManager(module)
     functionPassManager.add(llvm::createPromoteMemoryToRegisterPass());
     functionPassManager.add(llvm::createLoopSimplifyPass());
     functionPassManager.add(llvm::createInstSimplifyLegacyPass());
-    functionPassManager.add(llvm::createInstructionCombiningPass());
+    // functionPassManager.add(llvm::createInstructionCombiningPass());
     functionPassManager.add(llvm::createIndVarSimplifyPass());
     functionPassManager.add(llvm::createFloat2IntPass());
     functionPassManager.add(llvm::createConstraintEliminationPass());

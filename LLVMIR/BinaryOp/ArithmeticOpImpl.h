@@ -22,5 +22,7 @@ ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
 
 ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
                      const Generator& generator);
+ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                     const Generator& generator);
 
 }  // namespace XSharp

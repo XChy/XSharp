@@ -14,6 +14,7 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
     auto& builder = helper->builder;
     auto& context = helper->context;
     llvm::Function* currentFunc = builder.GetInsertBlock()->getParent();
+    BasicBlock* currentBlock = builder.GetInsertBlock();
 
     auto [cond_val, cond_type] = generator(ast->condition);
     cond_val =
@@ -23,11 +24,9 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
         return {nullptr, nullptr};
     }
 
-    BasicBlock* thenBlock =
-        BasicBlock::Create(context, "true_case", currentFunc);
-    BasicBlock* elseBlock =
-        BasicBlock::Create(context, "false_case", currentFunc);
-    BasicBlock* endBlock = BasicBlock::Create(context, "endif", currentFunc);
+    BasicBlock* thenBlock = BasicBlock::Create(context, "if.then", currentFunc);
+    BasicBlock* elseBlock = BasicBlock::Create(context, "if.else");
+    BasicBlock* endBlock = BasicBlock::Create(context, "if.end");
 
     builder.CreateCondBr(cond_val, thenBlock, elseBlock);
 
@@ -36,18 +35,19 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
     auto [then_val, then_type] = generator(ast->block);
     if (!then_type) return {nullptr, nullptr};
 
-    builder.SetInsertPoint(thenBlock);
-    builder.CreateBr(endBlock);
+    if (!thenBlock->getTerminator()) builder.CreateBr(endBlock);
 
     // else
+    elseBlock->insertInto(currentFunc);
     builder.SetInsertPoint(elseBlock);
     if (ast->elseAst) {
         auto [else_val, else_type] = generator(ast->elseAst);
         if (!else_type) return {nullptr, nullptr};
     }
-    builder.CreateBr(endBlock);
+    if (!elseBlock->getTerminator()) builder.CreateBr(endBlock);
 
     // end
+    endBlock->insertInto(currentFunc);
     builder.SetInsertPoint(endBlock);
 
     return {nullptr, XSharp::getVoidType()};
@@ -63,15 +63,14 @@ ValueAndType CodeGenProxy<WhileNode>::codeGen(WhileNode* ast,
 
     using llvm::BasicBlock;
     llvm::Function* currentFunc = builder.GetInsertBlock()->getParent();
-    BasicBlock* loopstart =
-        BasicBlock::Create(context, "loop_start", currentFunc);
-    BasicBlock* loopBlock =
-        BasicBlock::Create(context, "loop_body", currentFunc);
-    BasicBlock* endBlock = BasicBlock::Create(context, "endWhile", currentFunc);
+    BasicBlock* loop_cond =
+        BasicBlock::Create(context, "while.cond", currentFunc);
+    BasicBlock* loop_body = BasicBlock::Create(context, "while.body");
+    BasicBlock* loop_end = BasicBlock::Create(context, "while.end");
 
-    builder.CreateBr(loopstart);
-    builder.SetInsertPoint(loopstart);
+    builder.CreateBr(loop_cond);
 
+    builder.SetInsertPoint(loop_cond);
     auto [cond_val, cond_type] = generator(ast->condition);
     cond_val = XSharp::TypeAdapter::llvmConvert(
         cond_type, XSharp::getBooleanType(), cond_val);
@@ -79,18 +78,19 @@ ValueAndType CodeGenProxy<WhileNode>::codeGen(WhileNode* ast,
         helper->error("The condition of <while> is not a boolean");
         return {nullptr, nullptr};
     }
-    builder.CreateCondBr(cond_val, loopBlock, endBlock);
-
-    builder.SetInsertPoint(loopBlock);
+    builder.CreateCondBr(cond_val, loop_body, loop_end);
 
     // Loop inner
+    loop_body->insertInto(currentFunc);
+    builder.SetInsertPoint(loop_body);
     auto [then_val, then_type] = generator(ast->block);
     if (!then_type) return {nullptr, nullptr};
 
-    builder.CreateBr(loopstart);
+    builder.CreateBr(loop_cond);
 
     // end loop
-    builder.SetInsertPoint(endBlock);
+    loop_end->insertInto(currentFunc);
+    builder.SetInsertPoint(loop_end);
 
     return {nullptr, XSharp::getVoidType()};
 }
