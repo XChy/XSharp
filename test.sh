@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-ctest
+ctest --output-on-failure
