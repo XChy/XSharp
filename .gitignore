@@ -46,3 +46,8 @@ testcases/types.xsharp.bc
 testcases/types.xsharp.bc
 testcases/arithmetic
 testcases/arithmetic.xsharp.o
+testcases/isprime
+testcases/isprime.xsharp.bc
+testcases/isprime.xsharp.o
+testcases/types
+testcases/types.xsharp.o
