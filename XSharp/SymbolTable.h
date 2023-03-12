@@ -17,6 +17,7 @@ class SymbolTable
 
     void addSymbol(const Symbol& symbol);
 
+    // find the symbols recusively in the table and its parents
     std::vector<Symbol> findSymbols(const XString& name) const;
     std::vector<Symbol> findFunctions(const XString& name) const;
     Symbol findFunctionFor(const XString& name,
@@ -24,6 +25,7 @@ class SymbolTable
 
     Symbol findVariable(const XString& name) const;
 
+    // find symbols in current scope
     bool hasSymbol(const XString& name);
 
     SymbolTable* parent();

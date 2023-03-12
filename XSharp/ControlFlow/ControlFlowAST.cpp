@@ -27,6 +27,7 @@ XString WhileNode::dump() const
 {
     return fmt::format("while({}){}", condition->dump(), block->dump());
 }
+
 WhileNode::~WhileNode()
 {
     delete condition;

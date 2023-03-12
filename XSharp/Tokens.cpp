@@ -81,7 +81,7 @@ bool XSharp::isKeyword(const XString &keyword)
     if (keywords.find(keyword) == keywords.end())
         return false;
     else {
-        return keywords[keyword];
+        return keywords.contains(keyword);
     }
 }
 
@@ -90,21 +90,21 @@ bool XSharp::isOperator(const XString &oper)
     if (operators.find(oper) == operators.end())
         return false;
     else
-        return operators[oper];
+        return operators.contains(oper);
 }
 
 bool XSharp::isOperator(XChar oper)
 {
-    for (const std::pair<XString, bool> &a : operators) {
-        if (a.first.contains(oper)) return true;
+    for (auto operStr : operators) {
+        if (operStr.contains(oper)) return true;
     }
     return false;
 }
 
 bool XSharp::operatorContains(const XString &part)
 {
-    for (const std::pair<XString, bool> &oper : operators) {
-        if (oper.first.subStringIndex(part) != -1) return true;
+    for (auto operStr : operators) {
+        if (operStr.subStringIndex(part) != -1) return true;
     }
     return false;
 }

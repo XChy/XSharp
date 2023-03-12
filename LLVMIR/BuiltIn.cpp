@@ -24,6 +24,10 @@ void setUpBuildIn(llvm::Module& module, llvm::LLVMContext& context,
                                FunctionType::get(Type::getInt8Ty(context),
                                                  {Type::getDoubleTy(context)},
                                                  false));  // IO
+    module.getOrInsertFunction(
+        "printBoolean",
+        FunctionType::get(Type::getInt8Ty(context), {Type::getInt1Ty(context)},
+                          false));  // IO
     module.getOrInsertFunction("inputI32",
                                FunctionType::get(Type::getInt32Ty(context), {},
                                                  false));  // IO
@@ -47,6 +51,13 @@ void setUpBuildIn(llvm::Module& module, llvm::LLVMContext& context,
                        .type = XSharp::getFunctionType(
                            XSharp::getBooleanType(), {XSharp::getDoubleType()}),
                        .definition = module.getFunction("printDouble")});
+    symbols.addSymbol(XSharp::Symbol{
+        .name = "print",
+        .symbolType = XSharp::SymbolType::Function,
+        .type = XSharp::getFunctionType(XSharp::getBooleanType(),
+                                        {XSharp::getBooleanType()}),
+        .definition = module.getFunction("printBoolean")});
+
     symbols.addSymbol(XSharp::Symbol{
         .name = "inputI32",
         .symbolType = XSharp::SymbolType::Function,

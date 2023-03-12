@@ -1,30 +1,24 @@
 #pragma once
 
 #include <memory>
+#include <unordered_set>
 #include "XString.h"
 
 namespace XSharp {
 
-static std::unordered_map<XString, bool> keywords = {
-    {"for", true},       {"while", true},   {"break", true},
-    {"continue", true},  {"if", true},      {"else", true},
-    {"return", true},    {"switch", true},  {"default", true},
-    {"case", true},      {"throw", true},   {"catch", true},
-    {"try", true},       {"class", true},   {"const", true},
-    {"static", true},    {"enum", true},    {"false", true},
-    {"true", true},      {"new", true},     {"public", true},
-    {"protected", true}, {"private", true},
+static std::unordered_set<XString> keywords = {
+    "for",    "while",  "break",   "continue",  "if",      "else",
+    "return", "switch", "default", "case",      "throw",   "catch",
+    "try",    "class",  "const",   "static",    "enum",    "false",
+    "true",   "new",    "public",  "protected", "private",
 };
 bool isKeyword(const XString& keyword);
 
-static std::unordered_map<XString, bool> operators = {
-    {"+", true},  {"-", true},  {"*", true},  {"/", true},   {"^", true},
-    {"&", true},  {"<<", true}, {">>", true}, {"<<=", true}, {">>=", true},
-    {"%", true},  {"!", true},  {"!=", true}, {"=", true},   {"==", true},
-    {"+=", true}, {"-=", true}, {"*=", true}, {"/=", true},  {"%=", true},
-    {"&=", true}, {"|=", true}, {"^=", true}, {"++", true},  {"--", true},
-    {"<", true},  {">", true},  {"<=", true}, {">=", true},  {"?", true},
-    {":", true},
+static std::unordered_set<XString> operators = {
+    "+",  "-",  "*",  "/",  "^",  "&",  "<<", ">>", "<<=", ">>=", "%",
+    "!",  "!=", "=",  "==", "+=", "-=", "*=", "/=", "%=",  "&=",  "|=",
+    "^=", "++", "--", "<",  ">",  "<=", ">=", "&&", "||",  "?",   ":",
+
 };
 bool isOperator(const XString& oper);
 bool isOperator(XChar oper);

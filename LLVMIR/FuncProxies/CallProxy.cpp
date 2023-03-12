@@ -42,8 +42,10 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
             auto param_type = symbol.type->parameterTypes()[i];
             argumentValues[i] =
                 XSharp::TypeAdapter::llvmConvert(arg_type, param_type, arg);
-            if (!arg) {
-                // TODO: error?
+            if (!argumentValues[i]) {
+                helper->error("Cannot convert argument to '{}'",
+                              param_type->typeName());
+                return {nullptr, nullptr};
             }
         }
 

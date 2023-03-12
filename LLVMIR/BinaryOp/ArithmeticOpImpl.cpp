@@ -1,5 +1,4 @@
 #include "ArithmeticOpImpl.h"
-#include <cerrno>
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/Types/Type.h"

@@ -17,6 +17,7 @@ std::vector<Symbol> SymbolTable::findSymbols(const XString& name) const
 {
     Iterator symbolIterator = symbols.find(name);
 
+    // search symbol in parent table
     if (symbolIterator == symbols.end()) {
         if (_parent)
             return _parent->findSymbols(name);
@@ -24,6 +25,7 @@ std::vector<Symbol> SymbolTable::findSymbols(const XString& name) const
             return {};
     }
 
+    // search symbol in current table
     auto symbolCount = symbols.count(name);
     std::vector<Symbol> result;
     for (int i = 0; i < symbolCount; ++i) {
@@ -61,6 +63,7 @@ Symbol SymbolTable::findFunctionFor(
     auto functions = findFunctions(name);
     for (auto funcSymbol : functions) {
         auto parameterTypes = funcSymbol.type->parameterTypes();
+
         if (std::equal(argumentTypes.begin(), argumentTypes.end(),
                        parameterTypes.begin(), parameterTypes.end(),
                        [](TypeNode* a, TypeNode* b) -> bool {
@@ -75,9 +78,11 @@ Symbol SymbolTable::findFunctionFor(
 
     for (auto funcSymbol : functions) {
         auto parameterTypes = funcSymbol.type->parameterTypes();
+
         bool adaptable = std::equal(
             argumentTypes.begin(), argumentTypes.end(), parameterTypes.begin(),
             parameterTypes.end(), &TypeAdapter::canConvert);
+
         if (adaptable) return funcSymbol;
     }
     return Symbol{.symbolType = SymbolType::NoneSymbol};

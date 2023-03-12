@@ -1,4 +1,5 @@
 #include "LogicalOpImpl.h"
+#include "LLVMIR/CodeGenHelper.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"
 ValueAndType XSharp::EqualImpl(BinaryOperatorNode* op,
@@ -141,4 +142,40 @@ ValueAndType XSharp::LessOrEqualImpl(BinaryOperatorNode* op,
     else
         return {helper->builder.CreateFCmpULE(lhs, rhs),
                 XSharp::getBooleanType()};
+}
+
+ValueAndType XSharp::AndImpl(BinaryOperatorNode* op,
+                             CodeGenContextHelper* helper,
+                             const Generator& generator)
+{
+    auto [lhs, lhs_type] = generator(op->left());
+    auto [rhs, rhs_type] = generator(op->right());
+
+    lhs = TypeAdapter::llvmConvert(lhs_type, XSharp::getBooleanType(), lhs);
+    rhs = TypeAdapter::llvmConvert(rhs_type, XSharp::getBooleanType(), rhs);
+
+    if (!lhs || !rhs) {
+        helper->error("And operator can only be applied on two boolean");
+        return {nullptr, nullptr};
+    }
+
+    return {helper->builder.CreateAnd(lhs, rhs), XSharp::getBooleanType()};
+}
+
+ValueAndType XSharp::OrImpl(BinaryOperatorNode* op,
+                            CodeGenContextHelper* helper,
+                            const Generator& generator)
+{
+    auto [lhs, lhs_type] = generator(op->left());
+    auto [rhs, rhs_type] = generator(op->right());
+
+    lhs = TypeAdapter::llvmConvert(lhs_type, XSharp::getBooleanType(), lhs);
+    rhs = TypeAdapter::llvmConvert(rhs_type, XSharp::getBooleanType(), rhs);
+
+    if (!lhs || !rhs) {
+        helper->error("And operator can only be applied on two boolean");
+        return {nullptr, nullptr};
+    }
+
+    return {helper->builder.CreateOr(lhs, rhs), XSharp::getBooleanType()};
 }

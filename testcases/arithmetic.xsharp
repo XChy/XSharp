@@ -1,14 +1,12 @@
+i32 e;
 void main()
 {
     i32 n;
     n = inputI32();
 
-    i32 i;
-    i = 0;
-    i32 a;
-    a = 1;
-    i32 b;
-    b = 1;
+    i32 i=0;
+    i32 a=1;
+    i32 b=1;
     i32 c;
     while (i<n){
         c = a+b;

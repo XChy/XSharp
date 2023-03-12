@@ -8,15 +8,25 @@ CodeGenProxy<BinaryOperatorNode>::CodeGenProxy()
     processors["-"] = XSharp::SubImpl;
     processors["*"] = XSharp::MulImpl;
     processors["/"] = XSharp::DivImpl;
+
     processors["=="] = XSharp::EqualImpl;
     processors[">"] = XSharp::GreaterImpl;
     processors["<"] = XSharp::LessImpl;
     processors[">="] = XSharp::GreaterOrEqualImpl;
     processors["<="] = XSharp::LessOrEqualImpl;
+
+    processors["&&"] = XSharp::AndImpl;
+    processors["||"] = XSharp::OrImpl;
 }
 ValueAndType CodeGenProxy<BinaryOperatorNode>::codeGen(
     BinaryOperatorNode* ast, CodeGenContextHelper* helper,
     const Generator& generator)
 {
-    return processors[ast->operatorStr()](ast, helper, generator);
+    auto iter = processors.find(ast->operatorStr());
+    if (iter != processors.end())
+        return processors[ast->operatorStr()](ast, helper, generator);
+    else {
+        helper->error("Not support the operator '{}' yet", ast->operatorStr());
+        return {nullptr, nullptr};
+    }
 }
