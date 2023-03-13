@@ -3,6 +3,7 @@
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Types/TypeAdapter.h"
 
+// TODO: complete implementation for continue/return
 using namespace XSharp;
 template <>
 class CodeGenProxy<IfNode>

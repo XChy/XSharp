@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <vector>
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Class/ClassAST.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Tokens.h"
 #include "XSharp/XSharpUtils.h"
@@ -46,11 +47,11 @@ DefinitionsNode* Parser::definitions()
     return root;
 }
 
-ClassDeclarationNode* Parser::classDeclaration() { return nullptr; }
+ClassNode* Parser::classDeclaration() { return nullptr; }
 
-FunctionDeclarationNode* Parser::functionDeclaration()
+FunctionNode* Parser::functionDeclaration()
 {
-    FunctionDeclarationNode* root = new FunctionDeclarationNode;
+    FunctionNode* root = new FunctionNode;
 
     root->setReturnType(type());
 
@@ -71,10 +72,10 @@ FunctionDeclarationNode* Parser::functionDeclaration()
     return root;
 }
 
-VariableDeclarationNode* Parser::variableDeclaration(
+VariableNode* Parser::variableDeclaration(
     const std::vector<TokenType>& stopwords)
 {
-    VariableDeclarationNode* root = new VariableDeclarationNode;
+    VariableNode* root = new VariableNode;
     root->setType(type());
 
     if (current->type == Identifier) {
@@ -97,9 +98,9 @@ VariableDeclarationNode* Parser::variableDeclaration(
     return root;
 }
 
-std::vector<VariableDeclarationNode*> Parser::paramsDefinition()
+std::vector<VariableNode*> Parser::paramsDefinition()
 {
-    std::vector<VariableDeclarationNode*> paramsDef;
+    std::vector<VariableNode*> paramsDef;
 
     // if no parameter in parentheses, then return empty paramsDef
     if (current->type == CloseParenthesis) return paramsDef;
@@ -378,7 +379,7 @@ ASTNode* Parser::operand()
         forward();
         operand = new BoxNode(expression({CloseParenthesis}));
     } else if (current->type == Identifier) {
-        operand = new VariableNode(current->value);
+        operand = new VariableExprNode(current->value);
     } else {
         delete before;
         throw XSharpError("Not a operand");
@@ -390,7 +391,7 @@ ASTNode* Parser::operand()
         if (current->type == Dot) {
             current++;
             if (current->type == Identifier) {
-                MemberNode* member = new MemberNode(current->value);
+                MemberExprNode* member = new MemberExprNode(current->value);
                 member->setObject(operand);
                 operand = member;
             } else {

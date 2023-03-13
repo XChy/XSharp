@@ -28,6 +28,31 @@ ValueAndType XSharp::EqualImpl(BinaryOperatorNode* op,
                 XSharp::getBooleanType()};
 }
 
+ValueAndType XSharp::NotEqualImpl(BinaryOperatorNode* op,
+                                  CodeGenContextHelper* helper,
+                                  const Generator& generator)
+{
+    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+
+    if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
+        // TODO: Support customed operator
+        helper->error("Cannot compare non-numbers");
+        return {nullptr, nullptr};
+    }
+
+    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+
+    lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
+    rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
+
+    if (merged_type->isInteger())
+        return {helper->builder.CreateICmpNE(lhs, rhs),
+                XSharp::getBooleanType()};
+    else
+        return {helper->builder.CreateFCmpUNE(lhs, rhs),
+                XSharp::getBooleanType()};
+}
 ValueAndType XSharp::GreaterImpl(BinaryOperatorNode* op,
                                  CodeGenContextHelper* helper,
                                  const Generator& generator)

@@ -94,74 +94,12 @@ BinaryOperatorNode::~BinaryOperatorNode()
     delete _right;
 }
 
-XString ClassDeclarationNode::dump() const
-{
-    return fmt::format("Class\n{{ \nname:{}\n }}", _name);
-}
+FunctionNode::FunctionNode() : _impl(nullptr) {}
 
-XString DefinitionsNode::dump() const
-{
-    XString result;
-    for (auto i : _classDeclarations) {
-        result.append(i->dump());
-        result.append('\n');
-    }
-    for (auto i : _functionDeclarations) {
-        result.append(i->dump());
-        result.append('\n');
-    }
-    for (auto i : _variableDeclarations) {
-        result.append(i->dump());
-        result.append('\n');
-    }
-    return result;
-}
-
-void DefinitionsNode::addClass(ClassDeclarationNode* classDeclaration)
-{
-    _classDeclarations.push_back(classDeclaration);
-}
-
-void DefinitionsNode::addFunction(FunctionDeclarationNode* functionDeclaration)
-{
-    _functionDeclarations.push_back(functionDeclaration);
-}
-
-void DefinitionsNode::addVariable(VariableDeclarationNode* variableDeclaration)
-{
-    _variableDeclarations.push_back(variableDeclaration);
-}
-
-std::vector<ClassDeclarationNode*> DefinitionsNode::classDeclarations() const
-{
-    return _classDeclarations;
-}
-
-std::vector<FunctionDeclarationNode*> DefinitionsNode::functionDeclarations()
-    const
-{
-    return _functionDeclarations;
-}
-
-std::vector<VariableDeclarationNode*> DefinitionsNode::variableDeclarations()
-    const
-{
-    return _variableDeclarations;
-}
-
-DefinitionsNode::~DefinitionsNode()
-{
-    for (auto p : _variableDeclarations) delete p;
-    for (auto p : _functionDeclarations) delete p;
-    for (auto p : _classDeclarations) delete p;
-}
-
-FunctionDeclarationNode::FunctionDeclarationNode() : _impl(nullptr) {}
-
-XString FunctionDeclarationNode::dump() const
+XString FunctionNode::dump() const
 {
     std::vector<std::string> paramDumps;
-    for (VariableDeclarationNode* param : _params) {
+    for (VariableNode* param : _params) {
         paramDumps.push_back(param->dump().toStdString());
     }
 
@@ -174,38 +112,31 @@ XString FunctionDeclarationNode::dump() const
                        implDump);
 }
 
-void FunctionDeclarationNode::setName(const XString& name) { _name = name; }
+void FunctionNode::setName(const XString& name) { _name = name; }
 
-XString FunctionDeclarationNode::name() const { return _name; }
+XString FunctionNode::name() const { return _name; }
 
-void FunctionDeclarationNode::setReturnType(TypeNode* returnType)
+void FunctionNode::setReturnType(TypeNode* returnType)
 {
     _returnType = returnType;
 }
 
-TypeNode* FunctionDeclarationNode::returnType() const { return _returnType; }
+TypeNode* FunctionNode::returnType() const { return _returnType; }
 
-void FunctionDeclarationNode::setParams(
-    std::vector<VariableDeclarationNode*> params)
+void FunctionNode::setParams(std::vector<VariableNode*> params)
 {
     _params = params;
 }
 
-void FunctionDeclarationNode::addParam(VariableDeclarationNode* param)
-{
-    _params.push_back(param);
-}
+void FunctionNode::addParam(VariableNode* param) { _params.push_back(param); }
 
-std::vector<VariableDeclarationNode*> FunctionDeclarationNode::params()
-{
-    return _params;
-}
+std::vector<VariableNode*> FunctionNode::params() { return _params; }
 
-BlockNode* FunctionDeclarationNode::impl() const { return _impl; }
+BlockNode* FunctionNode::impl() const { return _impl; }
 
-void FunctionDeclarationNode::setImpl(BlockNode* impl) { _impl = impl; }
+void FunctionNode::setImpl(BlockNode* impl) { _impl = impl; }
 
-FunctionDeclarationNode::~FunctionDeclarationNode()
+FunctionNode::~FunctionNode()
 {
     for (auto param : params()) {
         delete param;
@@ -213,9 +144,9 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
     delete _impl;
 }
 
-VariableDeclarationNode::VariableDeclarationNode() : _initValue(nullptr) {}
+VariableNode::VariableNode() : _initValue(nullptr) {}
 
-XString VariableDeclarationNode::dump() const
+XString VariableNode::dump() const
 {
     if (_initValue) {
         return fmt::format("Var {}:{} = {}", _name, _type->typeName(),
@@ -225,22 +156,19 @@ XString VariableDeclarationNode::dump() const
     }
 }
 
-void VariableDeclarationNode::setType(TypeNode* type) { _type = type; }
+void VariableNode::setType(TypeNode* type) { _type = type; }
 
-TypeNode* VariableDeclarationNode::type() const { return _type; }
+TypeNode* VariableNode::type() const { return _type; }
 
-void VariableDeclarationNode::setName(const XString& name) { _name = name; }
+void VariableNode::setName(const XString& name) { _name = name; }
 
-XString VariableDeclarationNode::name() const { return _name; }
+XString VariableNode::name() const { return _name; }
 
-void VariableDeclarationNode::setInitValue(ASTNode* initValue)
-{
-    _initValue = initValue;
-}
+void VariableNode::setInitValue(ASTNode* initValue) { _initValue = initValue; }
 
-ASTNode* VariableDeclarationNode::initValue() const { return _initValue; }
+ASTNode* VariableNode::initValue() const { return _initValue; }
 
-VariableDeclarationNode::~VariableDeclarationNode() { delete _initValue; }
+VariableNode::~VariableNode() { delete _initValue; }
 
 XString BlockNode::dump() const
 {
@@ -315,13 +243,13 @@ XString UnaryOperatorNode::operatorStr() const { return _operatorStr; }
 
 UnaryOperatorNode::~UnaryOperatorNode() { delete _operand; }
 
-VariableNode::VariableNode(const XString name) : _name(name) {}
+VariableExprNode::VariableExprNode(const XString name) : _name(name) {}
 
-XString VariableNode::dump() const { return fmt::format("<{}>", _name); }
+XString VariableExprNode::dump() const { return fmt::format("<{}>", _name); }
 
-void VariableNode::setName(const XString& name) { _name = name; }
+void VariableExprNode::setName(const XString& name) { _name = name; }
 
-XString VariableNode::name() const { return _name; }
+XString VariableExprNode::name() const { return _name; }
 
 BoxNode::BoxNode(ASTNode* child) : _child(child) {}
 
@@ -333,23 +261,24 @@ ASTNode* BoxNode::child() { return _child; }
 
 BoxNode::~BoxNode() { delete _child; }
 
-MemberNode::MemberNode(const XString name) : _memberName(name), _object(nullptr)
+MemberExprNode::MemberExprNode(const XString name)
+    : _memberName(name), _object(nullptr)
 {
 }
 
-XString MemberNode::dump() const
+XString MemberExprNode::dump() const
 {
     return fmt::format("{}.{}", _object->dump(), _memberName);
 }
 
-void MemberNode::setMemberName(const XString& name) { _memberName = name; }
+void MemberExprNode::setMemberName(const XString& name) { _memberName = name; }
 
-XString MemberNode::memberName() const { return _memberName; }
+XString MemberExprNode::memberName() const { return _memberName; }
 
-void MemberNode::setObject(ASTNode* object) { _object = object; }
+void MemberExprNode::setObject(ASTNode* object) { _object = object; }
 
-ASTNode* MemberNode::object() { return _object; }
-MemberNode::~MemberNode() { delete _object; }
+ASTNode* MemberExprNode::object() { return _object; }
+MemberExprNode::~MemberExprNode() { delete _object; }
 
 XString IndexNode::dump() const
 {
@@ -377,4 +306,7 @@ XString ReturnNode::dump() const
 void ReturnNode::setReturnValue(ASTNode* retVal) { this->retVal = retVal; }
 ASTNode* ReturnNode::returnValue() { return retVal; }
 
-ReturnNode::~ReturnNode() { delete retVal; }
+ReturnNode::~ReturnNode()
+{
+    if (retVal) delete retVal;
+}

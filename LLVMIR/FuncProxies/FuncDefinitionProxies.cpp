@@ -8,9 +8,9 @@
 #include "XSharp/Types/Type.h"
 #include "XSharp/Types/TypeSystem.h"
 
-ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
-    FunctionDeclarationNode* ast, CodeGenContextHelper* helper,
-    const Generator& generator)
+ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
+                                                 CodeGenContextHelper* helper,
+                                                 const Generator& generator)
 {
     using llvm::BasicBlock;
     using XSharp::Symbol;
@@ -66,7 +66,16 @@ ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
     }
 
     auto [impl, impl_type] = generator(ast->impl());
-    if (!impl_type) return {nullptr, nullptr};
+    if (!impl_type) {
+        func->eraseFromParent();
+        return {nullptr, nullptr};
+    }
+
+    if (!builder.GetInsertBlock()->getTerminator()) {
+        helper->error("There must be a terminator/returner for the function {}",
+                      ast->name());
+        return {nullptr, nullptr};
+    }
 
     helper->toParentScope();
 
@@ -75,6 +84,7 @@ ValueAndType CodeGenProxy<FunctionDeclarationNode>::codeGen(
     // for debug
     llvm::verifyFunction(*func);
 
+    // optimize the function
     helper->optimizer.functionPassManager.run(*func);
 
     return {func, functionType};

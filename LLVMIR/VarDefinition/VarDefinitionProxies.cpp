@@ -5,38 +5,18 @@
 #include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/Types/TypeSystem.h"
 
-ValueAndType CodeGenProxy<VariableDeclarationNode>::codeGen(
-    VariableDeclarationNode* ast, CodeGenContextHelper* helper,
-    const Generator& generator)
+ValueAndType CodeGenProxy<VariableNode>::codeGen(VariableNode* ast,
+                                                 CodeGenContextHelper* helper,
+                                                 const Generator& generator)
 {
     if (helper->isGlobalScope()) {
-        if (helper->globalSymbols.hasSymbol(ast->name())) {
-            helper->error("Redefinition of variable {}", ast->name());
-            return {nullptr, nullptr};
-        }
-
-        TypeNode* var_type = XSharp::getReferenceType(ast->type());
-
-        // TODO: variable's initValue's processing
-        llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(
-            helper->module, castToLLVM(var_type->innerType(), helper->context),
-            var_type->isConst, llvm::GlobalVariable::ExternalLinkage, nullptr,
-            ast->name().toStdString());
-
-        helper->globalSymbols.addSymbol(
-            {.name = ast->name(),
-             .symbolType = XSharp::SymbolType::GlobalVariable,
-             .type = XSharp::getReferenceType(var_type),
-             .definition = globalVar});
-
-        return {globalVar, var_type};
+        return genGlobalVariable(ast, helper, generator);
     } else {
         return genLocalVariable(ast, helper, generator);
     }
 }
 
-ValueAndType genLocalVariable(VariableDeclarationNode* ast,
-                              CodeGenContextHelper* helper,
+ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
                               const Generator& generator)
 {
     using XSharp::TypeAdapter;
@@ -73,4 +53,29 @@ ValueAndType genLocalVariable(VariableDeclarationNode* ast,
          .definition = var_alloca});
 
     return {var_alloca, var_type};
+}
+
+ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
+                               const Generator& generator)
+{
+    if (helper->globalSymbols.hasSymbol(ast->name())) {
+        helper->error("Redefinition of variable {}", ast->name());
+        return {nullptr, nullptr};
+    }
+
+    TypeNode* var_type = XSharp::getReferenceType(ast->type());
+
+    // TODO: Global variable's initValue's processing
+    llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(
+        helper->module, castToLLVM(var_type->innerType(), helper->context),
+        var_type->isConst, llvm::GlobalVariable::ExternalLinkage, nullptr,
+        ast->name().toStdString());
+
+    helper->globalSymbols.addSymbol(
+        {.name = ast->name(),
+         .symbolType = XSharp::SymbolType::GlobalVariable,
+         .type = XSharp::getReferenceType(var_type),
+         .definition = globalVar});
+
+    return {globalVar, var_type};
 }

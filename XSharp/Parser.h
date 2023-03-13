@@ -2,12 +2,13 @@
 
 #include <vector>
 #include "XSharp/ControlFlow/ControlFlowAST.h"
+#include "XSharp/Class/ClassAST.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "xsharp_global.h"
-#include "ASTNodes.h"
 #include "Tokens.h"
 #include "XSharpUtils.h"
 #include "OperInfo.h"
+
 namespace XSharp {
 
 class XSharp_EXPORT Parser
@@ -18,14 +19,13 @@ class XSharp_EXPORT Parser
                        tokenList);  // The astnode pointer is managed by caller
    private:
     DefinitionsNode* definitions();
-    ClassDeclarationNode* classDeclaration();
-    FunctionDeclarationNode* functionDeclaration();
+    ClassNode* classDeclaration();
+    FunctionNode* functionDeclaration();
 
     // end after the stopword
-    VariableDeclarationNode* variableDeclaration(
-        const std::vector<TokenType>& stopwords);
+    VariableNode* variableDeclaration(const std::vector<TokenType>& stopwords);
 
-    std::vector<VariableDeclarationNode*> paramsDefinition();
+    std::vector<VariableNode*> paramsDefinition();
 
     // end at the right parenthesis
     std::vector<ASTNode*> paramsList();

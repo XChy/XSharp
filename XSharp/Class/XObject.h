@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <vector>
 #include "XSharp/XString.h"
 #include "XSharp/xsharp_global.h"
@@ -14,10 +15,12 @@ struct XObjectHeader;
 class XSharp_EXPORT XClass
 {
    public:
+    ~XClass();
+
    private:
     XString _name;
     std::vector<XMemberFunction*> _memberFunctions;
-    std::vector<XMember*> _members;
+    std::vector<XMember*> _fields;
 };
 
 /*
@@ -27,12 +30,8 @@ class XSharp_EXPORT XClass
  */
 
 struct XSharp_EXPORT XObjectHeader {
-    // member marked is applied to implement sweep-mark GC
-    bool marked;
-
-    // padding
-    char padding[3];
-
+    // the last 2 bits is utilized as mark for GC
+    int headerBits;
     // member classDef is applied to implement runtime reflection
     XClass* classDef;
 };

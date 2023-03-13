@@ -4,14 +4,15 @@
 
 // TODO: Scope-related Variable
 template <>
-class CodeGenProxy<VariableDeclarationNode>
+class CodeGenProxy<VariableNode>
 {
    public:
-    ValueAndType codeGen(VariableDeclarationNode* ast,
-                         CodeGenContextHelper* helper,
+    ValueAndType codeGen(VariableNode* ast, CodeGenContextHelper* helper,
                          const Generator& generator);
 };
 
-ValueAndType genLocalVariable(VariableDeclarationNode* ast,
-                              CodeGenContextHelper* helper,
+ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
                               const Generator& generator);
+
+ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
+                               const Generator& generator);

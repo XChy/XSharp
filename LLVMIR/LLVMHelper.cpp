@@ -43,9 +43,9 @@ LLVMHelper::LLVMHelper()
     addProxy<IntegerNode>();
     addProxy<BooleanNode>();
     addProxy<DecimalFractionNode>();
+    addProxy<VariableExprNode>();
     addProxy<VariableNode>();
-    addProxy<VariableDeclarationNode>();
-    addProxy<FunctionDeclarationNode>();
+    addProxy<FunctionNode>();
     addProxy<FunctionCallNode>();
     addProxy<BoxNode>();
     addProxy<BlockNode>();

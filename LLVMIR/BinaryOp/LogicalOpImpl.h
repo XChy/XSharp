@@ -8,6 +8,9 @@ namespace XSharp {
 ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
                        const Generator& generator);
 
+ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                          const Generator& generator);
+
 ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
                          const Generator& generator);
 

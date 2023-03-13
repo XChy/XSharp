@@ -53,6 +53,10 @@ class CodeGenContextHelper
     XSharp::SymbolTable* currentSymbols;
 
     XSharp::TypeNode* currentReturnType;
+
+    // TODO: Apply proxy to change the BasicBlock below
+    llvm::BasicBlock* loopStart;
+    llvm::BasicBlock* loopEnd;
 };
 
 ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper);

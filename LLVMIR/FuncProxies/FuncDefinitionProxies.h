@@ -4,10 +4,9 @@
 #include "XSharp/ASTNodes.h"
 
 template <>
-class CodeGenProxy<FunctionDeclarationNode>
+class CodeGenProxy<FunctionNode>
 {
    public:
-    ValueAndType codeGen(FunctionDeclarationNode* ast,
-                         CodeGenContextHelper* helper,
+    ValueAndType codeGen(FunctionNode* ast, CodeGenContextHelper* helper,
                          const Generator& generator);
 };

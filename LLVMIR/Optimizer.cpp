@@ -9,13 +9,16 @@
 
 Optimizer::Optimizer(llvm::Module* module) : functionPassManager(module)
 {
+    // promote memory allocation to register allocation
     functionPassManager.add(llvm::createPromoteMemoryToRegisterPass());
+    // simplify looping
     functionPassManager.add(llvm::createLoopSimplifyPass());
     functionPassManager.add(llvm::createInstSimplifyLegacyPass());
     functionPassManager.add(llvm::createIndVarSimplifyPass());
     functionPassManager.add(llvm::createFloat2IntPass());
     functionPassManager.add(llvm::createConstraintEliminationPass());
     functionPassManager.add(llvm::createCFGSimplificationPass());
+    functionPassManager.add(llvm::createGVNPass());
     functionPassManager.add(llvm::createFloat2IntPass());
     functionPassManager.add(llvm::createInstructionCombiningPass());
     functionPassManager.add(llvm::createReassociatePass());

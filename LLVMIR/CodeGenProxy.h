@@ -13,6 +13,7 @@
 #include <functional>
 #include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
+#include "XSharp/Class/ClassAST.h"
 #include "XSharp/Types/Type.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
@@ -21,6 +22,7 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/CodeGenHelper.h"
 
+using namespace XSharp;
 typedef std::function<ValueAndType(ASTNode*)> Generator;
 
 // interface for codegen
@@ -108,9 +110,9 @@ class CodeGenProxy<BlockNode>
 };
 
 template <>
-class CodeGenProxy<VariableNode>
+class CodeGenProxy<VariableExprNode>
 {
    public:
-    ValueAndType codeGen(VariableNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(VariableExprNode* ast, CodeGenContextHelper* helper,
                          const Generator& generator);
 };

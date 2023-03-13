@@ -15,8 +15,8 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
     using llvm::ConstantInt;
     using llvm::Function;
 
-    if (ast->function()->is<VariableNode>()) {
-        VariableNode* asteeNode = ast->function()->to<VariableNode>();
+    if (ast->function()->is<VariableExprNode>()) {
+        VariableExprNode* asteeNode = ast->function()->to<VariableExprNode>();
         XString asteeName = asteeNode->name();
 
         std::vector<llvm::Value*> argumentValues;
@@ -54,7 +54,7 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
                 symbol.type->returnValueType()};
     }
     // TODO: thiscall
-    else if (ast->function()->is<MemberNode>()) {
+    else if (ast->function()->is<MemberExprNode>()) {
     }
     // TODO: callable
     else {

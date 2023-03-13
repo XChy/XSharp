@@ -155,10 +155,10 @@ class XSharp_EXPORT BlockNode : public ASTNode
     std::vector<ASTNode*> _contents;
 };
 
-class XSharp_EXPORT VariableDeclarationNode : public ASTNode
+class XSharp_EXPORT VariableNode : public ASTNode
 {
    public:
-    VariableDeclarationNode();
+    VariableNode();
 
     XString dump() const;
 
@@ -171,7 +171,7 @@ class XSharp_EXPORT VariableDeclarationNode : public ASTNode
     void setInitValue(ASTNode* initValue);
     ASTNode* initValue() const;
 
-    ~VariableDeclarationNode();
+    ~VariableNode();
 
    private:
     TypeNode* _type;
@@ -179,10 +179,10 @@ class XSharp_EXPORT VariableDeclarationNode : public ASTNode
     ASTNode* _initValue;
 };
 
-class XSharp_EXPORT FunctionDeclarationNode : public ASTNode
+class XSharp_EXPORT FunctionNode : public ASTNode
 {
    public:
-    FunctionDeclarationNode();
+    FunctionNode();
 
     XString dump() const;
 
@@ -192,52 +192,20 @@ class XSharp_EXPORT FunctionDeclarationNode : public ASTNode
     void setReturnType(TypeNode* returnType);
     TypeNode* returnType() const;
 
-    void setParams(std::vector<VariableDeclarationNode*> params);
-    void addParam(VariableDeclarationNode* param);
-    std::vector<VariableDeclarationNode*> params();
+    void setParams(std::vector<VariableNode*> params);
+    void addParam(VariableNode* param);
+    std::vector<VariableNode*> params();
 
     BlockNode* impl() const;
     void setImpl(BlockNode* impl);
 
-    ~FunctionDeclarationNode();
+    ~FunctionNode();
 
    private:
     XString _name;
     TypeNode* _returnType;
-    std::vector<VariableDeclarationNode*> _params;  // <type name,param name>
+    std::vector<VariableNode*> _params;  // <type name,param name>
     BlockNode* _impl;
-};
-
-class XSharp_EXPORT ClassDeclarationNode : public ASTNode
-{
-   public:
-    XString dump() const;
-
-    TypeNode* exprType() { return nullptr; }
-
-   private:
-    XString _name;
-};
-
-class XSharp_EXPORT DefinitionsNode : public ASTNode
-{
-   public:
-    XString dump() const;
-
-    void addClass(ClassDeclarationNode* classDeclaration);
-    void addFunction(FunctionDeclarationNode* functionDeclaration);
-    void addVariable(VariableDeclarationNode* variableDeclaration);
-
-    std::vector<ClassDeclarationNode*> classDeclarations() const;
-    std::vector<FunctionDeclarationNode*> functionDeclarations() const;
-    std::vector<VariableDeclarationNode*> variableDeclarations() const;
-
-    ~DefinitionsNode();
-
-   private:
-    std::vector<ClassDeclarationNode*> _classDeclarations;
-    std::vector<FunctionDeclarationNode*> _functionDeclarations;
-    std::vector<VariableDeclarationNode*> _variableDeclarations;
 };
 
 class XSharp_EXPORT FunctionCallNode : public ASTNode
@@ -259,10 +227,10 @@ class XSharp_EXPORT FunctionCallNode : public ASTNode
     std::vector<ASTNode*> _params;
 };
 
-class XSharp_EXPORT VariableNode : public ASTNode
+class XSharp_EXPORT VariableExprNode : public ASTNode
 {
    public:
-    VariableNode(const XString name);
+    VariableExprNode(const XString name);
 
     XString dump() const;
 
@@ -273,10 +241,10 @@ class XSharp_EXPORT VariableNode : public ASTNode
     XString _name;
 };
 
-class XSharp_EXPORT MemberNode : public ASTNode
+class XSharp_EXPORT MemberExprNode : public ASTNode
 {
    public:
-    MemberNode(const XString name);
+    MemberExprNode(const XString name);
 
     XString dump() const;
 
@@ -286,7 +254,7 @@ class XSharp_EXPORT MemberNode : public ASTNode
     void setObject(ASTNode* object);
     ASTNode* object();
 
-    ~MemberNode();
+    ~MemberExprNode();
 
    private:
     XString _memberName;

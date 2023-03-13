@@ -9,7 +9,6 @@ void main(){
     b = 100;
     print(add(a,b)+add(b,a));
     print(add(b,b)+add(b,b));
-    return;
 }
 
 
