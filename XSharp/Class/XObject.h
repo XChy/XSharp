@@ -1,39 +1,34 @@
 #include <cstdint>
 #include <vector>
+#include "XSharp/Class/XClass.h"
 #include "XSharp/XString.h"
 #include "XSharp/xsharp_global.h"
 
 namespace XSharp {
 
-class XMemberFunction;
-class XMember;
-struct XObjectHeader;
+struct BuiltinString;
 
-/*
- * the definition for Class in X#
- */
-class XSharp_EXPORT XClass
-{
-   public:
-    ~XClass();
-
-   private:
-    XString _name;
-    std::vector<XMemberFunction*> _memberFunctions;
-    std::vector<XMember*> _fields;
+struct XSharp_EXPORT ClassInfo {
+    BuiltinString* name;
+    // Traits(vtable)
+    // Fields
 };
 
 /*
- * Header for every Object
+ *Common header for every Object
  *
  *
  */
 
 struct XSharp_EXPORT XObjectHeader {
     // the last 2 bits is utilized as mark for GC
-    int headerBits;
-    // member classDef is applied to implement runtime reflection
-    XClass* classDef;
+    // classInfo is applied to implement runtime reflection/trait
+    uintptr_t classPointer;
+
+    void setMark(char mark) noexcept;
+    char getMark() const noexcept;
+    void setClass(ClassInfo* classptr) noexcept;
+    ClassInfo* getClass() const noexcept;
 };
 
 }  // namespace XSharp

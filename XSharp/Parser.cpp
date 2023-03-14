@@ -47,7 +47,15 @@ DefinitionsNode* Parser::definitions()
     return root;
 }
 
-ClassNode* Parser::classDeclaration() { return nullptr; }
+ClassNode* Parser::classDeclaration()
+{
+    ClassNode* classNode = new ClassNode;
+    // skip 'class'
+    forward();
+
+    // analyze the class block
+    return classNode;
+}
 
 FunctionNode* Parser::functionDeclaration()
 {

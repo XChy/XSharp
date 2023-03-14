@@ -13,6 +13,9 @@ enum class SymbolType {
     LocalVariable,
     Argument,
     Function,
+    Member,
+    MemberEvaler,
+    MemberMethod,
     BuiltInFunction,
     Class,
     NoneSymbol
