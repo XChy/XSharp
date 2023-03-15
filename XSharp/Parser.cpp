@@ -298,8 +298,10 @@ ASTNode* Parser::expression(std::vector<TokenType> stopwords, int ctxPriority)
 
     while (true) {
         if (isStopwords(current, stopwords)) return lhs;
+
         if (current->type != Operator)
             throw XSharpError("No operator matched after operand");
+
         if (priority(current->value) <= ctxPriority) break;
 
         XString op = current->value;

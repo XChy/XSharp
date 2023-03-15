@@ -5,7 +5,9 @@
 #include <unordered_map>
 #include "LLVMIR/CodeGenProxy.h"
 
+#include "LLVMIR/FuncProxies/FuncDefinitionProxies.h"
 #include "LLVMIR/BinaryOp/BinaryOpProxy.h"
+#include "LLVMIR/UnaryOP/UnaryOpProxy.h"
 #include "LLVMIR/ControlFlow/ControlFlowProxies.h"
 #include "LLVMIR/FuncProxies/CallProxy.h"
 #include "LLVMIR/VarDefinition/VarDefinitionProxies.h"

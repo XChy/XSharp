@@ -47,6 +47,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     functionSymbol.function = func;
 
     BasicBlock* block = BasicBlock::Create(context, "entry", func);
+    builder.SetInsertPoint(block);
 
     // TODO: maybe support function definition or lambda in function?
     helper->toNewFunctionScope(functionSymbol);

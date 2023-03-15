@@ -30,7 +30,6 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
 
     TypeNode* var_type = XSharp::getReferenceType(ast->type());
 
-    // TODO: variable's initValue's processing
     auto var_alloca =
         builder.CreateAlloca(castToLLVM(var_type->innerType(), context),
                              nullptr, ast->name().toStdString());

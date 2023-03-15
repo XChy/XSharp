@@ -29,7 +29,6 @@
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 
-#include "LLVMIR/FuncProxies/FuncDefinitionProxies.h"
 LLVMHelper::LLVMHelper()
 {
     // module.setDataLayout("");

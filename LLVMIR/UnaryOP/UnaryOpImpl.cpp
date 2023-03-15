@@ -1,12 +1,14 @@
 #include "UnaryOpImpl.h"
-#include "XSharp/Types/Type.h"
 using namespace XSharp;
 
-ValueAndType PositiveImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
-                          const Generator& generator)
+ValueAndType XSharp::PositiveImpl(UnaryOperatorNode* op,
+                                  CodeGenContextHelper* helper,
+                                  const Generator& generator)
 {
     auto [operand, operand_type] =
         deReference(generator(op->operand()), helper);
+
+    if (!operand_type) return {nullptr, nullptr};
 
     if (!operand_type->isNumber()) {
         // TODO: Support customed operator
@@ -16,11 +18,15 @@ ValueAndType PositiveImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
 
     return {operand, operand_type};
 }
-ValueAndType NegativeImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
-                          const Generator& generator)
+
+ValueAndType XSharp::NegativeImpl(UnaryOperatorNode* op,
+                                  CodeGenContextHelper* helper,
+                                  const Generator& generator)
 {
     auto [operand, operand_type] =
         deReference(generator(op->operand()), helper);
+
+    if (!operand_type) return {nullptr, nullptr};
 
     if (!operand_type->isNumber()) {
         // TODO: Support customed operator
@@ -31,12 +37,14 @@ ValueAndType NegativeImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
     return {operand, operand_type};
 }
 
-ValueAndType NotImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
-                     const Generator& generator)
+ValueAndType XSharp::NotImpl(UnaryOperatorNode* op,
+                             CodeGenContextHelper* helper,
+                             const Generator& generator)
 {
     auto [operand, operand_type] =
         deReference(generator(op->operand()), helper);
 
+    if (!operand_type) return {nullptr, nullptr};
     if (operand_type->basicType() == BasicType::Boolean) {
         // TODO: Support customed operator
         helper->error("Cannot get the positive value of non-numbers");

@@ -1,4 +1,5 @@
 #include "CodeGenHelper.h"
+#include <cerrno>
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
 
@@ -38,6 +39,9 @@ bool CodeGenContextHelper::isGlobalScope() const
 ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper)
 {
     auto [ref_val, ref_type] = ref;
+    if (!ref_type) {
+        return {nullptr, nullptr};
+    }
     if (ref_type->category == XSharp::TypeNode::Reference) {
         return {
             helper->builder.CreateLoad(

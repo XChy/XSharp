@@ -11,6 +11,7 @@ ValueAndType XSharp::AssignImpl(BinaryOperatorNode* op,
 {
     auto [lhs, lhs_type] = generator(op->left());
     auto [rhs, rhs_type] = generator(op->right());
+    if (!lhs_type || !rhs_type) return {nullptr, nullptr};
     // Only the reference can be assigned to value
     if (lhs_type->category != TypeNode::Reference) {
         helper->error("Cannot assign value to non-reference");
@@ -23,7 +24,7 @@ ValueAndType XSharp::AssignImpl(BinaryOperatorNode* op,
                       rhs_type->typeName(), lhs_type->innerType()->typeName());
         return {nullptr, nullptr};
     }
-
+    helper->builder.CreateStore(rhs, lhs);
     return {lhs, lhs_type};
 }
 
@@ -34,6 +35,7 @@ ValueAndType XSharp::AddImpl(BinaryOperatorNode* op,
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
 
+    if (!lhs_type || !rhs_type) return {nullptr, nullptr};
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
         helper->error("Cannot add non-numbers");
@@ -54,6 +56,7 @@ ValueAndType XSharp::SubImpl(BinaryOperatorNode* op,
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    if (!lhs_type || !rhs_type) return {nullptr, nullptr};
 
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
@@ -75,6 +78,7 @@ ValueAndType XSharp::MulImpl(BinaryOperatorNode* op,
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    if (!lhs_type || !rhs_type) return {nullptr, nullptr};
 
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
@@ -96,6 +100,7 @@ ValueAndType XSharp::DivImpl(BinaryOperatorNode* op,
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    if (!lhs_type || !rhs_type) return {nullptr, nullptr};
 
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
@@ -121,6 +126,7 @@ ValueAndType XSharp::ModImpl(BinaryOperatorNode* op,
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    if (!lhs_type || !rhs_type) return {nullptr, nullptr};
 
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
