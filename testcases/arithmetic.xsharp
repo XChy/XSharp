@@ -8,8 +8,8 @@ void main()
     i32 b=1;
     i32 c;
     while (i<n){
-        c = a+b;
-        a = b;
+        a = c = (-a)+b*c/66;
+        a = b % 3 / 2 + 4 + (b = 4);
         b = c;
         i=i+1;
     }

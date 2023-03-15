@@ -4,6 +4,7 @@
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Class/ClassAST.h"
 #include "XSharp/Types/TypeSystem.h"
+#include "XSharp/XString.h"
 #include "xsharp_global.h"
 #include "Tokens.h"
 #include "XSharpUtils.h"
@@ -37,14 +38,16 @@ class XSharp_EXPORT Parser
     WhileNode* whileStatement();
 
     // end at the pos of stopwords
-    ASTNode* expression(std::vector<TokenType> stopwords);
+    ASTNode* expression(std::vector<TokenType> stopwords, int priority = 0);
     ASTNode* operand();
 
     // end after <type-name>
     TypeNode* type();
 
+    static int priority(const XString& op);
     static int priority(BinaryOperatorNode* oper);
     static int priority(UnaryOperatorNode* oper);
+    static Assoc assoc(const XString& op);
     static Assoc assoc(BinaryOperatorNode* oper);
 
     bool isStopwords(Iterator tokenIter,

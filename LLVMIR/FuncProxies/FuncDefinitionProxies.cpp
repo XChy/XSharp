@@ -41,15 +41,15 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     Function* func = Function::Create(
         (llvm::FunctionType*)castToLLVM(functionType, context),
         Function::ExternalLinkage, ast->name().toStdString(), module);
+    func->setGC("shadow-stack");
 
     functionSymbol.type = functionType;
     functionSymbol.function = func;
 
+    BasicBlock* block = BasicBlock::Create(context, "entry", func);
+
     // TODO: maybe support function definition or lambda in function?
     helper->toNewFunctionScope(functionSymbol);
-
-    BasicBlock* block = BasicBlock::Create(context, "entry", func);
-    builder.SetInsertPoint(block);
 
     auto iter = func->arg_begin();
     for (int i = 0; i < func->arg_size(); ++i) {

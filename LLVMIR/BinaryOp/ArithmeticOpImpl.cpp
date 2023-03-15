@@ -24,7 +24,7 @@ ValueAndType XSharp::AssignImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    return {helper->builder.CreateStore(rhs, lhs), lhs_type};
+    return {lhs, lhs_type};
 }
 
 ValueAndType XSharp::AddImpl(BinaryOperatorNode* op,

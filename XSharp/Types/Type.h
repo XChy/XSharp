@@ -79,6 +79,7 @@ class TypeNode
     TypeNode* elementType() const;
 
     // Class type,  TODO complete below
+    bool isObjectRef() const;
 
     // generate a unique name for a type
     XString typeName() const;
@@ -86,6 +87,7 @@ class TypeNode
     uint typeID;
     XString baseName;
     bool isConst;
+
     enum Categories {
         Basic,
         Reference,

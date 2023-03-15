@@ -25,20 +25,22 @@ struct UnaryOperatorInfo {
 namespace XSharp {
 //{operator, {priority,associativity}}
 static std::unordered_map<XString, BinaryOperatorInfo> binaryOperInfo = {
-    {"+", {5, LeftToRight}},    {"-", {5, LeftToRight}},
-    {"*", {4, LeftToRight}},    {"/", {4, LeftToRight}},
-    {"^", {11, LeftToRight}},   {"&", {10, LeftToRight}},
-    {"%", {4, LeftToRight}},    {"!=", {9, LeftToRight}},
-    {"=", {16, RightToLeft}},   {"==", {9, LeftToRight}},
-    {"+=", {16, RightToLeft}},  {"-=", {16, RightToLeft}},
-    {"*=", {16, RightToLeft}},  {"/=", {16, RightToLeft}},
-    {"<<=", {16, RightToLeft}}, {">>=", {16, RightToLeft}},
-    {"%=", {16, RightToLeft}},  {"&=", {16, RightToLeft}},
-    {"|=", {16, RightToLeft}},  {"^=", {16, RightToLeft}},
-    {"=", {16, RightToLeft}},   {"<", {8, LeftToRight}},
-    {">", {8, LeftToRight}},    {"<=", {8, LeftToRight}},
-    {">=", {8, LeftToRight}},   {"?", {15, LeftToRight}},
-    {":", {15, LeftToRight}},
+    {"+", {120, LeftToRight}},  {"-", {120, LeftToRight}},
+    {"*", {130, LeftToRight}},  {"/", {130, LeftToRight}},
+    {"^", {80, LeftToRight}},   {"&", {90, LeftToRight}},
+    {"<<", {110, LeftToRight}}, {">>", {110, LeftToRight}},
+    {"%", {130, LeftToRight}},  {"!=", {90, LeftToRight}},
+    {"=", {50, RightToLeft}},   {"==", {90, LeftToRight}},
+    {"+=", {50, RightToLeft}},  {"-=", {50, RightToLeft}},
+    {"*=", {50, RightToLeft}},  {"/=", {50, RightToLeft}},
+    {"<<=", {50, RightToLeft}}, {">>=", {50, RightToLeft}},
+    {"%=", {50, RightToLeft}},  {"&=", {50, RightToLeft}},
+    {"|=", {50, RightToLeft}},  {"^=", {50, RightToLeft}},
+    {"||", {60, LeftToRight}},  {"&&", {70, LeftToRight}},
+    {"=", {50, RightToLeft}},   {"<", {100, LeftToRight}},
+    {">", {100, LeftToRight}},  {"<=", {100, LeftToRight}},
+    {">=", {100, LeftToRight}}, {"?", {60, LeftToRight}},
+    {":", {60, LeftToRight}},
 };
 
 static std::unordered_map<XString, UnaryOperatorInfo> unaryOperInfo = {

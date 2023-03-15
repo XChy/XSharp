@@ -103,8 +103,14 @@ if(BUILD_XSharpCLI)
   add_executable(XSharpC XSharpCLI/xsharpc.cpp)
   set_target_properties(XSharpC PROPERTIES OUTPUT_NAME
                                            "${PROJECT_SOURCE_DIR}/bin/xsharpc")
+
+  add_executable(ASTPRINT XSharpCLI/astprint.cpp)
+  set_target_properties(
+    ASTPRINT PROPERTIES OUTPUT_NAME "${PROJECT_SOURCE_DIR}/bin/astprint")
+
   if(SUPPORT_LLVMIR)
-    target_link_libraries(XSharpC ${llvm_libs} XSharp_STATIC)
+    target_link_libraries(XSharpC ${llvm_libs} XSharp_STATIC fmt)
+    target_link_libraries(ASTPRINT ${llvm_libs} XSharp_STATIC fmt)
   endif()
 endif()
 

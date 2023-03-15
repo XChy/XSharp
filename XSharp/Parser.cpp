@@ -4,6 +4,7 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Class/ClassAST.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
+#include "XSharp/OperInfo.h"
 #include "XSharp/Tokens.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
@@ -51,6 +52,18 @@ ClassNode* Parser::classDeclaration()
 {
     ClassNode* classNode = new ClassNode;
     // skip 'class'
+    forward();
+
+    // skip '{'
+    if (current->is(OpenBrace))
+        forward();
+    else
+        throw XSharpError("Expected '{' is missing");
+
+    while (!current->is(CloseBrace)) {
+    }
+
+    // skip '}'
     forward();
 
     // analyze the class block
@@ -274,94 +287,36 @@ WhileNode* Parser::whileStatement()
     return new WhileNode{condition, codeblock};
 }
 
-ASTNode* Parser::expression(std::vector<TokenType> stopwords)
+ASTNode* Parser::expression(std::vector<TokenType> stopwords, int ctxPriority)
 {
     if (isStopwords(current, stopwords)) {
+        // TODO: error?
         return nullptr;
     }
 
-    BinaryOperatorNode* root = nullptr;
+    ASTNode* lhs = operand();
 
-    ASTNode* factor1 = nullptr;
-    BinaryOperatorNode* oper2 = nullptr;
-    ASTNode* factor3 = nullptr;
+    while (true) {
+        if (isStopwords(current, stopwords)) return lhs;
+        if (current->type != Operator)
+            throw XSharpError("No operator matched after operand");
+        if (priority(current->value) <= ctxPriority) break;
 
-    factor1 = operand();
+        XString op = current->value;
 
-    if (isStopwords(current, stopwords)) return factor1;
-
-    if (current->type == Operator) {
-        root = new BinaryOperatorNode;
-        root->setOperatorStr(current->value);
-        root->setLeft(factor1);
-    } else {
-        throw XSharpError("No operator matched after operand");
-    }
-
-    if (isStopwords(++current, stopwords))
-        throw XSharpError("No operand after operator");
-
-    root->setRight(operand());
-
-    while (!isStopwords(current, stopwords)) {
-        oper2 = new BinaryOperatorNode;
-        oper2->setOperatorStr(current->value);
         forward();
+        auto right_binding_power =
+            assoc(op) == LeftToRight ? priority(op) : priority(op) - 1;
+        auto rhs = expression(stopwords, right_binding_power);
 
-        if (isStopwords(current, stopwords))
-            throw XSharpError("No operand after operator");
-
-        factor3 = operand();
-
-        if (priority(oper2) > priority(root)) {
-            oper2->setLeft(root);
-            oper2->setRight(factor3);
-            root = oper2;
-        } else if (priority(oper2) == priority(root)) {
-            if (assoc(oper2) == LeftToRight) {
-                oper2->setLeft(root);
-                oper2->setRight(factor3);
-                root = oper2;
-            } else if (assoc(oper2) == RightToLeft) {
-                oper2->setLeft(root->right());
-                oper2->setRight(factor3);
-                root->setRight(oper2);
-            }
-        } else {
-            BinaryOperatorNode* node = root;
-            while (true) {
-                if (!node->right()->is<BinaryOperatorNode>()) {
-                    oper2->setLeft(node->right());
-                    oper2->setRight(factor3);
-                    node->setRight(oper2);
-                    break;
-                }
-
-                BinaryOperatorNode* currentNode =
-                    (BinaryOperatorNode*)node->right();
-
-                if (priority(oper2) > priority(currentNode)) {
-                    oper2->setLeft(currentNode);
-                    oper2->setRight(factor3);
-                    node->setRight(oper2);
-                    break;
-                } else if (priority(oper2) == priority(currentNode)) {
-                    if (assoc(oper2) == LeftToRight) {
-                        oper2->setLeft(currentNode);
-                        oper2->setRight(factor3);
-                        node->setRight(oper2);
-                    } else if (assoc(oper2) == RightToLeft) {
-                        oper2->setLeft(currentNode->right());
-                        oper2->setRight(factor3);
-                        currentNode->setRight(oper2);
-                    }
-                    break;
-                }
-                node = currentNode;
-            }
-        }
+        auto new_lhs = new BinaryOperatorNode;
+        new_lhs->setOperatorStr(op);
+        new_lhs->setLeft(lhs);
+        new_lhs->setRight(rhs);
+        lhs = new_lhs;
     }
-    return root;
+
+    return lhs;
 }
 
 ASTNode* Parser::operand()
@@ -493,6 +448,10 @@ TypeNode* Parser::type()
     }
 }
 
+int Parser::priority(const XString& op)
+{
+    return XSharp::binaryOperInfo[op].priority;
+}
 int Parser::priority(BinaryOperatorNode* oper)
 {
     return XSharp::binaryOperInfo[oper->operatorStr()].priority;
@@ -501,6 +460,11 @@ int Parser::priority(BinaryOperatorNode* oper)
 int Parser::priority(UnaryOperatorNode* oper)
 {
     return XSharp::unaryOperInfo[oper->operatorStr()].priority;
+}
+
+Assoc Parser::assoc(const XString& op)
+{
+    return XSharp::binaryOperInfo[op].assoc;
 }
 
 Assoc Parser::assoc(BinaryOperatorNode* oper)

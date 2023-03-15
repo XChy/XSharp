@@ -155,6 +155,12 @@ bool TypeNode::isNumber() const
     }
     return false;
 }
+
+bool TypeNode::isObjectRef() const
+{
+    return category == Reference && innerType()->category == Class;
+}
+
 uint TypeNode::size() const
 {
     switch (category) {
