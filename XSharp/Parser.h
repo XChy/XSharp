@@ -21,9 +21,13 @@ class XSharp_EXPORT Parser
    private:
     DefinitionsNode* definitions();
     ClassNode* classDeclaration();
+    // <type> <name> (paramlist)
+    bool isFunctionDecl() const;
     FunctionNode* functionDeclaration();
 
     // end after the stopword
+    // <type> <name> (( = <initial value> ))
+    bool isVariableDecl() const;
     VariableNode* variableDeclaration(const std::vector<TokenType>& stopwords);
 
     std::vector<VariableNode*> paramsDefinition();
@@ -41,7 +45,6 @@ class XSharp_EXPORT Parser
     ASTNode* expression(std::vector<TokenType> stopwords, int priority = 0);
     ASTNode* operand();
 
-    // end after <type-name>
     TypeNode* type();
 
     static int priority(const XString& op);

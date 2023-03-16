@@ -1,0 +1,13 @@
+class{
+i32 a = b;
+i32 a = c;
+
+i32 a(i32 a){
+    print(c);
+}
+
+i32 b(double b){
+    print(c);
+}
+
+}

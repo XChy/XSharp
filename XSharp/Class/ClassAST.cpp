@@ -10,6 +10,10 @@ XString ClassNode::dump() const
     for (auto member : members) {
         fieldDumps.push_back(fmt::format("field : {}", member->dump()));
     }
+    for (auto method : methods) {
+        fieldDumps.push_back(fmt::format("field : {}", method->dump()));
+    }
+
     return fmt::format("Class {}{{ \n{}\n }}", name,
                        fmt::join(fieldDumps, "\n"));
 }

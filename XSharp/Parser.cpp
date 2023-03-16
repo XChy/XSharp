@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include <algorithm>
+#include <cmath>
 #include <vector>
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Class/ClassAST.h"
@@ -61,6 +62,15 @@ ClassNode* Parser::classDeclaration()
         throw XSharpError("Expected '{' is missing");
 
     while (!current->is(CloseBrace)) {
+        if (isVariableDecl()) {
+            auto var = variableDeclaration({SentenceEnd});
+            classNode->members.push_back(var);
+        } else if (isFunctionDecl()) {
+            auto func = functionDeclaration();
+            classNode->methods.push_back(func);
+        } else {
+            throw XSharpError("Not a field in class");
+        }
     }
 
     // skip '}'
@@ -70,6 +80,36 @@ ClassNode* Parser::classDeclaration()
     return classNode;
 }
 
+bool Parser::isFunctionDecl() const
+{
+    auto localCurrent = current;
+
+    // <type-expression>
+    if (localCurrent->isKeyword("const")) localCurrent++;
+
+    if (!localCurrent->is(Identifier)) return false;
+
+    localCurrent++;
+
+    while (localCurrent->is(OpenBracket)) {
+        localCurrent++;
+        if (localCurrent->is(CloseBracket)) {
+            localCurrent++;
+        } else {
+            return false;
+        }
+    }
+
+    // <name>
+    if (!localCurrent->is(Identifier)) return false;
+
+    localCurrent++;
+
+    // '(paramlist)'
+    if (localCurrent->is(OpenParenthesis)) return true;
+
+    return false;
+}
 FunctionNode* Parser::functionDeclaration()
 {
     FunctionNode* root = new FunctionNode;
@@ -91,6 +131,39 @@ FunctionNode* Parser::functionDeclaration()
 
     root->setImpl(block());
     return root;
+}
+
+bool Parser::isVariableDecl() const
+{
+    auto localCurrent = current;
+
+    // <type-expression>
+    if (localCurrent->isKeyword("const")) localCurrent++;
+
+    if (!localCurrent->is(Identifier)) return false;
+
+    localCurrent++;
+
+    while (localCurrent->is(OpenBracket)) {
+        localCurrent++;
+        if (localCurrent->is(CloseBracket)) {
+            localCurrent++;
+        } else {
+            return false;
+        }
+    }
+
+    // <name>
+    if (!localCurrent->is(Identifier)) return false;
+
+    localCurrent++;
+
+    // Initializer or SentenceEnd
+
+    if (localCurrent->is(SentenceEnd)) return true;
+    if (localCurrent->isOperator("=")) return true;
+
+    return false;
 }
 
 VariableNode* Parser::variableDeclaration(
@@ -294,6 +367,7 @@ ASTNode* Parser::expression(std::vector<TokenType> stopwords, int ctxPriority)
         return nullptr;
     }
 
+    // Pratt Parsing
     ASTNode* lhs = operand();
 
     while (true) {
@@ -419,12 +493,12 @@ TypeNode* Parser::type()
     bool isConst = false;
     uint arrayDimension = 0;
     XString baseName;
-    if (current->type == Keyword && current->value == "const") {
+    if (current->isKeyword("const")) {
         isConst = true;
         forward();
     }
 
-    if (current->type == Identifier) {
+    if (current->is(Identifier)) {
         baseName = current->value;
         forward();
 
@@ -485,7 +559,7 @@ bool Parser::isStopwords(Iterator tokenIter,
 
 void Parser::forward()
 {
-    if (current != end)
+    if (current != end && !current->is(Eof))
         current++;
     else
         throw XSharpError("Reach the end without completing parsing");

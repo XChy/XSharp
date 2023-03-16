@@ -45,7 +45,8 @@ enum TokenType {
     CloseBrace,
     SentenceEnd,
     Identifier,
-    Keyword
+    Keyword,
+    Eof
 };
 
 class XSharp_EXPORT Token
