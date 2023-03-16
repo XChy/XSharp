@@ -1,9 +1,8 @@
 #pragma once
 
-#include <unordered_map>
-#include <vector>
 #include "XSharp/xsharp_global.h"
 #include "XSharp/XString.h"
+#include "XSharp/Class/XClass.h"
 #include "Type.h"
 
 namespace XSharp {
@@ -15,6 +14,7 @@ class TypeContext
     ~TypeContext();
 
     TypeNode* registerType(XSharp::TypeNode* type);
+    TypeNode* registerClass(XClass* classDecl);
 
     // return typeid
     // If no type with the name exists ,return 0
@@ -23,7 +23,8 @@ class TypeContext
     TypeNode* typeOf(int typeId);
 
     std::unordered_map<XString, uint> typesMap;
-    std::vector<TypeNode*> typesList;
+    std::vector<TypeNode*> typeList;
+    std::unordered_map<XString, TypeNode*> classes;
 
    private:
     uint registerNum = 0;

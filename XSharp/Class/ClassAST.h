@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include "XSharp/ASTNodes.h"
 
 namespace XSharp {

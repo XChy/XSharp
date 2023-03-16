@@ -2,6 +2,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
+#include <unistd.h>
 #include <vector>
 
 llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)

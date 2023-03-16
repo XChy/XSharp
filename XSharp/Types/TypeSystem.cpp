@@ -1,4 +1,6 @@
 #include "TypeSystem.h"
+#include "XSharp/Types/Type.h"
+#include "XSharp/Class/XClass.h"
 
 using namespace XSharp;
 
@@ -25,18 +27,28 @@ TypeContext::TypeContext()
 
 TypeContext::~TypeContext()
 {
-    for (TypeNode* node : typesList) delete node;
+    for (TypeNode* node : typeList) delete node;
 }
 TypeNode* TypeContext::registerType(XSharp::TypeNode* type)
 {
-    // typesMap[type->typeName()] = registerNum;
+    if (type->category == TypeNode::Class) {
+        classes[type->typeName()] = type;
+    }
 
-    typesList.push_back(type);
-    typesList[registerNum]->typeID = registerNum;
-    return typesList[registerNum++];
+    typeList.push_back(type);
+    typeList[registerNum]->typeID = registerNum;
+    return typeList[registerNum++];
 }
 
-TypeNode* TypeContext::typeOf(int typeId) { return typesList[typeId]; }
+TypeNode* TypeContext::registerClass(XClass* classDecl)
+{
+    TypeNode* type = new TypeNode;
+    type->typeSpecifiedInfo = ClassType{.classDecl = classDecl};
+    type->baseName = classDecl->name;
+    registerType(type);
+    return type;
+}
+TypeNode* TypeContext::typeOf(int typeId) { return typeList[typeId]; }
 
 uint TypeContext::typeIDOf(XString name)
 {
@@ -86,11 +98,8 @@ TypeNode* XSharp::getArrayType(TypeNode* elementType, uint dimension)
 
 TypeNode* XSharp::getClassType(const XString& baseName)
 {
-    TypeNode* node = new TypeNode;
-    node->category = TypeNode::Class;
-    node->typeSpecifiedInfo = ClassType{};
-    GlobalTypeContext.registerType(node);
-    return node;
+    // TODO: support generics
+    return GlobalTypeContext.classes[baseName];
 }
 
 TypeNode* XSharp::getClosureType()

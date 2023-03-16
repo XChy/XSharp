@@ -25,9 +25,10 @@ class Field
 class XSharp_EXPORT XClass
 {
    public:
+    XString name;
+
    private:
     // TODO: trait table
-    XString _name;
     std::vector<Field> fields;
 };
 

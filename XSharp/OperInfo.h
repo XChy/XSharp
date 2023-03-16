@@ -6,9 +6,9 @@
 enum Assoc { LeftToRight, RightToLeft };
 
 enum UnaryOperatorPlace {
-    BeforeValue = 0b01,
-    AfterValue = 0b10,
-    All = BeforeValue | AfterValue
+    prefix = 0b01,
+    postfix = 0b10,
+    All = prefix | postfix
 };
 
 struct BinaryOperatorInfo {
@@ -45,11 +45,10 @@ static std::unordered_map<XString, BinaryOperatorInfo> binaryOperInfo = {
 
 static std::unordered_map<XString, UnaryOperatorInfo> unaryOperInfo = {
     {"+",
-     {3, BeforeValue,
-      RightToLeft}},  //{operator,{priority,place,associativity}}
-    {"-", {3, BeforeValue, RightToLeft}},
+     {3, prefix, RightToLeft}},  //{operator,{priority,place,associativity}}
+    {"-", {3, prefix, RightToLeft}},
     {"++", {3, All, RightToLeft}},
     {"--", {3, All, RightToLeft}},
-    {"!", {3, BeforeValue, RightToLeft}}};
+    {"!", {3, prefix, RightToLeft}}};
 
 }  // namespace XSharp

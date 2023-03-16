@@ -25,25 +25,12 @@ DefinitionsNode* Parser::definitions()
     while (current != end) {
         if (current->isKeyword("class")) {
             root->addClass(classDeclaration());
-        } else if (current->is(Identifier)) {
-            forward();
-            // TODO: Identify the variable and function when parsing
-            if (current->type == Identifier) {  // Function or variable
-                forward();
-                if (current->type == OpenParenthesis) {  // define function
-                    backward();
-                    backward();
-                    root->addFunction(functionDeclaration());
-                } else if (current->is(SentenceEnd) ||
-                           current->isOperator("=")) {  // define variable
-                    backward();
-                    backward();
-                    root->addVariable(variableDeclaration({SentenceEnd}));
-                } else {
-                }
-            } else {
-                throw XSharpError("Illegal identifer");
-            }
+        } else if (isVariableDecl()) {
+            root->addVariable(variableDeclaration({SentenceEnd}));
+        } else if (isFunctionDecl()) {
+            root->addFunction(functionDeclaration());
+        } else {
+            throw XSharpError("Not a definition in global");
         }
     }
     return root;
@@ -53,6 +40,11 @@ ClassNode* Parser::classDeclaration()
 {
     ClassNode* classNode = new ClassNode;
     // skip 'class'
+    forward();
+
+    if (!current->is(Identifier)) throw XSharpError("No name for class");
+
+    classNode->name = current->value;
     forward();
 
     // skip '{'
@@ -416,7 +408,7 @@ ASTNode* Parser::operand()
         operand = new StringNode(current->value);
     } else if (current->type == OpenParenthesis) {
         forward();
-        operand = new BoxNode(expression({CloseParenthesis}));
+        operand = expression({CloseParenthesis});
     } else if (current->type == Identifier) {
         operand = new VariableExprNode(current->value);
     } else {

@@ -1,4 +1,4 @@
-class{
+class A{
 i32 a = b;
 i32 a = c;
 

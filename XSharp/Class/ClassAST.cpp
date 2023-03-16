@@ -14,8 +14,7 @@ XString ClassNode::dump() const
         fieldDumps.push_back(fmt::format("field : {}", method->dump()));
     }
 
-    return fmt::format("Class {}{{ \n{}\n }}", name,
-                       fmt::join(fieldDumps, "\n"));
+    return fmt::format("Class {}{{\n{}\n}}", name, fmt::join(fieldDumps, "\n"));
 }
 
 ClassNode::~ClassNode()
@@ -23,6 +22,7 @@ ClassNode::~ClassNode()
     for (auto i : members) delete i;
     for (auto i : methods) delete i;
 }
+
 XString DefinitionsNode::dump() const
 {
     XString result;

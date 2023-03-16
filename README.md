@@ -41,7 +41,12 @@ xsharp xxx.xe          # execute the bytecode
   XSharp can compile XSharp code into LLVM IR, which XSharp apply **LLVM14(or above)** to compile and optimize to generate binary
 
 - ##### **FMT**
+
   For format printing
+
+- ##### **Boehm GC** (**Temporary GC, I may develop a unique one for XSharp later**)
+
+  For garbage collection
 
 ### Grammar
 

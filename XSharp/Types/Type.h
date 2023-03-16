@@ -27,9 +27,9 @@ struct ReferenceType {
     TypeNode* innerType;
 };
 
+class XClass;
 struct ClassType {
-    // TODO: complete class type-specified setting
-    std::vector<TypeNode*> genericsParams;
+    XClass* classDecl;
 };
 
 struct ArrayType {
@@ -80,6 +80,7 @@ class TypeNode
 
     // Class type,  TODO complete below
     bool isObjectRef() const;
+    XClass* getObjectClass() const;
 
     // generate a unique name for a type
     XString typeName() const;

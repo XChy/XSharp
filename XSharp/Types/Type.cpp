@@ -161,6 +161,18 @@ bool TypeNode::isObjectRef() const
     return category == Reference && innerType()->category == Class;
 }
 
+XClass* TypeNode::getObjectClass() const
+{
+    if (category == Reference && innerType()->category == Class) {
+        // Easily get classDecl
+        return innerType()->getObjectClass();
+    } else if (category == Class) {
+        return std::get<ClassType>(typeSpecifiedInfo).classDecl;
+    } else {
+        return nullptr;
+    }
+}
+
 uint TypeNode::size() const
 {
     switch (category) {
