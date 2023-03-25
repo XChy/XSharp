@@ -119,6 +119,8 @@ XString TypeNode::typeName() const
     return "";
 }
 
+bool TypeNode::isBasic() const { return category == Basic; }
+
 BasicType TypeNode::basicType() const
 {
     return std::get<BasicType>(typeSpecifiedInfo);

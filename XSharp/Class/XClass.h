@@ -1,4 +1,5 @@
-#include "XSharp/Symbol.h"
+#pragma once
+#include "XSharp/Types/Type.h"
 #include "XSharp/XString.h"
 #include "XSharp/xsharp_global.h"
 /*
@@ -12,12 +13,14 @@ enum class VisitLevel {
     Private,
 };
 
+class TypeNode;
 class Field
 {
    public:
-    XSharp::Symbol* fieldSymbol;
     VisitLevel visitLevel;
     bool isStatic;
+    XString name;
+    TypeNode* type;
 
     int offset();
 };
@@ -27,9 +30,8 @@ class XSharp_EXPORT XClass
    public:
     XString name;
 
-   private:
     // TODO: trait table
-    std::vector<Field> fields;
+    std::vector<Field> dataFields;
 };
 
 }  // namespace XSharp

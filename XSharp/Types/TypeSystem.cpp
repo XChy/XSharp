@@ -28,6 +28,10 @@ TypeContext::TypeContext()
 TypeContext::~TypeContext()
 {
     for (TypeNode* node : typeList) delete node;
+    for (auto [_, classType] : classes) {
+        delete classType->getObjectClass();
+        delete classType;
+    }
 }
 TypeNode* TypeContext::registerType(XSharp::TypeNode* type)
 {
@@ -42,6 +46,12 @@ TypeNode* TypeContext::registerType(XSharp::TypeNode* type)
 
 TypeNode* TypeContext::registerClass(XClass* classDecl)
 {
+    if (classes.find(classDecl->name) != classes.end()) {
+        classes[classDecl->name]->typeSpecifiedInfo =
+            ClassType{.classDecl = classDecl};
+        return classes[classDecl->name];
+    }
+
     TypeNode* type = new TypeNode;
     type->typeSpecifiedInfo = ClassType{.classDecl = classDecl};
     type->baseName = classDecl->name;
@@ -59,6 +69,22 @@ uint TypeContext::typeIDOf(XString name)
     }
 
     return 0;
+}
+
+TypeNode* XSharp::registerClass(XClass* classDecl)
+{
+    if (GlobalTypeContext.classes.find(classDecl->name) !=
+        GlobalTypeContext.classes.end()) {
+        GlobalTypeContext.classes[classDecl->name]->typeSpecifiedInfo =
+            ClassType{.classDecl = classDecl};
+        return GlobalTypeContext.classes[classDecl->name];
+    }
+
+    TypeNode* type = new TypeNode;
+    type->typeSpecifiedInfo = ClassType{.classDecl = classDecl};
+    type->baseName = classDecl->name;
+    GlobalTypeContext.registerType(type);
+    return type;
 }
 
 TypeNode* XSharp::getBasicType(BasicType type)
@@ -99,6 +125,13 @@ TypeNode* XSharp::getArrayType(TypeNode* elementType, uint dimension)
 TypeNode* XSharp::getClassType(const XString& baseName)
 {
     // TODO: support generics
+    if (!GlobalTypeContext.classes.contains(baseName)) {
+        GlobalTypeContext.classes[baseName] = new TypeNode;
+        GlobalTypeContext.classes[baseName]->baseName = baseName;
+        GlobalTypeContext.classes[baseName]->typeSpecifiedInfo =
+            ClassType{.classDecl = nullptr};
+        GlobalTypeContext.classes[baseName]->category = TypeNode::Class;
+    }
     return GlobalTypeContext.classes[baseName];
 }
 

@@ -58,6 +58,7 @@ class TypeNode
     bool operator==(const TypeNode& other) const { return equals(other); }
 
     // Basic type
+    bool isBasic() const;
     BasicType basicType() const;
     bool isInteger() const;
     bool isSigned() const;

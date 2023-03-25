@@ -24,11 +24,14 @@ DefinitionsNode* Parser::definitions()
     DefinitionsNode* root = new DefinitionsNode;
     while (current != end) {
         if (current->isKeyword("class")) {
-            root->addClass(classDeclaration());
+            root->decls.push_back(classDeclaration());
+            // root->addClass(classDeclaration());
         } else if (isVariableDecl()) {
-            root->addVariable(variableDeclaration({SentenceEnd}));
+            root->decls.push_back(variableDeclaration({SentenceEnd}));
+            // root->addVariable(variableDeclaration({SentenceEnd}));
         } else if (isFunctionDecl()) {
-            root->addFunction(functionDeclaration());
+            // root->addFunction(functionDeclaration());
+            root->decls.push_back(functionDeclaration());
         } else {
             throw XSharpError("Not a definition in global");
         }

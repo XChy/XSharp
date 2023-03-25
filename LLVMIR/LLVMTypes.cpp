@@ -2,8 +2,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
-#include <unistd.h>
-#include <vector>
+#include "XSharp/Class/XClass.h"
 
 llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
 {
@@ -43,16 +42,33 @@ llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
                 castToLLVM(type->returnValueType(), context),
                 llvmTypesForParams, false);
         }
+
         case TypeNode::Array:
             // Allocate XSharp's array on heap
             // So the type of array is the pointer type of its element
             return llvm::PointerType::get(
                 castToLLVM(type->elementType(), context), 0);
-        case TypeNode::Class:
+
+        case TypeNode::Class: {
             // TODO: Complete the related definition of class
-            return llvm::StructType::get(context, std::vector<llvm::Type*>());
+            std::vector<llvm::Type*> llvmTypes;
+            // Class Pointer for reflection
+
+            llvmTypes.push_back(
+                llvm::Type::getIntNTy(context, sizeof(uintptr_t) * 8));
+
+            for (auto fieid : type->getObjectClass()->dataFields) {
+                llvmTypes.push_back(castToLLVM(fieid.type, context));
+            }
+
+            auto valueType = llvm::StructType::get(context, llvmTypes);
+            auto refType = valueType->getPointerTo();
+            return refType;
+        }
+
         case TypeNode::Closure:
             break;
+
         case TypeNode::Reference:
             return llvm::PointerType::get(
                 castToLLVM(type->innerType(), context), 0);

@@ -2,7 +2,6 @@
 
 #include "XSharp/xsharp_global.h"
 #include "XSharp/XString.h"
-#include "XSharp/Class/XClass.h"
 #include "Type.h"
 
 namespace XSharp {
@@ -58,6 +57,8 @@ TypeNode* getTypeFor(const XString& baseName);
 
 // To adapt the lhs number and rhs number for logical and arithmetic operator
 TypeNode* getMergedType(TypeNode* lhs_type, TypeNode* rhs_type);
+
+TypeNode* registerClass(XClass* classDecl);
 
 static TypeNode* getVoidType() { return getBasicType(BasicType::Void); }
 static TypeNode* getI64Type() { return getBasicType(BasicType::I64); }

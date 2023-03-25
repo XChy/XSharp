@@ -21,6 +21,7 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/BuiltIn.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Class/ClassAST.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Symbol.h"
 #include "XSharp/Types/Type.h"
@@ -53,6 +54,7 @@ LLVMHelper::LLVMHelper()
     addProxy<ReturnNode>();
     addProxy<BinaryOperatorNode>();
     addProxy<UnaryOperatorNode>();
+    addProxy<ClassNode>();
 }
 
 LLVMHelper::~LLVMHelper()

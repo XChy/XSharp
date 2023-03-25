@@ -73,4 +73,5 @@ DefinitionsNode::~DefinitionsNode()
     for (auto p : _variables) delete p;
     for (auto p : _functions) delete p;
     for (auto p : _classes) delete p;
+    for (auto p : decls) delete p;
 }

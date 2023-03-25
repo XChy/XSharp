@@ -31,6 +31,8 @@ class XSharp_EXPORT DefinitionsNode : public ASTNode
 
     ~DefinitionsNode();
 
+    std::vector<ASTNode*> decls;
+
    private:
     std::vector<ClassNode*> _classes;
     std::vector<FunctionNode*> _functions;

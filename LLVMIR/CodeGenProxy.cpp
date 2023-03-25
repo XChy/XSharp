@@ -11,18 +11,23 @@ ValueAndType CodeGenProxy<DefinitionsNode>::codeGen(
     if (ast->is<DefinitionsNode>()) {
         DefinitionsNode* definitions = ast->to<DefinitionsNode>();
 
-        for (auto var : definitions->variables()) {
-            auto [val, type] = generator(var);
+        for (auto decl : definitions->decls) {
+            auto [val, type] = generator(decl);
             if (!type) return {nullptr, nullptr};
         }
-        for (auto funcNode : definitions->functions()) {
-            auto [val, type] = generator(funcNode);
-            if (!type) return {nullptr, nullptr};
-        }
-        for (auto classDef : definitions->classes()) {
-            auto [val, type] = generator(classDef);
-            if (!type) return {nullptr, nullptr};
-        }
+
+        // for (auto var : definitions->variables()) {
+        // auto [val, type] = generator(var);
+        // if (!type) return {nullptr, nullptr};
+        //}
+        // for (auto funcNode : definitions->functions()) {
+        // auto [val, type] = generator(funcNode);
+        // if (!type) return {nullptr, nullptr};
+        //}
+        // for (auto classDef : definitions->classes()) {
+        // auto [val, type] = generator(classDef);
+        // if (!type) return {nullptr, nullptr};
+        //}
     }
 
     return {nullptr, XSharp::getVoidType()};

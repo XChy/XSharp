@@ -1,6 +1,6 @@
 #include "FuncDefinitionProxies.h"
-#include <llvm-14/llvm/IR/Function.h>
-#include <llvm-14/llvm/IR/Verifier.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Verifier.h>
 #include <cstdio>
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/ASTNodes.h"
@@ -86,7 +86,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     llvm::verifyFunction(*func);
 
     // optimize the function
-    helper->optimizer.functionPassManager.run(*func);
+    // helper->optimizer.functionPassManager.run(*func);
 
     return {func, functionType};
 }

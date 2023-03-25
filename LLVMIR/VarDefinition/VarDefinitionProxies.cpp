@@ -43,6 +43,7 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
                                             init_val);
         // validate the type of init_val
         if (init_val) builder.CreateStore(init_val, var_alloca);
+    } else {
     }
 
     helper->currentSymbols->addSymbol(
