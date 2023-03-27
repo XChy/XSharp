@@ -7,4 +7,4 @@
 #include <llvm/IR/TypeFinder.h>
 #include "XSharp/Types/Type.h"
 
-llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context);
+llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context);

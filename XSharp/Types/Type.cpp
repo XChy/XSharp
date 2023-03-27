@@ -3,9 +3,9 @@
 #include "XSharp/XString.h"
 using namespace XSharp;
 
-TypeNode::TypeNode() {}
+Type::Type() {}
 
-TypeNode::TypeNode(const TypeNode& other)
+Type::Type(const Type& other)
 {
     typeID = other.typeID;
     baseName = other.baseName;
@@ -13,33 +13,37 @@ TypeNode::TypeNode(const TypeNode& other)
     isConst = other.isConst;
     switch (category) {
         case Basic:
-            typeSpecifiedInfo = std::get<BasicType>(other.typeSpecifiedInfo);
+            typeinfo = std::get<BasicType>(other.typeinfo);
             break;
         case Array: {
-            ArrayType array = std::get<ArrayType>(other.typeSpecifiedInfo);
-            array.elementType = new TypeNode(*other.elementType());
-            typeSpecifiedInfo = array;
+            ArrayType array = std::get<ArrayType>(other.typeinfo);
+            array.elementType = new Type(*other.elementType());
+            typeinfo = array;
         } break;
         case Function: {
             FunctionType function;
-            function.returnValueType = new TypeNode(*other.returnValueType());
-            for (TypeNode* param : other.parameterTypes())
-                function.paramTypes.push_back(new TypeNode(*param));
-            typeSpecifiedInfo = function;
+            function.returnValueType = new Type(*other.returnValueType());
+            for (Type* param : other.parameterTypes())
+                function.paramTypes.push_back(new Type(*param));
+            typeinfo = function;
         } break;
         case Class:
-            // TODO class-related
+            typeinfo = std::get<ClassType>(other.typeinfo);
             break;
         case Closure:
+            // TODO: Closure
             break;
     }
 }
 
-TypeNode* TypeNode::innerType() const
+bool Type::isRef() const { return category == Reference; }
+
+Type* Type::derefType() const
 {
-    return std::get<ReferenceType>(typeSpecifiedInfo).innerType;
+    return std::get<ReferenceType>(typeinfo).innerType;
 }
-bool TypeNode::equals(const TypeNode& other) const
+
+bool Type::equals(const Type& other) const
 {
     if (this == &other) return true;
     if (this->category != other.category) return false;
@@ -48,7 +52,7 @@ bool TypeNode::equals(const TypeNode& other) const
         case Basic:
             return this->basicType() == other.basicType();
         case Reference:
-            return this->innerType()->equals(other.innerType());
+            return this->derefType()->equals(other.derefType());
         case Array:
             return arrayDimension() == other.arrayDimension() &&
                    elementType()->equals(*other.elementType());
@@ -73,36 +77,36 @@ bool TypeNode::equals(const TypeNode& other) const
     return false;
 }
 
-TypeNode* TypeNode::returnValueType() const
+Type* Type::returnValueType() const
 {
-    return std::get<FunctionType>(typeSpecifiedInfo).returnValueType;
+    return std::get<FunctionType>(typeinfo).returnValueType;
 }
-std::vector<TypeNode*> TypeNode::parameterTypes() const
+std::vector<Type*> Type::parameterTypes() const
 {
-    return std::get<FunctionType>(typeSpecifiedInfo).paramTypes;
+    return std::get<FunctionType>(typeinfo).paramTypes;
 }
 
 // Array type, TODO complete below
-uint TypeNode::arrayDimension() const
+uint Type::arrayDimension() const
 {
-    return std::get<ArrayType>(typeSpecifiedInfo).arrayDimension;
+    return std::get<ArrayType>(typeinfo).arrayDimension;
 }
 
-TypeNode* TypeNode::elementType() const
+Type* Type::elementType() const
 {
-    return std::get<ArrayType>(typeSpecifiedInfo).elementType;
+    return std::get<ArrayType>(typeinfo).elementType;
 }
 
 // Class type,  TODO complete below
 
 // generate a unique name for a type
-XString TypeNode::typeName() const
+XString Type::typeName() const
 {
     switch (category) {
         case Basic:
             return baseName;
         case Reference:
-            return fmt::format("Ref<{}>", innerType()->typeName());
+            return fmt::format("Ref<{}>", derefType()->typeName());
         case Class:
             return "Class";
         case Array:
@@ -111,43 +115,43 @@ XString TypeNode::typeName() const
         case Function:
             XString name = returnValueType()->typeName();
             name.append('(');
-            for (TypeNode* param : parameterTypes())
-                name.append(param->typeName());
+            for (Type* param : parameterTypes()) name.append(param->typeName());
             name.append(')');
             return name;
     }
     return "";
 }
 
-bool TypeNode::isBasic() const { return category == Basic; }
+bool Type::isBasic() const { return category == Basic; }
 
-BasicType TypeNode::basicType() const
-{
-    return std::get<BasicType>(typeSpecifiedInfo);
-}
+BasicType Type::basicType() const { return std::get<BasicType>(typeinfo); }
 
-bool TypeNode::isInteger() const
+bool Type::isInteger() const
 {
     return category == Basic &&
-           (basicType() == BasicType::I32 || basicType() == BasicType::I64 ||
+           (basicType() == BasicType::I8 || basicType() == BasicType::UI8 ||
+            basicType() == BasicType::I16 || basicType() == BasicType::I16 ||
+            basicType() == BasicType::I32 || basicType() == BasicType::UI32 ||
+            basicType() == BasicType::I64 || basicType() == BasicType::UI64);
+}
+
+bool Type::isSigned() const
+{
+    return category == Basic &&
+           (basicType() == BasicType::I8 || basicType() == BasicType::I16 ||
+            basicType() == BasicType::I32 || basicType() == BasicType::I64);
+}
+
+bool Type::isUnsigned() const
+{
+    return category == Basic &&
+           (basicType() == BasicType::UI8 || basicType() == BasicType::UI16 ||
             basicType() == BasicType::UI32 || basicType() == BasicType::UI64);
 }
 
-bool TypeNode::isSigned() const
+bool Type::isNumber() const
 {
-    return category == Basic &&
-           (basicType() == BasicType::I32 || basicType() == BasicType::I64);
-}
-
-bool TypeNode::isUnsigned() const
-{
-    return category == Basic &&
-           (basicType() == BasicType::UI32 || basicType() == BasicType::UI64);
-}
-
-bool TypeNode::isNumber() const
-{
-    if (category == TypeNode::Basic) {
+    if (category == Type::Basic) {
         if (basicType() == BasicType::I32 || basicType() == BasicType::I64 ||
             basicType() == BasicType::UI32 || basicType() == BasicType::UI64 ||
             basicType() == BasicType::Float ||
@@ -158,24 +162,24 @@ bool TypeNode::isNumber() const
     return false;
 }
 
-bool TypeNode::isObjectRef() const
+bool Type::isObjectRef() const
 {
-    return category == Reference && innerType()->category == Class;
+    return category == Reference && derefType()->category == Class;
 }
 
-XClass* TypeNode::getObjectClass() const
+XClass* Type::getObjectClass() const
 {
-    if (category == Reference && innerType()->category == Class) {
+    if (category == Reference && derefType()->category == Class) {
         // Easily get classDecl
-        return innerType()->getObjectClass();
+        return derefType()->getObjectClass();
     } else if (category == Class) {
-        return std::get<ClassType>(typeSpecifiedInfo).classDecl;
+        return std::get<ClassType>(typeinfo).classDecl;
     } else {
         return nullptr;
     }
 }
 
-uint TypeNode::size() const
+uint Type::size() const
 {
     switch (category) {
         case Basic:
@@ -184,6 +188,7 @@ uint TypeNode::size() const
                 case BasicType::Boolean:
                     return 1;
                 case BasicType::Char:
+                case BasicType::UI16:
                     return 2;
                 case BasicType::I32:
                 case BasicType::UI32:

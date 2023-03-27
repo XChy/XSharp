@@ -5,19 +5,19 @@
 
 using namespace XSharp;
 
-bool NumberConverter::convertable(TypeNode* from, TypeNode* to)
+bool NumberConverter::convertable(Type* from, Type* to)
 {
     return from->isNumber() && to->isNumber();
 }
 
-bool NumberConverter::implicitConvertable(TypeNode* from, TypeNode* to)
+bool NumberConverter::implicitConvertable(Type* from, Type* to)
 {
     // TODO: tell apart explict and implicit conversions
     return convertable(from, to);
 }
 
 #ifdef XSharp_LLVMIR_SUPPORT
-llvm::Value* NumberConverter::convert(TypeNode* from, TypeNode* to,
+llvm::Value* NumberConverter::convert(Type* from, Type* to,
                                       llvm::IRBuilder<>* builder,
                                       llvm::LLVMContext* context,
                                       llvm::Value* val)

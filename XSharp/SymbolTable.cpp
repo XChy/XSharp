@@ -58,7 +58,7 @@ std::vector<Symbol> SymbolTable::findFunctions(const XString& name) const
 }
 
 Symbol SymbolTable::findFunctionFor(
-    const XString& name, const std::vector<TypeNode*> argumentTypes) const
+    const XString& name, const std::vector<Type*> argumentTypes) const
 {
     auto functions = findFunctions(name);
     for (auto funcSymbol : functions) {
@@ -66,8 +66,8 @@ Symbol SymbolTable::findFunctionFor(
 
         if (std::equal(argumentTypes.begin(), argumentTypes.end(),
                        parameterTypes.begin(), parameterTypes.end(),
-                       [](TypeNode* a, TypeNode* b) -> bool {
-                           if (a->category == TypeNode::Reference)
+                       [](Type* a, Type* b) -> bool {
+                           if (a->category == Type::Reference)
                                return a->innerType()->equals(b);
                            else
                                return a->equals(b);

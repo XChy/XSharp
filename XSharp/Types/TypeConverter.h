@@ -12,11 +12,11 @@ namespace XSharp {
 class TypeConverter
 {
    public:
-    virtual bool convertable(TypeNode* from, TypeNode* to) = 0;
-    virtual bool implicitConvertable(TypeNode* from, TypeNode* to) = 0;
+    virtual bool convertable(Type* from, Type* to) = 0;
+    virtual bool implicitConvertable(Type* from, Type* to) = 0;
 
 #ifdef XSharp_LLVMIR_SUPPORT
-    virtual llvm::Value* convert(TypeNode* from, TypeNode* to,
+    virtual llvm::Value* convert(Type* from, Type* to,
                                  llvm::IRBuilder<>* builder,
                                  llvm::LLVMContext* context,
                                  llvm::Value* val) = 0;
@@ -29,13 +29,12 @@ class XSharp_EXPORT NumberConverter : public TypeConverter
 {
    public:
     NumberConverter() {}
-    bool convertable(TypeNode* from, TypeNode* to);
-    bool implicitConvertable(TypeNode* from, TypeNode* to);
+    bool convertable(Type* from, Type* to);
+    bool implicitConvertable(Type* from, Type* to);
 
 #ifdef XSharp_LLVMIR_SUPPORT
-    llvm::Value* convert(TypeNode* from, TypeNode* to,
-                         llvm::IRBuilder<>* builder, llvm::LLVMContext* context,
-                         llvm::Value* val);
+    llvm::Value* convert(Type* from, Type* to, llvm::IRBuilder<>* builder,
+                         llvm::LLVMContext* context, llvm::Value* val);
 #endif
 
    private:

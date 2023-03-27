@@ -16,3 +16,6 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
 
 ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
                                const Generator& generator);
+
+ValueAndType genDataMember(VariableNode* ast, CodeGenContextHelper* helper,
+                           const Generator& generator);

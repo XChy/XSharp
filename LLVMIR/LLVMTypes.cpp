@@ -4,13 +4,13 @@
 #include <llvm/IR/Type.h>
 #include "XSharp/Class/XClass.h"
 
-llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
+llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
 {
     using XSharp::BasicType;
     // TODO complete XSharp's Type to Variable
-    using XSharp::TypeNode;
+    using XSharp::Type;
     switch (type->category) {
-        case TypeNode::Basic:
+        case Type::Basic:
             switch (type->basicType()) {
                 case BasicType::Void:
                     return llvm::Type::getVoidTy(context);
@@ -32,24 +32,23 @@ llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
                     return nullptr;
             }
 
-        case TypeNode::Function: {
+        case Type::Function: {
             std::vector<llvm::Type*> llvmTypesForParams;
-            for (TypeNode* paramTypeNode : type->parameterTypes())
-                llvmTypesForParams.push_back(
-                    castToLLVM(paramTypeNode, context));
+            for (Type* paramType : type->parameterTypes())
+                llvmTypesForParams.push_back(castToLLVM(paramType, context));
 
             return llvm::FunctionType::get(
                 castToLLVM(type->returnValueType(), context),
                 llvmTypesForParams, false);
         }
 
-        case TypeNode::Array:
+        case Type::Array:
             // Allocate XSharp's array on heap
             // So the type of array is the pointer type of its element
             return llvm::PointerType::get(
                 castToLLVM(type->elementType(), context), 0);
 
-        case TypeNode::Class: {
+        case Type::Class: {
             // TODO: Complete the related definition of class
             std::vector<llvm::Type*> llvmTypes;
             // Class Pointer for reflection
@@ -66,12 +65,12 @@ llvm::Type* castToLLVM(XSharp::TypeNode* type, llvm::LLVMContext& context)
             return refType;
         }
 
-        case TypeNode::Closure:
+        case Type::Closure:
             break;
 
-        case TypeNode::Reference:
+        case Type::Reference:
             return llvm::PointerType::get(
-                castToLLVM(type->innerType(), context), 0);
+                castToLLVM(type->derefType(), context), 0);
         default:
             return nullptr;
     }

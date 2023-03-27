@@ -21,7 +21,7 @@ class SymbolTable
     std::vector<Symbol> findSymbols(const XString& name) const;
     std::vector<Symbol> findFunctions(const XString& name) const;
     Symbol findFunctionFor(const XString& name,
-                           const std::vector<TypeNode*> argumentTypes) const;
+                           const std::vector<Type*> argumentTypes) const;
 
     Symbol findVariable(const XString& name) const;
 

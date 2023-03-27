@@ -15,7 +15,7 @@ ValueAndType XSharp::EqualImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -41,7 +41,7 @@ ValueAndType XSharp::NotEqualImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -66,7 +66,7 @@ ValueAndType XSharp::GreaterImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -95,7 +95,7 @@ ValueAndType XSharp::LessImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -124,7 +124,7 @@ ValueAndType XSharp::GreaterOrEqualImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -153,7 +153,7 @@ ValueAndType XSharp::LessOrEqualImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);

@@ -6,18 +6,18 @@ static llvm::IRBuilder<>* llvmBuilder;
 static llvm::LLVMContext* llvmContext;
 
 static std::vector<TypeConverter*> converters;
-bool TypeAdapter::canConvert(TypeNode* from, TypeNode* to)
+bool TypeAdapter::canConvert(Type* from, Type* to)
 {
     for (auto converter : converters) {
-        if (from->category == TypeNode::Reference &&
-            to->category != TypeNode::Reference) {
-            if (converter->convertable(from->innerType(), to)) return true;
+        if (from->category == Type::Reference &&
+            to->category != Type::Reference) {
+            if (converter->convertable(from->derefType(), to)) return true;
             continue;
         }
 
-        if (from->category == TypeNode::Reference &&
-            to->category == TypeNode::Reference) {
-            if (converter->convertable(from->innerType(), to->innerType()))
+        if (from->category == Type::Reference &&
+            to->category == Type::Reference) {
+            if (converter->convertable(from->derefType(), to->derefType()))
                 return true;
             continue;
         }
@@ -33,21 +33,21 @@ void TypeAdapter::addConverter(TypeConverter* converter)
 }
 
 #ifdef XSharp_LLVMIR_SUPPORT
-llvm::Value* TypeAdapter::llvmConvert(TypeNode* originalType,
-                                      TypeNode* expectedType, llvm::Value* val)
+llvm::Value* TypeAdapter::llvmConvert(Type* originalType, Type* expectedType,
+                                      llvm::Value* val)
 {
     if (originalType->equals(expectedType)) return val;
 
     for (auto converter : converters) {
         // get automatically dereference, to convert the innerValue's type
-        if (originalType->category == TypeNode::Reference &&
-            expectedType->category != TypeNode::Reference) {
-            if (converter->convertable(originalType->innerType(),
+        if (originalType->category == Type::Reference &&
+            expectedType->category != Type::Reference) {
+            if (converter->convertable(originalType->derefType(),
                                        expectedType)) {
                 auto loadedType =
-                    castToLLVM(originalType->innerType(), *llvmContext);
+                    castToLLVM(originalType->derefType(), *llvmContext);
                 auto loadedValue = llvmBuilder->CreateLoad(loadedType, val);
-                return converter->convert(originalType->innerType(),
+                return converter->convert(originalType->derefType(),
                                           expectedType, llvmBuilder,
                                           llvmContext, loadedValue);
             }
@@ -57,12 +57,12 @@ llvm::Value* TypeAdapter::llvmConvert(TypeNode* originalType,
         // Convert between reference, used to handle the case
         // where converting Objects, and note that at this case
         // converter's 'convert(..)' is deprecated
-        if (originalType->category == TypeNode::Reference &&
-            expectedType->category == TypeNode::Reference) {
-            if (converter->convertable(originalType->innerType(),
-                                       expectedType->innerType())) {
+        if (originalType->category == Type::Reference &&
+            expectedType->category == Type::Reference) {
+            if (converter->convertable(originalType->derefType(),
+                                       expectedType->derefType())) {
                 return llvmBuilder->CreatePointerCast(
-                    val, castToLLVM(expectedType->innerType(), *llvmContext));
+                    val, castToLLVM(expectedType->derefType(), *llvmContext));
             }
             continue;
         }

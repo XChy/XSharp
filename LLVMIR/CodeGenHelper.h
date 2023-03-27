@@ -52,7 +52,7 @@ class CodeGenContextHelper
     XSharp::SymbolTable globalSymbols;
     XSharp::SymbolTable* currentSymbols;
 
-    XSharp::TypeNode* currentReturnType;
+    XSharp::Type* currentReturnType;
 
     // TODO: Apply proxy to change the BasicBlock below
     llvm::BasicBlock* loopStart;

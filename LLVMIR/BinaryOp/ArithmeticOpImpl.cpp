@@ -13,7 +13,7 @@ ValueAndType XSharp::AssignImpl(BinaryOperatorNode* op,
     auto [rhs, rhs_type] = generator(op->right());
     if (!lhs_type || !rhs_type) return {nullptr, nullptr};
     // Only the reference can be assigned to value
-    if (lhs_type->category != TypeNode::Reference) {
+    if (lhs_type->category != Type::Reference) {
         helper->error("Cannot assign value to non-reference");
         return {nullptr, nullptr};
     }
@@ -43,7 +43,7 @@ ValueAndType XSharp::AddImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -65,7 +65,7 @@ ValueAndType XSharp::SubImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -87,7 +87,7 @@ ValueAndType XSharp::MulImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -109,7 +109,7 @@ ValueAndType XSharp::DivImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -135,7 +135,7 @@ ValueAndType XSharp::ModImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    TypeNode* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);

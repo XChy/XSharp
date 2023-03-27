@@ -6,24 +6,22 @@
 
 namespace XSharp {
 
+namespace Types {
+Type* get(const XString& name);
+
+}  // namespace Types
+
 class TypeContext
 {
    public:
     TypeContext();
     ~TypeContext();
 
-    TypeNode* registerType(XSharp::TypeNode* type);
-    TypeNode* registerClass(XClass* classDecl);
+    void registerType(Type* type);
 
-    // return typeid
-    // If no type with the name exists ,return 0
-    uint typeIDOf(XString name);
-
-    TypeNode* typeOf(int typeId);
-
-    std::unordered_map<XString, uint> typesMap;
-    std::vector<TypeNode*> typeList;
-    std::unordered_map<XString, TypeNode*> classes;
+    std::unordered_map<XString, Type*> types;
+    std::unordered_map<XString, XClass*> classDecls;
+    std::unordered_map<BasicType, XString> basicTypeToName;
 
    private:
     uint registerNum = 0;
@@ -37,37 +35,37 @@ static std::unordered_map<XString, BasicType> nameToBasicType = {
     {"boolean", BasicType::Boolean},
 };
 
-static TypeContext GlobalTypeContext;
+TypeContext* getTypeContext();
 
-TypeNode* getBasicType(BasicType type);
+Type* getBasicType(BasicType type);
 
-TypeNode* getReferenceType(TypeNode* innerType);
+Type* getReferenceType(Type* innerType);
 
 // params' memory is managed by TypeSystem
-TypeNode* getFunctionType(TypeNode* returnValueType,
-                          const std::vector<TypeNode*>& paramsType);
+Type* getFunctionType(Type* returnValueType,
+                      const std::vector<Type*>& paramsType);
 
-TypeNode* getArrayType(TypeNode* elementType, uint dimension);
+Type* getArrayType(Type* elementType, uint dimension);
 
-TypeNode* getClassType(const XString& baseName);
+Type* getClassType(const XString& baseName);
 
-TypeNode* getClosureType();
+Type* getClosureType();
 
-TypeNode* getTypeFor(const XString& baseName);
+Type* getTypeFor(const XString& baseName);
 
 // To adapt the lhs number and rhs number for logical and arithmetic operator
-TypeNode* getMergedType(TypeNode* lhs_type, TypeNode* rhs_type);
+Type* getMergedType(Type* lhs_type, Type* rhs_type);
 
-TypeNode* registerClass(XClass* classDecl);
+Type* registerClass(XClass* classDecl);
 
-static TypeNode* getVoidType() { return getBasicType(BasicType::Void); }
-static TypeNode* getI64Type() { return getBasicType(BasicType::I64); }
-static TypeNode* getI32Type() { return getBasicType(BasicType::I32); }
-static TypeNode* getUI32Type() { return getBasicType(BasicType::UI32); }
-static TypeNode* getUI64Type() { return getBasicType(BasicType::UI64); }
-static TypeNode* getFloatType() { return getBasicType(BasicType::Float); }
-static TypeNode* getDoubleType() { return getBasicType(BasicType::Double); }
-static TypeNode* getBooleanType() { return getBasicType(BasicType::Boolean); }
-static TypeNode* getCharType() { return getBasicType(BasicType::Char); }
+static Type* getVoidType() { return getBasicType(BasicType::Void); }
+static Type* getI64Type() { return getBasicType(BasicType::I64); }
+static Type* getI32Type() { return getBasicType(BasicType::I32); }
+static Type* getUI32Type() { return getBasicType(BasicType::UI32); }
+static Type* getUI64Type() { return getBasicType(BasicType::UI64); }
+static Type* getFloatType() { return getBasicType(BasicType::Float); }
+static Type* getDoubleType() { return getBasicType(BasicType::Double); }
+static Type* getBooleanType() { return getBasicType(BasicType::Boolean); }
+static Type* getCharType() { return getBasicType(BasicType::Char); }
 
 }  // namespace XSharp

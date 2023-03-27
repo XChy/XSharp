@@ -42,7 +42,7 @@ ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper)
     if (!ref_type) {
         return {nullptr, nullptr};
     }
-    if (ref_type->category == XSharp::TypeNode::Reference) {
+    if (ref_type->category == XSharp::Type::Reference) {
         return {
             helper->builder.CreateLoad(
                 castToLLVM(ref_type->innerType(), helper->context), ref_val),

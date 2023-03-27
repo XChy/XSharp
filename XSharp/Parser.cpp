@@ -513,7 +513,7 @@ TypeNode* Parser::type()
     if (arrayDimension == 0) {
         return XSharp::getTypeFor(baseName);
     } else {
-        TypeNode* arrayType =
+        Type* arrayType =
             XSharp::getArrayType(XSharp::getTypeFor(baseName), arrayDimension);
         return arrayType;
     }

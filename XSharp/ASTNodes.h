@@ -1,10 +1,11 @@
 #pragma once
 
-#include "XSharp/Types/Type.h"
 #include "xsharp_global.h"
 #include "XString.h"
 
-using XSharp::TypeNode;
+namespace XSharp {
+
+class TypeNode;
 
 class XSharp_EXPORT ASTNode
 {
@@ -294,3 +295,4 @@ class XSharp_EXPORT ReturnNode : public ASTNode
    private:
     ASTNode* retVal;
 };
+}  // namespace XSharp

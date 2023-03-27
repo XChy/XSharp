@@ -8,13 +8,18 @@
 
 namespace XSharp {
 
-class TypeNode;
+class Type;
+class XClass;
 
 enum class BasicType {
     Void = 0,
+    I8,
+    I16,
     I32,  // signed integer
     I64,
-    UI32,  // unsigned integer
+    UI8,
+    UI16,
+    UI32,
     UI64,
     Float,
     Double,
@@ -24,38 +29,43 @@ enum class BasicType {
 };
 
 struct ReferenceType {
-    TypeNode* innerType;
+    Type* innerType;
 };
 
-class XClass;
 struct ClassType {
     XClass* classDecl;
 };
 
 struct ArrayType {
     uint arrayDimension;
-    TypeNode* elementType;
+    Type* elementType;
 };
 
 // Function
 struct FunctionType {
-    std::vector<TypeNode*> paramTypes;
-    TypeNode* returnValueType;
+    std::vector<Type*> paramTypes;
+    Type* returnValueType;
 };
 
 // Closure
 struct ClosureType {
-    std::vector<TypeNode*> paramTypeIDs;
+    std::vector<Type*> paramTypeIDs;
 };
 
-class TypeNode
+struct Decoration {
+    bool isMutable;
+    bool isGlobal;
+    bool isConstexpr;
+};
+
+class Type
 {
    public:
-    TypeNode();
-    TypeNode(const TypeNode& other);
-    bool equals(const TypeNode& other) const;
-    bool equals(const TypeNode* other) const { return equals(*other); };
-    bool operator==(const TypeNode& other) const { return equals(other); }
+    Type();
+    Type(const Type& other);
+    bool equals(const Type& other) const;
+    bool equals(const Type* other) const { return equals(*other); };
+    bool operator==(const Type& other) const { return equals(other); }
 
     // Basic type
     bool isBasic() const;
@@ -69,15 +79,16 @@ class TypeNode
     uint size() const;
 
     // Reference type, as variable
-    TypeNode* innerType() const;
+    bool isRef() const;
+    Type* derefType() const;
 
     // Function type, TODO complete below
-    TypeNode* returnValueType() const;
-    std::vector<TypeNode*> parameterTypes() const;
+    Type* returnValueType() const;
+    std::vector<Type*> parameterTypes() const;
 
     // Array type, TODO complete below
     uint arrayDimension() const;
-    TypeNode* elementType() const;
+    Type* elementType() const;
 
     // Class type,  TODO complete below
     bool isObjectRef() const;
@@ -90,6 +101,8 @@ class TypeNode
     XString baseName;
     bool isConst;
 
+    Decoration decoration;
+
     enum Categories {
         Basic,
         Reference,
@@ -101,13 +114,13 @@ class TypeNode
 
     std::variant<BasicType, ReferenceType, ClassType, FunctionType, ArrayType,
                  ClosureType>
-        typeSpecifiedInfo;
+        typeinfo;
 };
 
 };  // namespace XSharp
 
 template <>
-struct fmt::formatter<XSharp::TypeNode> {
+struct fmt::formatter<XSharp::Type> {
     constexpr auto parse(format_parse_context& ctx)
     {
         auto it = ctx.begin(), end = ctx.end();
@@ -116,7 +129,7 @@ struct fmt::formatter<XSharp::TypeNode> {
     }
 
     template <typename FormatContext>
-    auto format(XSharp::TypeNode& type, FormatContext& ctx)
+    auto format(XSharp::Type& type, FormatContext& ctx)
     {
         return format_to(ctx.out(), "{}", type.typeName().toStdString());
     }

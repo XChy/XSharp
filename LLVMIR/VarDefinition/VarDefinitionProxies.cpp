@@ -79,3 +79,12 @@ ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
 
     return {globalVar, var_type};
 }
+
+ValueAndType genDataMember(VariableNode* ast, CodeGenContextHelper* helper,
+                           const Generator& generator)
+{
+    if (helper->currentSymbols->hasSymbol(ast->name())) {
+        helper->error("Redefinition of variable {}", ast->name());
+        return {nullptr, nullptr};
+    }
+}

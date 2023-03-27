@@ -13,14 +13,15 @@ enum class VisitLevel {
     Private,
 };
 
-class TypeNode;
+class Type;
+
 class Field
 {
    public:
     VisitLevel visitLevel;
     bool isStatic;
     XString name;
-    TypeNode* type;
+    Type* type;
 
     int offset();
 };

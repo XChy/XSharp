@@ -4,21 +4,24 @@
 
 using namespace XSharp;
 
+TypeContext globalTypeContext;
+
 TypeContext::TypeContext()
 {
-    std::unordered_map<BasicType, XString> basicTypeToName = {
-        {BasicType::Void, "void"},       {BasicType::I32, "i32"},
-        {BasicType::I64, "i64"},         {BasicType::UI32, "ui32"},
+    basicTypeToName = {
+        {BasicType::Void, "void"},       {BasicType::I8, "i8"},
+        {BasicType::UI8, "ui8"},         {BasicType::I16, "i16"},
+        {BasicType::UI16, "ui16"},       {BasicType::I32, "i32"},
+        {BasicType::UI32, "ui32"},       {BasicType::I64, "i64"},
         {BasicType::UI64, "ui64"},       {BasicType::Float, "float"},
         {BasicType::Double, "double"},   {BasicType::Char, "char"},
         {BasicType::Boolean, "boolean"},
     };
 
-    // fill a useless node so that typeID start with 1
     for (int i = 0; i < int(BasicType::ENDTYPE); ++i) {
-        TypeNode* node = new TypeNode;
-        node->category = TypeNode::Basic;
-        node->typeSpecifiedInfo = BasicType(i);
+        Type* node = new Type;
+        node->category = Type::Basic;
+        node->typeinfo = BasicType(i);
         BasicType type = BasicType(i);
         node->baseName = basicTypeToName[type];
         registerType(node);
@@ -27,124 +30,82 @@ TypeContext::TypeContext()
 
 TypeContext::~TypeContext()
 {
-    for (TypeNode* node : typeList) delete node;
-    for (auto [_, classType] : classes) {
-        delete classType->getObjectClass();
-        delete classType;
-    }
-}
-TypeNode* TypeContext::registerType(XSharp::TypeNode* type)
-{
-    if (type->category == TypeNode::Class) {
-        classes[type->typeName()] = type;
+    for (auto [name, type] : types) {
+        delete type;
     }
 
-    typeList.push_back(type);
-    typeList[registerNum]->typeID = registerNum;
-    return typeList[registerNum++];
+    for (auto [_, classDecl] : classDecls) {
+        delete classDecl;
+    }
 }
-
-TypeNode* TypeContext::registerClass(XClass* classDecl)
+void TypeContext::registerType(XSharp::Type* type)
 {
-    if (classes.find(classDecl->name) != classes.end()) {
-        classes[classDecl->name]->typeSpecifiedInfo =
-            ClassType{.classDecl = classDecl};
-        return classes[classDecl->name];
+    if (type->category == Type::Class) {
+        classDecls[type->typeName()] = type->getObjectClass();
     }
 
-    TypeNode* type = new TypeNode;
-    type->typeSpecifiedInfo = ClassType{.classDecl = classDecl};
-    type->baseName = classDecl->name;
-    registerType(type);
-    return type;
-}
-TypeNode* TypeContext::typeOf(int typeId) { return typeList[typeId]; }
-
-uint TypeContext::typeIDOf(XString name)
-{
-    auto iterator_found = typesMap.find(name);
-
-    if (iterator_found != typesMap.end()) {
-        return iterator_found->second;
-    }
-
-    return 0;
+    types[type->typeName()] = type;
 }
 
-TypeNode* XSharp::registerClass(XClass* classDecl)
+Type* XSharp::getBasicType(BasicType type)
 {
-    if (GlobalTypeContext.classes.find(classDecl->name) !=
-        GlobalTypeContext.classes.end()) {
-        GlobalTypeContext.classes[classDecl->name]->typeSpecifiedInfo =
-            ClassType{.classDecl = classDecl};
-        return GlobalTypeContext.classes[classDecl->name];
-    }
-
-    TypeNode* type = new TypeNode;
-    type->typeSpecifiedInfo = ClassType{.classDecl = classDecl};
-    type->baseName = classDecl->name;
-    GlobalTypeContext.registerType(type);
-    return type;
+    auto name = globalTypeContext.basicTypeToName[type];
+    return Types::get(name);
 }
 
-TypeNode* XSharp::getBasicType(BasicType type)
+Type* XSharp::getFunctionType(Type* returnValueType,
+                              const std::vector<Type*>& paramTypes)
 {
-    return GlobalTypeContext.typeOf(int(type));
-}
-
-TypeNode* XSharp::getFunctionType(TypeNode* returnValueType,
-                                  const std::vector<TypeNode*>& paramsType)
-{
-    TypeNode* node = new TypeNode;
-    node->category = TypeNode::Function;
-    node->typeSpecifiedInfo = FunctionType{.paramTypes = paramsType,
-                                           .returnValueType = returnValueType};
-    GlobalTypeContext.registerType(node);
+    Type* node = new Type;
+    node->category = Type::Function;
+    node->typeinfo = FunctionType{.paramTypes = paramTypes,
+                                  .returnValueType = returnValueType};
+    globalTypeContext.registerType(node);
     return node;
 }
 
-TypeNode* XSharp::getReferenceType(TypeNode* innerType)
+Type* XSharp::getReferenceType(Type* innerType)
 {
-    TypeNode* node = new TypeNode;
-    node->category = TypeNode::Reference;
-    node->typeSpecifiedInfo = ReferenceType{.innerType = innerType};
-    GlobalTypeContext.registerType(node);
+    Type* node = new Type;
+    node->category = Type::Reference;
+    node->typeinfo = ReferenceType{.innerType = innerType};
+    globalTypeContext.registerType(node);
     return node;
 }
 
-TypeNode* XSharp::getArrayType(TypeNode* elementType, uint dimension)
+Type* XSharp::getArrayType(Type* elementType, uint dimension)
 {
-    TypeNode* node = new TypeNode;
-    node->category = TypeNode::Array;
-    node->typeSpecifiedInfo =
+    Type* node = new Type;
+    node->category = Type::Array;
+    node->typeinfo =
         ArrayType{.arrayDimension = dimension, .elementType = elementType};
-    GlobalTypeContext.registerType(node);
+    globalTypeContext.registerType(node);
     return node;
 }
 
-TypeNode* XSharp::getClassType(const XString& baseName)
+Type* XSharp::getClassType(const XString& baseName)
 {
     // TODO: support generics
-    if (!GlobalTypeContext.classes.contains(baseName)) {
-        GlobalTypeContext.classes[baseName] = new TypeNode;
-        GlobalTypeContext.classes[baseName]->baseName = baseName;
-        GlobalTypeContext.classes[baseName]->typeSpecifiedInfo =
+    if (!globalTypeContext.classDecls.contains(baseName)) {
+        globalTypeContext.classDecls[baseName] = new Type;
+        globalTypeContext.classDecls[baseName]->baseName = baseName;
+        globalTypeContext.classDecls[baseName]->typeinfo =
             ClassType{.classDecl = nullptr};
-        GlobalTypeContext.classes[baseName]->category = TypeNode::Class;
+        globalTypeContext.classDecls[baseName]->category = Type::Class;
     }
-    return GlobalTypeContext.classes[baseName];
+    return globalTypeContext.classDecls[baseName];
 }
 
-TypeNode* XSharp::getClosureType()
+Type* XSharp::getClosureType()
 {
-    TypeNode* node = new TypeNode;
-    node->category = TypeNode::Closure;
-    node->typeSpecifiedInfo = ClosureType{};
-    GlobalTypeContext.registerType(node);
+    Type* node = new Type;
+    node->category = Type::Closure;
+    node->typeinfo = ClosureType{};
+    globalTypeContext.registerType(node);
     return node;
 }
 
-TypeNode* XSharp::getTypeFor(const XString& baseName)
+Type* XSharp::getTypeFor(const XString& baseName)
 {
     auto mapIter = nameToBasicType.find(baseName);
     if (mapIter != nameToBasicType.end()) {
@@ -154,9 +115,9 @@ TypeNode* XSharp::getTypeFor(const XString& baseName)
     }
 }
 
-TypeNode* XSharp::getMergedType(TypeNode* lhs_type, TypeNode* rhs_type)
+Type* XSharp::getMergedType(Type* lhs_type, Type* rhs_type)
 {
-    TypeNode* merged_type;
+    Type* merged_type;
     if (lhs_type->isInteger() && rhs_type->isInteger()) {
         if ((lhs_type->isSigned() && rhs_type->isSigned()) ||
             (lhs_type->isUnsigned() && rhs_type->isUnsigned())) {
@@ -172,3 +133,5 @@ TypeNode* XSharp::getMergedType(TypeNode* lhs_type, TypeNode* rhs_type)
     }
     return merged_type;
 }
+
+TypeContext* getGlobalTypeContext() { return &globalTypeContext; }
