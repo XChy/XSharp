@@ -40,7 +40,7 @@ bool Type::isRef() const { return category == Reference; }
 
 Type* Type::derefType() const
 {
-    return std::get<ReferenceType>(typeinfo).innerType;
+    return std::get<ReferenceType>(typeinfo).derefType;
 }
 
 bool Type::equals(const Type& other) const

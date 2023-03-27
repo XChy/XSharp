@@ -435,7 +435,7 @@ ASTNode* Parser::operand()
         } else if (current->type == OpenParenthesis) {
             current++;
             FunctionCallNode* funcCall = new FunctionCallNode;
-            funcCall->setParams(paramsList());
+            funcCall->setArgs(paramsList());
             funcCall->setFunction(operand);
             operand = funcCall;
         } else if (current->type == OpenBracket) {

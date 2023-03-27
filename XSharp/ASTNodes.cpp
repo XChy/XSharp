@@ -5,6 +5,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include "XSharp/Types/TypeNodes.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"
 #include "fmt/format.h"
@@ -108,7 +109,7 @@ XString FunctionNode::dump() const
         implDump = _impl->dump();
     }
     return fmt::format("func [{}]({})->[{}] {}", _name,
-                       fmt::join(paramDumps, ","), _returnType->typeName(),
+                       fmt::join(paramDumps, ","), _returnType->dump(),
                        implDump);
 }
 
@@ -142,6 +143,7 @@ FunctionNode::~FunctionNode()
         delete param;
     }
     delete _impl;
+    delete returnType();
 }
 
 VariableNode::VariableNode() : _initValue(nullptr) {}
@@ -149,10 +151,10 @@ VariableNode::VariableNode() : _initValue(nullptr) {}
 XString VariableNode::dump() const
 {
     if (_initValue) {
-        return fmt::format("Var {}:{} = {}", _name, _type->typeName(),
+        return fmt::format("Var {}:{} = {}", _name, _type->dump(),
                            _initValue->dump());
     } else {
-        return fmt::format("Var {}:{}", _name, _type->typeName());
+        return fmt::format("Var {}:{}", _name, _type->dump());
     }
 }
 
@@ -168,7 +170,11 @@ void VariableNode::setInitValue(ASTNode* initValue) { _initValue = initValue; }
 
 ASTNode* VariableNode::initValue() const { return _initValue; }
 
-VariableNode::~VariableNode() { delete _initValue; }
+VariableNode::~VariableNode()
+{
+    delete _type;
+    delete _initValue;
+}
 
 XString BlockNode::dump() const
 {
@@ -198,7 +204,7 @@ BlockNode::~BlockNode()
 XString FunctionCallNode::dump() const
 {
     std::vector<std::string> paramDumps;
-    for (auto param : _params) {
+    for (auto param : _args) {
         paramDumps.push_back(param->dump().toStdString());
     }
 
@@ -210,18 +216,15 @@ void FunctionCallNode::setFunction(ASTNode* func) { _function = func; }
 
 ASTNode* FunctionCallNode::function() { return _function; }
 
-void FunctionCallNode::setParams(std::vector<ASTNode*> params)
-{
-    _params = params;
-}
+void FunctionCallNode::setArgs(std::vector<ASTNode*> params) { _args = params; }
 
-void FunctionCallNode::addParam(ASTNode* param) { _params.push_back(param); }
+void FunctionCallNode::addArg(ASTNode* param) { _args.push_back(param); }
 
-std::vector<ASTNode*> FunctionCallNode::params() const { return _params; }
+std::vector<ASTNode*> FunctionCallNode::params() const { return _args; }
 
 FunctionCallNode::~FunctionCallNode()
 {
-    for (auto i : _params) delete i;
+    for (auto i : _args) delete i;
     delete _function;
 }
 

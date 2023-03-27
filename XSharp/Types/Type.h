@@ -29,7 +29,7 @@ enum class BasicType {
 };
 
 struct ReferenceType {
-    Type* innerType;
+    Type* derefType;
 };
 
 struct ClassType {

@@ -13,13 +13,17 @@ class TypeNode : public ASTNode
    public:
     virtual Type* toType() = 0;
     virtual ~TypeNode() = default;
+
+    virtual XString dump() const;
 };
 
 class IdentifierNode : public TypeNode
 {
    public:
     IdentifierNode() {}
-    virtual Type* toType();
+
+    Type* toType();
+    XString dump() const;
 
     XString name;
 };
@@ -29,7 +33,9 @@ class ArrayNode : public TypeNode
    public:
     ArrayNode();
     ~ArrayNode();
+
     virtual Type* toType();
+    XString dump() const;
 
     TypeNode* elementType;
     int dimensions;
@@ -40,6 +46,8 @@ class GenericsNode : public TypeNode
    public:
     GenericsNode();
     ~GenericsNode();
+
+    XString dump() const;
 
     std::vector<ASTNode*> args;
 };

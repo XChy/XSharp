@@ -8,7 +8,6 @@ namespace XSharp {
 
 namespace Types {
 Type* get(const XString& name);
-
 }  // namespace Types
 
 class TypeContext
@@ -18,6 +17,7 @@ class TypeContext
     ~TypeContext();
 
     void registerType(Type* type);
+    void registerTypeIf(Type* type);
 
     std::unordered_map<XString, Type*> types;
     std::unordered_map<XString, XClass*> classDecls;

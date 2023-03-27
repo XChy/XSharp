@@ -217,15 +217,15 @@ class XSharp_EXPORT FunctionCallNode : public ASTNode
     void setFunction(ASTNode* func);
     ASTNode* function();
 
-    void setParams(std::vector<ASTNode*> params);
-    void addParam(ASTNode* param);
+    void setArgs(std::vector<ASTNode*> args);
+    void addArg(ASTNode* arg);
     std::vector<ASTNode*> params() const;
 
     ~FunctionCallNode();
 
    private:
     ASTNode* _function;
-    std::vector<ASTNode*> _params;
+    std::vector<ASTNode*> _args;
 };
 
 class XSharp_EXPORT VariableExprNode : public ASTNode

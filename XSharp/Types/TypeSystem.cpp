@@ -28,6 +28,8 @@ TypeContext::TypeContext()
     }
 }
 
+Type* Types::get(const XString& name) { return globalTypeContext.types[name]; }
+
 TypeContext::~TypeContext()
 {
     for (auto [name, type] : types) {
@@ -38,13 +40,19 @@ TypeContext::~TypeContext()
         delete classDecl;
     }
 }
-void TypeContext::registerType(XSharp::Type* type)
+void TypeContext::registerType(Type* type)
 {
     if (type->category == Type::Class) {
         classDecls[type->typeName()] = type->getObjectClass();
     }
 
     types[type->typeName()] = type;
+}
+
+void TypeContext::registerTypeIf(Type* type)
+{
+    if (types.contains(type->typeName())) return;
+    registerType(type);
 }
 
 Type* XSharp::getBasicType(BasicType type)
@@ -68,7 +76,7 @@ Type* XSharp::getReferenceType(Type* innerType)
 {
     Type* node = new Type;
     node->category = Type::Reference;
-    node->typeinfo = ReferenceType{.innerType = innerType};
+    node->typeinfo = ReferenceType{.derefType = innerType};
     globalTypeContext.registerType(node);
     return node;
 }
@@ -86,14 +94,7 @@ Type* XSharp::getArrayType(Type* elementType, uint dimension)
 Type* XSharp::getClassType(const XString& baseName)
 {
     // TODO: support generics
-    if (!globalTypeContext.classDecls.contains(baseName)) {
-        globalTypeContext.classDecls[baseName] = new Type;
-        globalTypeContext.classDecls[baseName]->baseName = baseName;
-        globalTypeContext.classDecls[baseName]->typeinfo =
-            ClassType{.classDecl = nullptr};
-        globalTypeContext.classDecls[baseName]->category = Type::Class;
-    }
-    return globalTypeContext.classDecls[baseName];
+    return Types::get(baseName);
 }
 
 Type* XSharp::getClosureType()
