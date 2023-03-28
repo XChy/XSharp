@@ -7,6 +7,8 @@
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/OperInfo.h"
 #include "XSharp/Tokens.h"
+#include "XSharp/Types/Type.h"
+#include "XSharp/Types/TypeNodes.h"
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 
@@ -485,11 +487,11 @@ ASTNode* Parser::operand()
 
 TypeNode* Parser::type()
 {
-    bool isConst = false;
-    uint arrayDimension = 0;
+    Decoration decoration = {.isMutable = true, .isConstexpr = false};
+    int arrayDimension = 0;
     XString baseName;
-    if (current->isKeyword("const")) {
-        isConst = true;
+    if (current->isKeyword("immutable")) {
+        decoration.isMutable = false;
         forward();
     }
 
@@ -510,12 +512,12 @@ TypeNode* Parser::type()
         throw XSharpError("No typename matched");
     }
 
+    // TODO: Complete the type for Identifier and Array
+    // TODO: add decoration
     if (arrayDimension == 0) {
-        return XSharp::getTypeFor(baseName);
+        return new IdentifierNode(baseName);
     } else {
-        Type* arrayType =
-            XSharp::getArrayType(XSharp::getTypeFor(baseName), arrayDimension);
-        return arrayType;
+        return new ArrayNode(new IdentifierNode(baseName), arrayDimension);
     }
 }
 

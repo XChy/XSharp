@@ -68,4 +68,19 @@ class XSharp_EXPORT BreakNode : public ASTNode
    private:
 };
 
+class XSharp_EXPORT ReturnNode : public ASTNode
+{
+   public:
+    ReturnNode(ASTNode* expr);
+
+    XString dump() const;
+
+    void setReturnValue(ASTNode* retVal);
+    ASTNode* returnValue();
+
+    ~ReturnNode();
+
+   private:
+    ASTNode* retVal;
+};
 };  // namespace XSharp

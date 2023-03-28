@@ -108,7 +108,7 @@ XString Type::typeName() const
         case Reference:
             return fmt::format("Ref<{}>", derefType()->typeName());
         case Class:
-            return "Class";
+            return baseName;
         case Array:
             return elementType()->typeName() + "[]*" +
                    XString::fromInterger(arrayDimension());

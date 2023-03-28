@@ -68,7 +68,7 @@ Symbol SymbolTable::findFunctionFor(
                        parameterTypes.begin(), parameterTypes.end(),
                        [](Type* a, Type* b) -> bool {
                            if (a->category == Type::Reference)
-                               return a->innerType()->equals(b);
+                               return a->derefType()->equals(b);
                            else
                                return a->equals(b);
                        })) {

@@ -11,18 +11,21 @@ namespace XSharp {
 class TypeNode : public ASTNode
 {
    public:
-    virtual Type* toType() = 0;
+    virtual Type* toType() const = 0;
     virtual ~TypeNode() = default;
 
     virtual XString dump() const;
+
+    Decoration decoration;
 };
 
 class IdentifierNode : public TypeNode
 {
    public:
     IdentifierNode() {}
+    IdentifierNode(const XString& name) : name(name) {}
 
-    Type* toType();
+    Type* toType() const;
     XString dump() const;
 
     XString name;
@@ -32,13 +35,14 @@ class ArrayNode : public TypeNode
 {
    public:
     ArrayNode();
+    ArrayNode(TypeNode* element, int dimension);
     ~ArrayNode();
 
-    virtual Type* toType();
+    Type* toType() const;
     XString dump() const;
 
-    TypeNode* elementType;
-    int dimensions;
+    TypeNode* element;
+    int dimension;
 };
 
 class GenericsNode : public TypeNode
@@ -47,9 +51,11 @@ class GenericsNode : public TypeNode
     GenericsNode();
     ~GenericsNode();
 
+    Type* toType() const;
     XString dump() const;
 
     std::vector<ASTNode*> args;
+    TypeNode* prototype;
 };
 
 }  // namespace XSharp

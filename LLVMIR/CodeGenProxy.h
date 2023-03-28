@@ -92,15 +92,6 @@ class CodeGenProxy<BooleanNode>
     ValueAndType codeGen(BooleanNode* ast, CodeGenContextHelper* helper,
                          const Generator& generator);
 };
-
-template <>
-class CodeGenProxy<BoxNode>
-{
-   public:
-    ValueAndType codeGen(BoxNode* ast, CodeGenContextHelper* helper,
-                         const Generator& generator);
-};
-
 template <>
 class CodeGenProxy<BlockNode>
 {

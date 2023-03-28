@@ -25,17 +25,8 @@ class XSharp_EXPORT DefinitionsNode : public ASTNode
     void addFunction(FunctionNode* functionDeclaration);
     void addVariable(VariableNode* variableDeclaration);
 
-    std::vector<ClassNode*> classes() const;
-    std::vector<FunctionNode*> functions() const;
-    std::vector<VariableNode*> variables() const;
-
     ~DefinitionsNode();
 
     std::vector<ASTNode*> decls;
-
-   private:
-    std::vector<ClassNode*> _classes;
-    std::vector<FunctionNode*> _functions;
-    std::vector<VariableNode*> _variables;
 };
 }  // namespace XSharp

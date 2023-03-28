@@ -143,7 +143,7 @@ FunctionNode::~FunctionNode()
         delete param;
     }
     delete _impl;
-    delete returnType();
+    delete _returnType;
 }
 
 VariableNode::VariableNode() : _initValue(nullptr) {}
@@ -254,16 +254,6 @@ void VariableExprNode::setName(const XString& name) { _name = name; }
 
 XString VariableExprNode::name() const { return _name; }
 
-BoxNode::BoxNode(ASTNode* child) : _child(child) {}
-
-XString BoxNode::dump() const { return _child->dump(); }
-
-void BoxNode::setChild(ASTNode* child) { _child = child; }
-
-ASTNode* BoxNode::child() { return _child; }
-
-BoxNode::~BoxNode() { delete _child; }
-
 MemberExprNode::MemberExprNode(const XString name)
     : _memberName(name), _object(nullptr)
 {
@@ -285,7 +275,7 @@ MemberExprNode::~MemberExprNode() { delete _object; }
 
 XString IndexNode::dump() const
 {
-    return "IndexOf[" + _operand->dump() + "] At [" + _indexExpr->dump() + "]";
+    return fmt::format("{} in {}", _indexExpr->dump(), _operand->dump());
 }
 
 ASTNode* IndexNode::setOperand(ASTNode* operand) { return _operand = operand; }
@@ -295,21 +285,3 @@ ASTNode* IndexNode::operand() { return _operand; }
 void IndexNode::setIndexExpr(ASTNode* indexExpr) { _indexExpr = indexExpr; }
 
 ASTNode* IndexNode::indexExpr() { return _indexExpr; }
-
-ReturnNode::ReturnNode(ASTNode* expr) : retVal(expr) {}
-
-XString ReturnNode::dump() const
-{
-    if (retVal)
-        return fmt::format("return {}", retVal->dump());
-    else
-        return "";
-}
-
-void ReturnNode::setReturnValue(ASTNode* retVal) { this->retVal = retVal; }
-ASTNode* ReturnNode::returnValue() { return retVal; }
-
-ReturnNode::~ReturnNode()
-{
-    if (retVal) delete retVal;
-}

@@ -42,3 +42,21 @@ ContinueNode::~ContinueNode() {}
 XString BreakNode::dump() const { return fmt::format("break"); }
 
 BreakNode::~BreakNode() {}
+
+ReturnNode::ReturnNode(ASTNode* expr) : retVal(expr) {}
+
+XString ReturnNode::dump() const
+{
+    if (retVal)
+        return fmt::format("return {}", retVal->dump());
+    else
+        return "";
+}
+
+void ReturnNode::setReturnValue(ASTNode* retVal) { this->retVal = retVal; }
+ASTNode* ReturnNode::returnValue() { return retVal; }
+
+ReturnNode::~ReturnNode()
+{
+    if (retVal) delete retVal;
+}

@@ -11,14 +11,14 @@ CodeGenContextHelper::CodeGenContextHelper()
     module.setTargetTriple(LLVM_DEFAULT_TARGET_TRIPLE);
 }
 
-XSharp::SymbolTable* CodeGenContextHelper::toNewScope()
+XSharp::SymbolTable* CodeGenContextHelper::enterScope()
 {
     auto newScopeSymbolTable = currentSymbols->createChild();
     currentSymbols = newScopeSymbolTable;
     return currentSymbols;
 }
 
-XSharp::SymbolTable* CodeGenContextHelper::toParentScope()
+XSharp::SymbolTable* CodeGenContextHelper::exitScope()
 {
     if (isGlobalScope()) return nullptr;
     currentSymbols = currentSymbols->parent();
@@ -28,7 +28,7 @@ XSharp::SymbolTable* CodeGenContextHelper::toParentScope()
 void CodeGenContextHelper::toNewFunctionScope(const XSharp::Symbol& funcSymbol)
 {
     currentReturnType = funcSymbol.type->returnValueType();
-    toNewScope();
+    enterScope();
 }
 
 bool CodeGenContextHelper::isGlobalScope() const
@@ -45,8 +45,8 @@ ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper)
     if (ref_type->category == XSharp::Type::Reference) {
         return {
             helper->builder.CreateLoad(
-                castToLLVM(ref_type->innerType(), helper->context), ref_val),
-            ref_type->innerType()};
+                castToLLVM(ref_type->derefType(), helper->context), ref_val),
+            ref_type->derefType()};
     } else {
         return ref;
     }

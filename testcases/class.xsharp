@@ -15,6 +15,5 @@ i32 c;
 i32 main()
 {
     A a;
-    B b;
     return 123;
 }

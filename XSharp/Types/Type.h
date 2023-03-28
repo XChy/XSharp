@@ -54,7 +54,6 @@ struct ClosureType {
 
 struct Decoration {
     bool isMutable;
-    bool isGlobal;
     bool isConstexpr;
 };
 

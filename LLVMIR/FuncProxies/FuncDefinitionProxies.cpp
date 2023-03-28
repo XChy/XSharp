@@ -6,6 +6,7 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Symbol.h"
 #include "XSharp/Types/Type.h"
+#include "XSharp/Types/TypeNodes.h"
 #include "XSharp/Types/TypeSystem.h"
 
 ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
@@ -32,11 +33,12 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
         .symbolType = XSharp::SymbolType::Function,
     };
 
-    std::vector<TypeNode*> paramsType;
-    for (auto param : ast->params()) paramsType.push_back(param->type());
+    std::vector<Type*> paramsType;
+    for (auto param : ast->params())
+        paramsType.push_back(param->type()->toType());
 
     auto retType = ast->returnType();
-    TypeNode* functionType = XSharp::getFunctionType(retType, paramsType);
+    Type* functionType = XSharp::getFunctionType(retType->toType(), paramsType);
 
     Function* func = Function::Create(
         (llvm::FunctionType*)castToLLVM(functionType, context),
@@ -61,7 +63,8 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
         helper->currentSymbols->addSymbol(
             {.name = ast->params()[i]->name(),
              .symbolType = XSharp::SymbolType::Argument,
-             .type = XSharp::getReferenceType(ast->params()[i]->type()),
+             .type =
+                 XSharp::getReferenceType(ast->params()[i]->type()->toType()),
              .definition = arg_alloca});
         iter++;
     }
@@ -78,7 +81,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
         return {nullptr, nullptr};
     }
 
-    helper->toParentScope();
+    helper->exitScope();
 
     helper->currentSymbols->addSymbol(functionSymbol);
 

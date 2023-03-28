@@ -4,6 +4,7 @@
 #include "XSharp/Symbol.h"
 #include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/Types/TypeSystem.h"
+#include "XSharp/Types/TypeNodes.h"
 
 ValueAndType CodeGenProxy<VariableNode>::codeGen(VariableNode* ast,
                                                  CodeGenContextHelper* helper,
@@ -28,10 +29,10 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
         helper->error("Redefinition of variable '{}'", ast->name());
     }
 
-    TypeNode* var_type = XSharp::getReferenceType(ast->type());
+    Type* var_type = XSharp::getReferenceType(ast->type()->toType());
 
     auto var_alloca =
-        builder.CreateAlloca(castToLLVM(var_type->innerType(), context),
+        builder.CreateAlloca(castToLLVM(var_type->derefType(), context),
                              nullptr, ast->name().toStdString());
 
     if (ast->initValue()) {
@@ -39,7 +40,7 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
         // validate the initialization
         if (!init_type) return {nullptr, nullptr};
 
-        init_val = TypeAdapter::llvmConvert(init_type, var_type->innerType(),
+        init_val = TypeAdapter::llvmConvert(init_type, var_type->derefType(),
                                             init_val);
         // validate the type of init_val
         if (init_val) builder.CreateStore(init_val, var_alloca);
@@ -63,11 +64,11 @@ ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
         return {nullptr, nullptr};
     }
 
-    TypeNode* var_type = XSharp::getReferenceType(ast->type());
+    Type* var_type = XSharp::getReferenceType(ast->type()->toType());
 
     // TODO: Global variable's initValue's processing
     llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(
-        helper->module, castToLLVM(var_type->innerType(), helper->context),
+        helper->module, castToLLVM(var_type->derefType(), helper->context),
         var_type->isConst, llvm::GlobalVariable::ExternalLinkage, nullptr,
         ast->name().toStdString());
 

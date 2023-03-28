@@ -79,21 +79,6 @@ class XSharp_EXPORT StringNode : public ASTNode
     XString _value;
 };
 
-class XSharp_EXPORT BoxNode : public ASTNode
-{  // Applied to hide the binary operator node's information
-   public:
-    BoxNode(ASTNode* child);
-    XString dump() const;
-
-    void setChild(ASTNode* child);
-    ASTNode* child();
-
-    ~BoxNode();
-
-   private:
-    ASTNode* _child;
-};
-
 class XSharp_EXPORT BinaryOperatorNode : public ASTNode
 {
    public:
@@ -132,7 +117,6 @@ class XSharp_EXPORT UnaryOperatorNode : public ASTNode
     void setOperatorStr(const XString& operatorStr);
     XString operatorStr() const;
 
-    // TypeNode* exprType();
     ~UnaryOperatorNode();
 
    private:
@@ -280,19 +264,4 @@ class XSharp_EXPORT IndexNode : public ASTNode
 
 // Control Flow's ASTNode
 
-class XSharp_EXPORT ReturnNode : public ASTNode
-{
-   public:
-    ReturnNode(ASTNode* expr);
-
-    XString dump() const;
-
-    void setReturnValue(ASTNode* retVal);
-    ASTNode* returnValue();
-
-    ~ReturnNode();
-
-   private:
-    ASTNode* retVal;
-};
 }  // namespace XSharp

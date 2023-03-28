@@ -28,7 +28,14 @@ TypeContext::TypeContext()
     }
 }
 
-Type* Types::get(const XString& name) { return globalTypeContext.types[name]; }
+Type* Types::get(const XString& name)
+{
+    auto it = globalTypeContext.types.find(name);
+
+    if (it != globalTypeContext.types.end()) return it->second;
+
+    return nullptr;
+}
 
 TypeContext::~TypeContext()
 {
@@ -68,8 +75,14 @@ Type* XSharp::getFunctionType(Type* returnValueType,
     node->category = Type::Function;
     node->typeinfo = FunctionType{.paramTypes = paramTypes,
                                   .returnValueType = returnValueType};
-    globalTypeContext.registerType(node);
-    return node;
+    if (!Types::get(node->typeName())) {
+        globalTypeContext.registerType(node);
+        return node;
+    } else {
+        auto typeName = node->typeName();
+        delete node;
+        return Types::get(typeName);
+    }
 }
 
 Type* XSharp::getReferenceType(Type* innerType)
@@ -77,7 +90,16 @@ Type* XSharp::getReferenceType(Type* innerType)
     Type* node = new Type;
     node->category = Type::Reference;
     node->typeinfo = ReferenceType{.derefType = innerType};
-    globalTypeContext.registerType(node);
+
+    if (!Types::get(node->typeName())) {
+        globalTypeContext.registerType(node);
+        return node;
+    } else {
+        auto typeName = node->typeName();
+        delete node;
+        return Types::get(typeName);
+    }
+
     return node;
 }
 
@@ -87,8 +109,15 @@ Type* XSharp::getArrayType(Type* elementType, uint dimension)
     node->category = Type::Array;
     node->typeinfo =
         ArrayType{.arrayDimension = dimension, .elementType = elementType};
-    globalTypeContext.registerType(node);
-    return node;
+
+    if (!Types::get(node->typeName())) {
+        globalTypeContext.registerType(node);
+        return node;
+    } else {
+        auto typeName = node->typeName();
+        delete node;
+        return Types::get(typeName);
+    }
 }
 
 Type* XSharp::getClassType(const XString& baseName)
@@ -102,20 +131,15 @@ Type* XSharp::getClosureType()
     Type* node = new Type;
     node->category = Type::Closure;
     node->typeinfo = ClosureType{};
-    globalTypeContext.registerType(node);
-    return node;
-}
-
-Type* XSharp::getTypeFor(const XString& baseName)
-{
-    auto mapIter = nameToBasicType.find(baseName);
-    if (mapIter != nameToBasicType.end()) {
-        return getBasicType(nameToBasicType[baseName]);
+    if (!Types::get(node->typeName())) {
+        globalTypeContext.registerType(node);
+        return node;
     } else {
-        return getClassType(baseName);
+        auto typeName = node->typeName();
+        delete node;
+        return Types::get(typeName);
     }
 }
-
 Type* XSharp::getMergedType(Type* lhs_type, Type* rhs_type)
 {
     Type* merged_type;
@@ -133,6 +157,19 @@ Type* XSharp::getMergedType(Type* lhs_type, Type* rhs_type)
         merged_type = lhs_type->size() > rhs_type->size() ? lhs_type : rhs_type;
     }
     return merged_type;
+}
+
+Type* XSharp::registerClass(XClass* classDecl)
+{
+    globalTypeContext.classDecls[classDecl->name] = classDecl;
+
+    Type* type = new Type;
+    type->category = Type::Class;
+    type->typeinfo = ClassType{.classDecl = classDecl};
+    type->baseName = classDecl->name;
+
+    globalTypeContext.registerType(type);
+    return type;
 }
 
 TypeContext* getGlobalTypeContext() { return &globalTypeContext; }

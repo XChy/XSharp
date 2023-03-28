@@ -51,21 +51,19 @@ Type* getClassType(const XString& baseName);
 
 Type* getClosureType();
 
-Type* getTypeFor(const XString& baseName);
-
 // To adapt the lhs number and rhs number for logical and arithmetic operator
 Type* getMergedType(Type* lhs_type, Type* rhs_type);
 
 Type* registerClass(XClass* classDecl);
 
-static Type* getVoidType() { return getBasicType(BasicType::Void); }
-static Type* getI64Type() { return getBasicType(BasicType::I64); }
-static Type* getI32Type() { return getBasicType(BasicType::I32); }
-static Type* getUI32Type() { return getBasicType(BasicType::UI32); }
-static Type* getUI64Type() { return getBasicType(BasicType::UI64); }
-static Type* getFloatType() { return getBasicType(BasicType::Float); }
-static Type* getDoubleType() { return getBasicType(BasicType::Double); }
-static Type* getBooleanType() { return getBasicType(BasicType::Boolean); }
-static Type* getCharType() { return getBasicType(BasicType::Char); }
+inline Type* getVoidType() { return getBasicType(BasicType::Void); }
+inline Type* getI64Type() { return getBasicType(BasicType::I64); }
+inline Type* getI32Type() { return getBasicType(BasicType::I32); }
+inline Type* getUI32Type() { return getBasicType(BasicType::UI32); }
+inline Type* getUI64Type() { return getBasicType(BasicType::UI64); }
+inline Type* getFloatType() { return getBasicType(BasicType::Float); }
+inline Type* getDoubleType() { return getBasicType(BasicType::Double); }
+inline Type* getBooleanType() { return getBasicType(BasicType::Boolean); }
+inline Type* getCharType() { return getBasicType(BasicType::Char); }
 
 }  // namespace XSharp

@@ -66,13 +66,6 @@ ValueAndType CodeGenProxy<BooleanNode>::codeGen(BooleanNode* ast,
     return {val, XSharp::getBooleanType()};
 }
 
-ValueAndType CodeGenProxy<BoxNode>::codeGen(BoxNode* ast,
-                                            CodeGenContextHelper* helper,
-                                            const Generator& generator)
-{
-    return generator(ast->child());
-}
-
 ValueAndType CodeGenProxy<BlockNode>::codeGen(BlockNode* ast,
                                               CodeGenContextHelper* helper,
                                               const Generator& generator)

@@ -20,7 +20,7 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
         XString asteeName = asteeNode->name();
 
         std::vector<llvm::Value*> argumentValues;
-        std::vector<TypeNode*> argumentTypes;
+        std::vector<Type*> argumentTypes;
         for (auto ast : ast->params()) {
             auto [arg_val, arg_type] = generator(ast);
             if (arg_type == nullptr) return {nullptr, nullptr};

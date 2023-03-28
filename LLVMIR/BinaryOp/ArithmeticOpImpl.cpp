@@ -19,10 +19,10 @@ ValueAndType XSharp::AssignImpl(BinaryOperatorNode* op,
     }
 
     // TODO: ObjectRef's assignment
-    rhs = TypeAdapter::llvmConvert(rhs_type, lhs_type->innerType(), rhs);
+    rhs = TypeAdapter::llvmConvert(rhs_type, lhs_type->derefType(), rhs);
     if (!rhs_type) {
         helper->error("The type '{}' cannot be converted to '{}'",
-                      rhs_type->typeName(), lhs_type->innerType()->typeName());
+                      rhs_type->typeName(), lhs_type->derefType()->typeName());
         return {nullptr, nullptr};
     }
     helper->builder.CreateStore(rhs, lhs);

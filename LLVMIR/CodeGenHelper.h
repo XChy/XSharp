@@ -20,15 +20,15 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/Optimizer.h"
 
-typedef std::tuple<llvm::Value*, TypeNode*> ValueAndType;
+typedef std::tuple<llvm::Value*, XSharp::Type*> ValueAndType;
 
 class CodeGenContextHelper
 {
    public:
     CodeGenContextHelper();
 
-    XSharp::SymbolTable* toNewScope();
-    XSharp::SymbolTable* toParentScope();
+    XSharp::SymbolTable* enterScope();
+    XSharp::SymbolTable* exitScope();
 
     void toNewFunctionScope(const XSharp::Symbol& funcSymbol);
 

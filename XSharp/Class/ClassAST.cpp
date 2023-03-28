@@ -26,16 +26,8 @@ ClassNode::~ClassNode()
 XString DefinitionsNode::dump() const
 {
     XString result;
-    for (auto i : _classes) {
-        result.append(i->dump());
-        result.append('\n');
-    }
-    for (auto i : _functions) {
-        result.append(i->dump());
-        result.append('\n');
-    }
-    for (auto i : _variables) {
-        result.append(i->dump());
+    for (auto decl : decls) {
+        result.append(decl->dump());
         result.append('\n');
     }
     return result;
@@ -43,35 +35,20 @@ XString DefinitionsNode::dump() const
 
 void DefinitionsNode::addClass(ClassNode* classDeclaration)
 {
-    _classes.push_back(classDeclaration);
+    decls.push_back(classDeclaration);
 }
 
 void DefinitionsNode::addFunction(FunctionNode* functionDeclaration)
 {
-    _functions.push_back(functionDeclaration);
+    decls.push_back(functionDeclaration);
 }
 
 void DefinitionsNode::addVariable(VariableNode* variableDeclaration)
 {
-    _variables.push_back(variableDeclaration);
-}
-
-std::vector<ClassNode*> DefinitionsNode::classes() const { return _classes; }
-
-std::vector<FunctionNode*> DefinitionsNode::functions() const
-{
-    return _functions;
-}
-
-std::vector<VariableNode*> DefinitionsNode::variables() const
-{
-    return _variables;
+    decls.push_back(variableDeclaration);
 }
 
 DefinitionsNode::~DefinitionsNode()
 {
-    for (auto p : _variables) delete p;
-    for (auto p : _functions) delete p;
-    for (auto p : _classes) delete p;
     for (auto p : decls) delete p;
 }
