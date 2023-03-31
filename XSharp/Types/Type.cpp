@@ -214,17 +214,17 @@ uint Type::bits() const
             break;
 
         case Class: {
-            uint size = sizeof(uintptr_t) * 8;
+            uint bits = sizeof(uintptr_t) * 8;
             for (auto fieid : getObjectClass()->dataFields) {
                 if (fieid.type->category != Function)
-                    size += fieid.type->size();
+                    bits += fieid.type->bits();
             }
-            return size;
+            return bits;
         }
 
         case Reference:
         case Array:
-            return sizeof(uintptr_t) * 4;
+            return sizeof(uintptr_t) * 8;
     }
     return 0;
 }

@@ -22,6 +22,10 @@ ValueAndType CodeGenProxy<ClassNode>::codeGen(ClassNode* ast,
         Field field;
         field.name = member->name();
         if ((field.type = member->type()->toType())) {
+            if (field.type->category == Type::Class) {
+                field.type = getReferenceType(field.type);
+            }
+
             classInfo->dataFields.push_back(field);
         } else {
             helper->error("No typename matched with {}",
