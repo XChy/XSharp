@@ -44,11 +44,9 @@ static std::unordered_map<XString, BinaryOperatorInfo> binaryOperInfo = {
 };
 
 static std::unordered_map<XString, UnaryOperatorInfo> unaryOperInfo = {
-    {"+",
-     {3, prefix, RightToLeft}},  //{operator,{priority,place,associativity}}
-    {"-", {3, prefix, RightToLeft}},
-    {"++", {3, All, RightToLeft}},
-    {"--", {3, All, RightToLeft}},
+    {"+", {3, prefix, RightToLeft}},  //{operator,{priority,place,associativity}}
+    {"-", {3, prefix, RightToLeft}}, {"++", {3, All, RightToLeft}},
+    {"--", {3, All, RightToLeft}},   {"new", {10, prefix, RightToLeft}},
     {"!", {3, prefix, RightToLeft}}};
 
 }  // namespace XSharp

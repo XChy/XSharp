@@ -3,7 +3,7 @@
 #include "XSharp/Parser.h"
 #include "XSharp/xsharp_global.h"
 #include "XSharp/SymbolTable.h"
-#include "XSharp/TypeSystem.h"
+#include "XSharp/Types/TypeSystem.h"
 
 namespace XSharp {
 

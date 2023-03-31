@@ -6,6 +6,7 @@ CodeGenProxy<UnaryOperatorNode>::CodeGenProxy()
     processors["+"] = XSharp::PositiveImpl;
     processors["-"] = XSharp::NegativeImpl;
     processors["!"] = XSharp::NotImpl;
+    processors["new"] = XSharp::NewImpl;
 }
 
 ValueAndType CodeGenProxy<UnaryOperatorNode>::codeGen(

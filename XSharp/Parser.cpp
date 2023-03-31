@@ -264,6 +264,10 @@ ASTNode* Parser::statement()
                 stmt = ifStatement();
             } else if (current->value == "while") {
                 stmt = whileStatement();
+            } else if (current->value == "new") {
+                stmt = expression({SentenceEnd});
+            } else {
+                throw XSharpError("Not a statement");
             }
             break;
         case Identifier:
@@ -370,7 +374,7 @@ ASTNode* Parser::expression(std::vector<TokenType> stopwords, int ctxPriority)
     while (true) {
         if (isStopwords(current, stopwords)) return lhs;
 
-        if (current->type != Operator)
+        if (current->type != Operator && !current->isKeyword("new"))
             throw XSharpError("No operator matched after operand");
 
         if (priority(current->value) <= ctxPriority) break;
@@ -401,6 +405,12 @@ ASTNode* Parser::operand()
         before = new UnaryOperatorNode;
         before->setOperatorStr(current->value);
         forward();
+    } else if (current->isKeyword("new")) {
+        before = new UnaryOperatorNode;
+        before->setOperatorStr(current->value);
+        forward();
+        before->setOperand(type());
+        return before;
     }
 
     if (current->type == Integer) {
@@ -452,17 +462,18 @@ ASTNode* Parser::operand()
         current++;
     }
 
-    if (current->type == Operator) {
-        if ((current + 1)->type != Integer &&
-            (current + 1)->type != DecimalFraction &&
-            (current + 1)->type != Boolean && (current + 1)->type != String &&
-            (current + 1)->type != OpenParenthesis &&
-            (current + 1)->type != Identifier) {
-            after = new UnaryOperatorNode;
-            after->setOperatorStr(current->value);
-            current++;
-        }
-    }
+    //  FIXME: bug of prefix
+    //  if (current->type == Operator) {
+    //  if ((current + 1)->type != Integer &&
+    //(current + 1)->type != DecimalFraction &&
+    //(current + 1)->type != Boolean && (current + 1)->type != String &&
+    //(current + 1)->type != OpenParenthesis &&
+    //(current + 1)->type != Identifier) {
+    //  after = new UnaryOperatorNode;
+    //  after->setOperatorStr(current->value);
+    //  current++;
+    // }
+    // }
 
     if (!(before || after)) {
         return operand;

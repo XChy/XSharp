@@ -26,8 +26,8 @@ int main(int argc, char* argv[])
         fmt::print("{}", ast->dump());
         delete ast;
 
-    } catch (XSharpError e) {
-        fmt::print("ERROR:{}", e.errorInfo);
+    } catch (XSharpError& e) {
+        fmt::print("ERROR:{}\n", e.errorInfo);
     }
     XSharp::Lexer lexer;
     XSharp::Parser parser;

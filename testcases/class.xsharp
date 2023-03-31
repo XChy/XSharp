@@ -14,6 +14,6 @@ i32 c;
 
 i32 main()
 {
-    B[] a;
+    B a = new B;
     return 123;
 }

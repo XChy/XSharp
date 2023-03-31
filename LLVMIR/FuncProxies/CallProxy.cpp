@@ -16,8 +16,8 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
     using llvm::Function;
 
     if (ast->function()->is<VariableExprNode>()) {
-        VariableExprNode* asteeNode = ast->function()->to<VariableExprNode>();
-        XString asteeName = asteeNode->name();
+        VariableExprNode* nameNode = ast->function()->to<VariableExprNode>();
+        XString calleeName = nameNode->name();
 
         std::vector<llvm::Value*> argumentValues;
         std::vector<Type*> argumentTypes;
@@ -29,10 +29,10 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
         }
 
         auto symbol =
-            helper->currentSymbols->findFunctionFor(asteeName, argumentTypes);
+            helper->currentSymbols->findFunctionFor(calleeName, argumentTypes);
 
         if (symbol.symbolType == XSharp::SymbolType::NoneSymbol) {
-            helper->error("No matching function for '{} (...)'", asteeName);
+            helper->error("No matching function for '{} (...)'", calleeName);
             return {nullptr, nullptr};
         }
 

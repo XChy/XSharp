@@ -86,10 +86,10 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     helper->currentSymbols->addSymbol(functionSymbol);
 
     // for debug
-    llvm::verifyFunction(*func);
+    // llvm::verifyFunction(*func);
 
     // optimize the function
-    // helper->optimizer.functionPassManager.run(*func);
+    helper->optimizer.functionPassManager.run(*func);
 
     return {func, functionType};
 }

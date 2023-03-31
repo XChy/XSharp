@@ -10,8 +10,9 @@ static std::unordered_set<XString> keywords = {
     "for",    "while",  "break",   "continue", "if",    "else",
     "return", "switch", "default", "case",     "throw", "catch",
     "try",    "class",  "const",   "static",   "enum",  "false",
-    "true",   "new",    "public",  "private",
+    "true",   "public", "private", "new",
 };
+
 bool isKeyword(const XString& keyword);
 
 static std::unordered_set<XString> operators = {

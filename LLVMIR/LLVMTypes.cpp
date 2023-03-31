@@ -65,17 +65,14 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
                 llvmTypes.push_back(castToLLVM(fieid.type, context));
             }
 
-            auto valueType = llvm::StructType::get(context, llvmTypes);
-            auto refType = valueType->getPointerTo();
-            return refType;
+            return llvm::StructType::get(context, llvmTypes);
         }
 
         case Type::Closure:
             break;
 
         case Type::Reference:
-            return llvm::PointerType::get(
-                castToLLVM(type->derefType(), context), 0);
+            return castToLLVM(type->derefType(), context)->getPointerTo();
         default:
             return nullptr;
     }

@@ -29,7 +29,12 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
         helper->error("Redefinition of variable '{}'", ast->name());
     }
 
-    Type* var_type = XSharp::getReferenceType(ast->type()->toType());
+    Type* var_type;
+    if (ast->type()->toType()->isBasic())
+        var_type = XSharp::getReferenceType(ast->type()->toType());
+    else
+        var_type = XSharp::getReferenceType(
+            XSharp::getReferenceType(ast->type()->toType()));
 
     auto var_alloca =
         builder.CreateAlloca(castToLLVM(var_type->derefType(), context),

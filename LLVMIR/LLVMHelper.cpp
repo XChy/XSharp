@@ -54,6 +54,7 @@ LLVMHelper::LLVMHelper()
     addProxy<BinaryOperatorNode>();
     addProxy<UnaryOperatorNode>();
     addProxy<ClassNode>();
+    addProxy<MemberExprNode>();
 }
 
 LLVMHelper::~LLVMHelper()

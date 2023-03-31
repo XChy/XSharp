@@ -1,7 +1,7 @@
 #include "xsharp_gc.h"
 #include "gc.h"
 
-void* GC_new_object(size_t size) { return GC_MALLOC(size); }
+void* GC_new_object(int64_t size) { return GC_MALLOC(size); }
 
 void* GC_new_class(size_t size)
 {

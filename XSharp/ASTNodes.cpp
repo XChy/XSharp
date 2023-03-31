@@ -248,7 +248,7 @@ UnaryOperatorNode::~UnaryOperatorNode() { delete _operand; }
 
 VariableExprNode::VariableExprNode(const XString name) : _name(name) {}
 
-XString VariableExprNode::dump() const { return fmt::format("<{}>", _name); }
+XString VariableExprNode::dump() const { return _name; }
 
 void VariableExprNode::setName(const XString& name) { _name = name; }
 
