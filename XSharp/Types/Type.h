@@ -5,6 +5,7 @@
 #include <variant>
 #include "XSharp/xsharp_global.h"
 #include "XSharp/XString.h"
+#include "XSharp/Class/XClass.h"
 
 namespace XSharp {
 
@@ -76,6 +77,7 @@ class Type
     bool isNumber() const;
 
     uint size() const;
+    uint bits() const;
 
     // Reference type, as variable
     bool isRef() const;

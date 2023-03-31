@@ -1,4 +1,5 @@
 #include "Type.h"
+#include <cstdint>
 #include <variant>
 #include "XSharp/XString.h"
 using namespace XSharp;
@@ -11,29 +12,32 @@ Type::Type(const Type& other)
     baseName = other.baseName;
     category = other.category;
     isConst = other.isConst;
-    switch (category) {
-        case Basic:
-            typeinfo = std::get<BasicType>(other.typeinfo);
-            break;
-        case Array: {
-            ArrayType array = std::get<ArrayType>(other.typeinfo);
-            array.elementType = new Type(*other.elementType());
-            typeinfo = array;
-        } break;
-        case Function: {
-            FunctionType function;
-            function.returnValueType = new Type(*other.returnValueType());
-            for (Type* param : other.parameterTypes())
-                function.paramTypes.push_back(new Type(*param));
-            typeinfo = function;
-        } break;
-        case Class:
-            typeinfo = std::get<ClassType>(other.typeinfo);
-            break;
-        case Closure:
-            // TODO: Closure
-            break;
-    }
+    typeinfo = other.typeinfo;
+    // switch (category) {
+    // case Basic:
+    // typeinfo = std::get<BasicType>(other.typeinfo);
+    // break;
+
+    // case Array: {
+    // typeinfo = std::get<ArrayType>(other.typeinfo);
+    //} break;
+
+    // case Function: {
+    // FunctionType function;
+    // function.returnValueType = new Type(*other.returnValueType());
+    // for (Type* param : other.parameterTypes())
+    // function.paramTypes.push_back(new Type(*param));
+    // typeinfo = function;
+    //} break;
+
+    // case Class:
+    // typeinfo = std::get<ClassType>(other.typeinfo);
+    // break;
+
+    // case Closure:
+    //// TODO: Closure
+    // break;
+    //}
 }
 
 bool Type::isRef() const { return category == Reference; }
@@ -179,7 +183,9 @@ XClass* Type::getObjectClass() const
     }
 }
 
-uint Type::size() const
+uint Type::size() const { return bits() / 8; }
+
+uint Type::bits() const
 {
     switch (category) {
         case Basic:
@@ -187,22 +193,38 @@ uint Type::size() const
                 case BasicType::Void:
                 case BasicType::Boolean:
                     return 1;
+                case BasicType::I8:
+                case BasicType::UI8:
                 case BasicType::Char:
+                    return 8;
+                case BasicType::I16:
                 case BasicType::UI16:
-                    return 2;
+                    return 16;
                 case BasicType::I32:
                 case BasicType::UI32:
                 case BasicType::Float:
-                    return 4;
+                    return 32;
                 case BasicType::I64:
                 case BasicType::UI64:
                 case BasicType::Double:
-                    return 8;
+                    return 64;
                 default:
                     return 0;
             }
             break;
-            // TODO: Complete size of other types
+
+        case Class: {
+            uint size = sizeof(uintptr_t) * 4;
+            for (auto fieid : getObjectClass()->dataFields) {
+                if (fieid.type->category != Function)
+                    size += fieid.type->size();
+            }
+            return size;
+        }
+
+        case Reference:
+        case Array:
+            return sizeof(uintptr_t) * 4;
     }
     return 0;
 }

@@ -19,19 +19,15 @@ ValueAndType CodeGenProxy<ClassNode>::codeGen(ClassNode* ast,
 
     for (auto member : ast->members) {
         // TODO: variable definition
-
-        // auto [mem_val, mem_type] = generator(member);
-
-        // if (!mem_type) {
-        // delete classInfo;
-        // helper->toParentScope();
-        // return {nullptr, nullptr};
-        //}
-
         Field field;
         field.name = member->name();
-        field.type = member->type()->toType();
-        classInfo->dataFields.push_back(field);
+        if ((field.type = member->type()->toType())) {
+            classInfo->dataFields.push_back(field);
+        } else {
+            helper->error("No typename matched with {}",
+                          member->type()->dump());
+            return {nullptr, nullptr};
+        }
     }
 
     for (auto method : ast->methods) {

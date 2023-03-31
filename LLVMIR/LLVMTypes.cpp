@@ -18,6 +18,12 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
                     return llvm::Type::getInt1Ty(context);
                 case BasicType::Char:
                     return llvm::Type::getInt16Ty(context);
+                case BasicType::I8:
+                case BasicType::UI8:
+                    return llvm::Type::getInt8Ty(context);
+                case BasicType::I16:
+                case BasicType::UI16:
+                    return llvm::Type::getInt16Ty(context);
                 case BasicType::I32:
                 case BasicType::UI32:
                     return llvm::Type::getInt32Ty(context);
@@ -49,10 +55,9 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
                 castToLLVM(type->elementType(), context), 0);
 
         case Type::Class: {
-            // TODO: Complete the related definition of class
             std::vector<llvm::Type*> llvmTypes;
-            // Class Pointer for reflection
 
+            // Class Pointer for reflection
             llvmTypes.push_back(
                 llvm::Type::getIntNTy(context, sizeof(uintptr_t) * 8));
 

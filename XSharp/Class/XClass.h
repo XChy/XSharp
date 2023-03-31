@@ -1,5 +1,4 @@
 #pragma once
-#include "XSharp/Types/Type.h"
 #include "XSharp/XString.h"
 #include "XSharp/xsharp_global.h"
 /*
@@ -15,15 +14,11 @@ enum class VisitLevel {
 
 class Type;
 
-class Field
-{
-   public:
+struct Field {
     VisitLevel visitLevel;
     bool isStatic;
     XString name;
     Type* type;
-
-    int offset();
 };
 
 class XSharp_EXPORT XClass
