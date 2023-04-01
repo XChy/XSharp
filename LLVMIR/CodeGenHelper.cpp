@@ -10,7 +10,7 @@ CodeGenContextHelper::CodeGenContextHelper()
     currentSymbols = &globalSymbols;
 
     module.setTargetTriple(target_triple());
-    module.setTargetTriple(data_layout());
+    module.setDataLayout(data_layout());
 }
 
 XSharp::SymbolTable* CodeGenContextHelper::enterScope()

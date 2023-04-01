@@ -26,21 +26,25 @@ if(SUPPORT_LLVMIR)
   list(APPEND SRC ${LLVMSUPPORT_SRC})
   add_definitions(-DXSharp_LLVMIR_SUPPORT)
 
-  # find_package(LLVM REQUIRED CONFIG)
+  find_package(LLVM REQUIRED CONFIG)
 
-  # message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}") message(STATUS "Using
+  message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+  message(STATUS "Using
   # LLVMConfig.cmake in: ${LLVM_DIR}")
 
-  # include_directories(${LLVM_INCLUDE_DIRS})
-  # separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
-  # add_definitions(${LLVM_DEFINITIONS_LIST})
+  include_directories(${LLVM_INCLUDE_DIRS})
+  separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
+  add_definitions(${LLVM_DEFINITIONS_LIST})
 
-  execute_process(COMMAND llvm-config --libs all OUTPUT_VARIABLE llvm_libs)
+  execute_process(
+    COMMAND llvm-config --libs all
+    OUTPUT_VARIABLE llvm_libs
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
   # llvm_map_components_to_libnames( llvm_libs all support core codegen irreader
   # mc mca target asmprinter)
 
-  # message(STATUS "LLVM LIBS: ${llvm_libs}")
+  message(STATUS "LLVM LIBS: ${llvm_libs}")
 
 endif()
 
