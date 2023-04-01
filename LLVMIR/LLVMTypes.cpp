@@ -64,8 +64,9 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
             for (auto fieid : type->getObjectClass()->dataFields) {
                 llvmTypes.push_back(castToLLVM(fieid.type, context));
             }
-
-            return llvm::StructType::get(context, llvmTypes);
+            auto structType = llvm::StructType::get(context, llvmTypes);
+            structType->setName("a");
+            return structType;
         }
 
         case Type::Closure:

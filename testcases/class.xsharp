@@ -1,19 +1,24 @@
 class A{
 i32 a;
-double a;
 i32 b;
 i32 c;
 }
 
 class B{
 i32 a;
-A a;
 i32 b;
 i32 c;
+A d;
 }
 
 i32 main()
 {
     B a = new B;
+    a.a = 3;
+    a.b = 3;
+    a.c = 3;
+    a.d = new A;
+    a.d.a = 2;
+    print(a.a + a.b + a.c + a.d.a);
     return 123;
 }
