@@ -1,6 +1,6 @@
 #include "Target.h"
 #include <optional>
-#include <llvm-14/llvm/Support/TargetSelect.h>
+#include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/Target/TargetOptions.h>
