@@ -75,7 +75,7 @@ void test(const char *path)
     if (!helper.contextHelper._errors.empty()) {
         std::cout << "Semantic error:\n";
         for (auto error : helper.contextHelper._errors)
-            std::cout << error.errorInfo.toStdString();
+            std::cout << error.errorInfo.toStdString() << "\n";
     }
 
     delete ast;

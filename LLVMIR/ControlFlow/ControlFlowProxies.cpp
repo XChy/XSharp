@@ -104,6 +104,8 @@ ValueAndType CodeGenProxy<ReturnNode>::codeGen(ReturnNode* ast,
 
     if (ast->returnValue()) {
         auto [retVal, retType] = generator(ast->returnValue());
+        if (!retType) return {nullptr, nullptr};
+
         retVal = TypeAdapter::llvmConvert(retType, helper->currentReturnType,
                                           retVal);
         if (!retVal) {

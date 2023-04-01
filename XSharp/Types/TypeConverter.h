@@ -40,4 +40,19 @@ class XSharp_EXPORT NumberConverter : public TypeConverter
    private:
 };
 
+class XSharp_EXPORT ObjectConverter : public TypeConverter
+{
+   public:
+    ObjectConverter() {}
+    bool convertable(Type* from, Type* to);
+    bool implicitConvertable(Type* from, Type* to);
+
+#ifdef XSharp_LLVMIR_SUPPORT
+    llvm::Value* convert(Type* from, Type* to, llvm::IRBuilder<>* builder,
+                         llvm::LLVMContext* context, llvm::Value* val);
+#endif
+
+   private:
+};
+
 }  // namespace XSharp

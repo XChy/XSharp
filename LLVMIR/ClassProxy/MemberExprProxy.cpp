@@ -15,7 +15,7 @@ ValueAndType CodeGenProxy<MemberExprNode>::codeGen(MemberExprNode *ast,
 
     if (!obj_type) return {nullptr, nullptr};
 
-    if (obj_type->isObjectRef()) {
+    if (obj_type->isObject()) {
         XClass *classinfo = obj_type->getObjectClass();
 
         // start from virtual table

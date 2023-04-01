@@ -2,10 +2,16 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/Types/TypeConverter.h"
 using namespace XSharp;
+
 static llvm::IRBuilder<>* llvmBuilder;
 static llvm::LLVMContext* llvmContext;
 
-static std::vector<TypeConverter*> converters;
+static NumberConverter numberConverter;
+static ObjectConverter objectConverter;
+
+static std::vector<TypeConverter*> converters = {&numberConverter,
+                                                 &objectConverter};
+
 bool TypeAdapter::canConvert(Type* from, Type* to)
 {
     for (auto converter : converters) {
@@ -40,8 +46,9 @@ llvm::Value* TypeAdapter::llvmConvert(Type* originalType, Type* expectedType,
 
     for (auto converter : converters) {
         // get automatically dereference, to convert the innerValue's type
-        if (originalType->category == Type::Reference &&
-            expectedType->category != Type::Reference) {
+        if ((originalType->category == Type::Reference &&
+             expectedType->category != Type::Reference) ||
+            (originalType->isObjectRef() && expectedType->isObject())) {
             if (converter->convertable(originalType->derefType(),
                                        expectedType)) {
                 auto loadedType =
@@ -54,18 +61,18 @@ llvm::Value* TypeAdapter::llvmConvert(Type* originalType, Type* expectedType,
             continue;
         }
 
-        // Convert between reference, used to handle the case
+        // Convert between references, used to handle the case
         // where converting Objects, and note that at this case
         // converter's 'convert(..)' is deprecated
-        if (originalType->category == Type::Reference &&
-            expectedType->category == Type::Reference) {
-            if (converter->convertable(originalType->derefType(),
-                                       expectedType->derefType())) {
-                return llvmBuilder->CreatePointerCast(
-                    val, castToLLVM(expectedType->derefType(), *llvmContext));
-            }
-            continue;
-        }
+        // if (originalType->category == Type::Reference &&
+        // expectedType->category == Type::Reference) {
+        // if (converter->convertable(originalType->derefType(),
+        // expectedType->derefType())) {
+        // return llvmBuilder->CreatePointerCast(
+        // val, castToLLVM(expectedType->derefType(), *llvmContext));
+        //}
+        // continue;
+        //}
 
         // directly convert the value type
         if (converter->convertable(originalType, expectedType)) {

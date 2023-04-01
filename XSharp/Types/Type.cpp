@@ -72,8 +72,7 @@ bool Type::equals(const Type& other) const
             }
             return true;
         case Class:
-            // TODO Class related
-            return true;
+            return getObjectClass()->name == other.getObjectClass()->name;
         case Closure:
             // TODO Closure related
             return true;
@@ -166,9 +165,14 @@ bool Type::isNumber() const
     return false;
 }
 
-bool Type::isObjectRef() const
+bool Type::isObject() const
 {
     return category == Reference && derefType()->category == Class;
+}
+
+bool Type::isObjectRef() const
+{
+    return category == Reference && derefType()->isObject();
 }
 
 XClass* Type::getObjectClass() const

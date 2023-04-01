@@ -34,8 +34,13 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     };
 
     std::vector<Type*> paramsType;
-    for (auto param : ast->params())
-        paramsType.push_back(param->type()->toType());
+    for (auto param : ast->params()) {
+        auto paramType = param->type()->toType();
+        if (paramType->isBasic())
+            paramsType.push_back(paramType);
+        else if (paramType->category == Type::Class)
+            paramsType.push_back(getReferenceType(paramType));
+    }
 
     auto retType = ast->returnType();
     Type* functionType = XSharp::getFunctionType(retType->toType(), paramsType);
@@ -63,8 +68,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
         helper->currentSymbols->addSymbol(
             {.name = ast->params()[i]->name(),
              .symbolType = XSharp::SymbolType::Argument,
-             .type =
-                 XSharp::getReferenceType(ast->params()[i]->type()->toType()),
+             .type = XSharp::getReferenceType(paramsType[i]),
              .definition = arg_alloca});
         iter++;
     }

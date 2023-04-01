@@ -92,6 +92,7 @@ class Type
     Type* elementType() const;
 
     // Class type,  TODO complete below
+    bool isObject() const;
     bool isObjectRef() const;
     XClass* getObjectClass() const;
 

@@ -11,6 +11,11 @@ i32 c;
 A d;
 }
 
+i32 sum(A a)
+{
+    return  a.a + a.b + a.c;
+}
+
 i32 main()
 {
     B a = new B;
@@ -19,6 +24,8 @@ i32 main()
     a.c = 3;
     a.d = new A;
     a.d.a = 2;
-    print(a.a + a.b + a.c + a.d.a);
+    a.d.b = 3;
+    a.d.c = 4;
+    print(sum(a.d));
     return 123;
 }
