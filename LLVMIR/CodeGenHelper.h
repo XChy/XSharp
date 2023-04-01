@@ -18,6 +18,7 @@
 #include "XSharp/SymbolTable.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "LLVMIR/LLVMTypes.h"
+#include "LLVMIR/Target.h"
 #include "LLVMIR/Optimizer.h"
 
 typedef std::tuple<llvm::Value*, XSharp::Type*> ValueAndType;

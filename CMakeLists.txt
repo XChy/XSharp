@@ -26,18 +26,21 @@ if(SUPPORT_LLVMIR)
   list(APPEND SRC ${LLVMSUPPORT_SRC})
   add_definitions(-DXSharp_LLVMIR_SUPPORT)
 
-  find_package(LLVM REQUIRED CONFIG)
+  # find_package(LLVM REQUIRED CONFIG)
 
-  message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-  message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+  # message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}") message(STATUS "Using
+  # LLVMConfig.cmake in: ${LLVM_DIR}")
 
-  include_directories(${LLVM_INCLUDE_DIRS})
-  separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
-  add_definitions(${LLVM_DEFINITIONS_LIST})
+  # include_directories(${LLVM_INCLUDE_DIRS})
+  # separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
+  # add_definitions(${LLVM_DEFINITIONS_LIST})
 
-  llvm_map_components_to_libnames(llvm_libs all support core codegen irreader)
+  execute_process(COMMAND llvm-config --libs all OUTPUT_VARIABLE llvm_libs)
 
-  message(STATUS "LLVM LIBS: ${llvm_libs}")
+  # llvm_map_components_to_libnames( llvm_libs all support core codegen irreader
+  # mc mca target asmprinter)
+
+  # message(STATUS "LLVM LIBS: ${llvm_libs}")
 
 endif()
 
@@ -115,8 +118,9 @@ if(BUILD_XSharpCLI)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
+
   set(CMAKE_CXX_FLAGS_DEBUG
-      "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address  -Wall -Wno-unused-variable -pthread -O0 -g -ggdb -std=c++20"
+      "${CMAKE_CXX_FLAGS_DEBUG} ${LLVM_LIBRARIES} -fsanitize=address  -Wall -Wno-unused-variable -pthread -O0 -g -ggdb -std=c++20"
   )
   set(CMAKE_CXX_FLAGS_RELEASE
       "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20  -O2 -pthread -fopenmp")

@@ -1,5 +1,6 @@
 #include "CodeGenHelper.h"
 #include <cerrno>
+#include "LLVMIR/Target.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
 
@@ -8,7 +9,8 @@ CodeGenContextHelper::CodeGenContextHelper()
 {
     currentSymbols = &globalSymbols;
 
-    module.setTargetTriple(LLVM_DEFAULT_TARGET_TRIPLE);
+    module.setTargetTriple(target_triple());
+    module.setTargetTriple(data_layout());
 }
 
 XSharp::SymbolTable* CodeGenContextHelper::enterScope()

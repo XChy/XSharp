@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/BasicBlock.h"
@@ -17,7 +18,8 @@
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Target/TargetMachine.h"
-#include "llvm/Target/TargetOptions.h"
 #include "XSharp/xsharp_global.h"
 
-static std::string targetGet();
+std::string target_triple();
+
+std::string data_layout();
