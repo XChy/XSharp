@@ -4,6 +4,8 @@
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
 
+using namespace XSharp::LLVMCodeGen;
+
 CodeGenContextHelper::CodeGenContextHelper()
     : module("XSharp", context), builder(context), optimizer(&module)
 {
@@ -38,7 +40,8 @@ bool CodeGenContextHelper::isGlobalScope() const
     return currentSymbols == &globalSymbols;
 }
 
-ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper)
+ValueAndType XSharp::LLVMCodeGen::deReference(ValueAndType ref,
+                                              CodeGenContextHelper* helper)
 {
     auto [ref_val, ref_type] = ref;
     if (!ref_type) {

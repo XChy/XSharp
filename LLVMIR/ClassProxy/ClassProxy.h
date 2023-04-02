@@ -3,6 +3,8 @@
 #include "LLVMIR/CodeGenProxy.h"
 #include "XSharp/Class/ClassAST.h"
 
+namespace XSharp::LLVMCodeGen {
+
 template <>
 class CodeGenProxy<ClassNode>
 {
@@ -10,3 +12,5 @@ class CodeGenProxy<ClassNode>
     ValueAndType codeGen(ClassNode* ast, CodeGenContextHelper* helper,
                          const Generator& generator);
 };
+
+}  // namespace XSharp

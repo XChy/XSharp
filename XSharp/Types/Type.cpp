@@ -13,31 +13,6 @@ Type::Type(const Type& other)
     category = other.category;
     isConst = other.isConst;
     typeinfo = other.typeinfo;
-    // switch (category) {
-    // case Basic:
-    // typeinfo = std::get<BasicType>(other.typeinfo);
-    // break;
-
-    // case Array: {
-    // typeinfo = std::get<ArrayType>(other.typeinfo);
-    //} break;
-
-    // case Function: {
-    // FunctionType function;
-    // function.returnValueType = new Type(*other.returnValueType());
-    // for (Type* param : other.parameterTypes())
-    // function.paramTypes.push_back(new Type(*param));
-    // typeinfo = function;
-    //} break;
-
-    // case Class:
-    // typeinfo = std::get<ClassType>(other.typeinfo);
-    // break;
-
-    // case Closure:
-    //// TODO: Closure
-    // break;
-    //}
 }
 
 bool Type::isRef() const { return category == Reference; }
@@ -74,7 +49,7 @@ bool Type::equals(const Type& other) const
         case Class:
             return getObjectClass()->name == other.getObjectClass()->name;
         case Closure:
-            // TODO Closure related
+            // TODO: Closure related
             return true;
     }
     return false;
@@ -155,9 +130,7 @@ bool Type::isUnsigned() const
 bool Type::isNumber() const
 {
     if (category == Type::Basic) {
-        if (basicType() == BasicType::I32 || basicType() == BasicType::I64 ||
-            basicType() == BasicType::UI32 || basicType() == BasicType::UI64 ||
-            basicType() == BasicType::Float ||
+        if (isInteger() || basicType() == BasicType::Float ||
             basicType() == BasicType::Double) {
             return true;
         }

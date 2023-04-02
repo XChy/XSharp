@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <optional>
 #include <system_error>
+#include "XSharp/XString.h"
 #include <llvm-14/llvm/Support/FileSystem.h>
 #include <llvm-14/llvm/Support/raw_ostream.h>
 #include <llvm/Support/TargetSelect.h>
@@ -42,7 +43,7 @@ std::string data_layout()
     return datalayout;
 }
 
-std::error_code emit_object_code(const std::string& path, llvm::Module& module)
+std::error_code emit_object_code(const XString& path, llvm::Module& module)
 {
     std::string error;
     std::error_code error_code;
@@ -62,7 +63,8 @@ std::error_code emit_object_code(const std::string& path, llvm::Module& module)
     auto targetMachine =
         target->createTargetMachine(target_triple(), CPU, features, opt, RM);
 
-    llvm::raw_fd_ostream dest(path, error_code, llvm::sys::fs::OF_None);
+    llvm::raw_fd_ostream dest(path.toStdString(), error_code,
+                              llvm::sys::fs::OF_None);
     if (error_code) {
         llvm::errs() << "Could not open file: " << error_code.message();
         delete targetMachine;
@@ -84,8 +86,8 @@ std::error_code emit_object_code(const std::string& path, llvm::Module& module)
     return error_code;
 }
 
-int link_object(const std::string& object_path, const std::string& lib_path,
-                const std::string& exe_path)
+int link_object(const XString& object_path, const XString& lib_path,
+                const XString& exe_path)
 {
     return system(
         fmt::format("gcc {} {} -o {}", object_path, lib_path, exe_path)

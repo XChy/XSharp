@@ -1,12 +1,15 @@
 #include "UnaryOpProxy.h"
 #include "XSharp/ASTNodes.h"
 
+using namespace XSharp;
+using namespace XSharp::LLVMCodeGen;
+
 CodeGenProxy<UnaryOperatorNode>::CodeGenProxy()
 {
-    processors["+"] = XSharp::PositiveImpl;
-    processors["-"] = XSharp::NegativeImpl;
-    processors["!"] = XSharp::NotImpl;
-    processors["new"] = XSharp::NewImpl;
+    processors["+"] = PositiveImpl;
+    processors["-"] = NegativeImpl;
+    processors["!"] = NotImpl;
+    processors["new"] = NewImpl;
 }
 
 ValueAndType CodeGenProxy<UnaryOperatorNode>::codeGen(

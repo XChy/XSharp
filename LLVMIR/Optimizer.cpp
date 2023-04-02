@@ -7,6 +7,8 @@
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Utils.h"
 
+using namespace XSharp::LLVMCodeGen;
+
 Optimizer::Optimizer(llvm::Module* module) : functionPassManager(module)
 {
     // promote memory allocation to register allocation

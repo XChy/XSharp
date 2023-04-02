@@ -2,6 +2,9 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Types/TypeAdapter.h"
 
+using namespace XSharp;
+using namespace XSharp::LLVMCodeGen;
+
 ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
     FunctionCallNode* ast, CodeGenContextHelper* helper,
     const Generator& generator)

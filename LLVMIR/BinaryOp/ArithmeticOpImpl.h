@@ -3,10 +3,11 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Types/TypeAdapter.h"
 
+namespace XSharp {
+namespace LLVMCodeGen {
+
 typedef ValueAndType BinaryOpImpl(BinaryOperatorNode*, CodeGenContextHelper*,
                                   const Generator& generator);
-
-namespace XSharp {
 
 ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
                         const Generator& generator);
@@ -25,4 +26,5 @@ ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
 ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
                      const Generator& generator);
 
+}  // namespace LLVMCodeGen
 }  // namespace XSharp

@@ -28,26 +28,30 @@ llvm::Value* NumberConverter::convert(Type* from, Type* to,
 
     // integer to integer
     if (from->isInteger() && to->isInteger()) {
-        return builder->CreateIntCast(val, castToLLVM(to, *context),
-                                      from->isSigned());
+        return builder->CreateIntCast(
+            val, LLVMCodeGen::castToLLVM(to, *context), from->isSigned());
     }
 
     // TODO: integer and float-point
     if (from->isInteger() && !to->isInteger()) {
         if (from->isSigned())
-            return builder->CreateSIToFP(val, castToLLVM(to, *context));
+            return builder->CreateSIToFP(val,
+                                         LLVMCodeGen::castToLLVM(to, *context));
         else
-            return builder->CreateUIToFP(val, castToLLVM(to, *context));
+            return builder->CreateUIToFP(val,
+                                         LLVMCodeGen::castToLLVM(to, *context));
     } else if (!from->isInteger() && to->isInteger()) {
         if (from->isSigned())
-            return builder->CreateFPToSI(val, castToLLVM(to, *context));
+            return builder->CreateFPToSI(val,
+                                         LLVMCodeGen::castToLLVM(to, *context));
         else
-            return builder->CreateFPToUI(val, castToLLVM(to, *context));
+            return builder->CreateFPToUI(val,
+                                         LLVMCodeGen::castToLLVM(to, *context));
     }
 
     // float-point to float-point
     if (!from->isInteger() && !to->isInteger()) {
-        builder->CreateFPCast(val, castToLLVM(to, *context));
+        builder->CreateFPCast(val, LLVMCodeGen::castToLLVM(to, *context));
     }
 
     return nullptr;

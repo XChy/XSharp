@@ -64,7 +64,7 @@ void test(const char *path)
     auto ast = parser.parse(tokens);
     fmt::print("{}", ast->dump());
 
-    LLVMHelper helper;
+    XSharp::LLVMCodeGen::LLVMHelper helper;
     TypeAdapter::setLLVMBuilder(&helper.contextHelper.builder);
     TypeAdapter::setLLVMContext(&helper.contextHelper.context);
     helper.generateLLVMIR(ast, XString(path).append(".bc"));

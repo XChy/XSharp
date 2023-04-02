@@ -8,29 +8,33 @@
 #include "LLVMIR/BuiltIn.h"
 #include "XSharp/SymbolTable.h"
 #include "XSharp/Types/TypeSystem.h"
+
+namespace XSharp::LLVMCodeGen {
+
 void setUpBuildIn(llvm::Module& module, llvm::LLVMContext& context,
                   XSharp::SymbolTable& symbols)
 {
-    using namespace llvm;
     module.getOrInsertFunction(
-        "printI64",
-        FunctionType::get(Type::getInt8Ty(context), {Type::getInt64Ty(context)},
-                          false));  // IO
+        "printI64", llvm::FunctionType::get(llvm::Type::getInt8Ty(context),
+                                            {llvm::Type::getInt64Ty(context)},
+                                            false));  // IO
     module.getOrInsertFunction(
-        "printI32",
-        FunctionType::get(Type::getInt8Ty(context), {Type::getInt32Ty(context)},
-                          false));  // IO
-    module.getOrInsertFunction("printDouble",
-                               FunctionType::get(Type::getInt8Ty(context),
-                                                 {Type::getDoubleTy(context)},
-                                                 false));  // IO
+        "printI32", llvm::FunctionType::get(llvm::Type::getInt8Ty(context),
+                                            {llvm::Type::getInt32Ty(context)},
+                                            false));  // IO
+    module.getOrInsertFunction(
+        "printDouble",
+        llvm::FunctionType::get(llvm::Type::getInt8Ty(context),
+                                {llvm::Type::getDoubleTy(context)},
+                                false));  // IO
     module.getOrInsertFunction(
         "printBoolean",
-        FunctionType::get(Type::getInt8Ty(context), {Type::getInt1Ty(context)},
-                          false));  // IO
-    module.getOrInsertFunction("inputI32",
-                               FunctionType::get(Type::getInt32Ty(context), {},
-                                                 false));  // IO
+        llvm::FunctionType::get(llvm::Type::getInt8Ty(context),
+                                {llvm::Type::getInt1Ty(context)},
+                                false));  // IO
+    module.getOrInsertFunction(
+        "inputI32", llvm::FunctionType::get(llvm::Type::getInt32Ty(context), {},
+                                            false));  // IO
 
     symbols.addSymbol(
         XSharp::Symbol{.name = "print",
@@ -64,3 +68,4 @@ void setUpBuildIn(llvm::Module& module, llvm::LLVMContext& context,
         .type = XSharp::getFunctionType(XSharp::getI32Type(), {}),
         .definition = module.getFunction("inputI32")});
 }
+}  // namespace XSharp::LLVMCodeGen

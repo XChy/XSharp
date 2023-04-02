@@ -51,8 +51,8 @@ llvm::Value* TypeAdapter::llvmConvert(Type* originalType, Type* expectedType,
             (originalType->isObjectRef() && expectedType->isObject())) {
             if (converter->convertable(originalType->derefType(),
                                        expectedType)) {
-                auto loadedType =
-                    castToLLVM(originalType->derefType(), *llvmContext);
+                auto loadedType = LLVMCodeGen::castToLLVM(
+                    originalType->derefType(), *llvmContext);
                 auto loadedValue = llvmBuilder->CreateLoad(loadedType, val);
                 return converter->convert(originalType->derefType(),
                                           expectedType, llvmBuilder,
@@ -96,4 +96,5 @@ void TypeAdapter::setLLVMBuilder(llvm::IRBuilder<>* builder)
 }
 
 llvm::IRBuilder<>* TypeAdapter::getLLVMBuilder() { return llvmBuilder; }
+
 #endif

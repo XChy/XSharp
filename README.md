@@ -1,5 +1,3 @@
-**Not completed yet**
-
 # XSharp
 
 A toy OOP language with lexer, parser, compiler and runtime
@@ -19,8 +17,14 @@ This project can be built with CMake
 Input the command below in to build XSharp Compiler in your computer(**Only support Linux now**)
 
 ```bash
+# Install LLVM dependencies for XSharp
+sudo apt install llvm-dev
+
+# Install toolchain for compiling XSharp
+sudo apt install build-essential
+
 git clone git@github.com:XChy/XSharp.git
-cmake . && make #you can configure CMake yourself
+cmake . && make -j8 #you can configure CMake yourself
 ```
 
 ### Usage
@@ -47,6 +51,13 @@ xsharp xxx.xe          # execute the bytecode
 - ##### **Boehm GC** (**Temporary GC, I may develop a unique one for XSharp later**)
 
   For garbage collection
+
+### TODOs
+
+- ##### simple OOP
+- ##### basic types
+- ##### modules
+- ##### match pattern
 
 ### Grammar
 
@@ -93,11 +104,11 @@ class foo
 --XSharp
  |
  |- XSharp      # Main code of XSharp (Lexer,Parser,Semantics)
+ |- XSharpIR    # Impliment VM for X# AST with XSharp-IR
+ |- XSharpRuntime # Runtime for X#
+ |- XSharpCLI   # Command-line Interface(xsharpc, xsharp)
  |-
  |- LLVMIR      # Impliment AOT for X# AST with LLVM-IR
- |- XSharpIR    # Impliment VM for X# AST with XSharp-IR
  |- test        # Code to test correctness of XSharp's Builder
  |- testcases   # X# code for test
- |- XSharpCLI   # Command-line Interface(xsharpc, xsharp)
- |- XSharpRuntime # Runtime for X#
 ```

@@ -1,23 +1,26 @@
 #include "BinaryOpProxy.h"
 #include "XSharp/ASTNodes.h"
 
+using namespace XSharp::LLVMCodeGen;
+using namespace XSharp;
+
 CodeGenProxy<BinaryOperatorNode>::CodeGenProxy()
 {
-    processors["="] = XSharp::AssignImpl;
-    processors["+"] = XSharp::AddImpl;
-    processors["-"] = XSharp::SubImpl;
-    processors["*"] = XSharp::MulImpl;
-    processors["/"] = XSharp::DivImpl;
-    processors["%"] = XSharp::ModImpl;
+    processors["="] = AssignImpl;
+    processors["+"] = AddImpl;
+    processors["-"] = SubImpl;
+    processors["*"] = MulImpl;
+    processors["/"] = DivImpl;
+    processors["%"] = ModImpl;
 
-    processors["=="] = XSharp::EqualImpl;
-    processors[">"] = XSharp::GreaterImpl;
-    processors["<"] = XSharp::LessImpl;
-    processors[">="] = XSharp::GreaterOrEqualImpl;
-    processors["<="] = XSharp::LessOrEqualImpl;
+    processors["=="] = EqualImpl;
+    processors[">"] = GreaterImpl;
+    processors["<"] = LessImpl;
+    processors[">="] = GreaterOrEqualImpl;
+    processors["<="] = LessOrEqualImpl;
 
-    processors["&&"] = XSharp::LogicalAndImpl;
-    processors["||"] = XSharp::LogicalOrImpl;
+    processors["&&"] = LogicalAndImpl;
+    processors["||"] = LogicalOrImpl;
 }
 
 ValueAndType CodeGenProxy<BinaryOperatorNode>::codeGen(

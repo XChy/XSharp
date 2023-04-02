@@ -1,6 +1,9 @@
 #pragma once
 #include <llvm/IR/LegacyPassManager.h>
 
+namespace XSharp {
+namespace LLVMCodeGen {
+
 class Optimizer
 {
    public:
@@ -8,3 +11,6 @@ class Optimizer
 
     llvm::legacy::FunctionPassManager functionPassManager;
 };
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

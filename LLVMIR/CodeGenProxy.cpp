@@ -4,6 +4,9 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Types/TypeSystem.h"
 
+using namespace XSharp;
+using namespace XSharp::LLVMCodeGen;
+
 ValueAndType CodeGenProxy<DefinitionsNode>::codeGen(
     DefinitionsNode* ast, CodeGenContextHelper* helper,
     const Generator& generator)

@@ -6,6 +6,8 @@
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/Types/TypeNodes.h"
 
+namespace XSharp::LLVMCodeGen {
+
 ValueAndType CodeGenProxy<VariableNode>::codeGen(VariableNode* ast,
                                                  CodeGenContextHelper* helper,
                                                  const Generator& generator)
@@ -101,3 +103,5 @@ ValueAndType genDataMember(VariableNode* ast, CodeGenContextHelper* helper,
         return {nullptr, nullptr};
     }
 }
+
+}  // namespace XSharp::LLVMCodeGen

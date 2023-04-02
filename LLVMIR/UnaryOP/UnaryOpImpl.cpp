@@ -6,11 +6,10 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/Types/TypeNodes.h"
 #include "XSharp/Types/TypeSystem.h"
-using namespace XSharp;
+namespace XSharp::LLVMCodeGen {
 
-ValueAndType XSharp::PositiveImpl(UnaryOperatorNode* op,
-                                  CodeGenContextHelper* helper,
-                                  const Generator& generator)
+ValueAndType PositiveImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
+                          const Generator& generator)
 {
     auto [operand, operand_type] =
         deReference(generator(op->operand()), helper);
@@ -26,9 +25,8 @@ ValueAndType XSharp::PositiveImpl(UnaryOperatorNode* op,
     return {operand, operand_type};
 }
 
-ValueAndType XSharp::NegativeImpl(UnaryOperatorNode* op,
-                                  CodeGenContextHelper* helper,
-                                  const Generator& generator)
+ValueAndType NegativeImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
+                          const Generator& generator)
 {
     auto [operand, operand_type] =
         deReference(generator(op->operand()), helper);
@@ -44,9 +42,8 @@ ValueAndType XSharp::NegativeImpl(UnaryOperatorNode* op,
     return {operand, operand_type};
 }
 
-ValueAndType XSharp::NotImpl(UnaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
-                             const Generator& generator)
+ValueAndType NotImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
+                     const Generator& generator)
 {
     auto [operand, operand_type] =
         deReference(generator(op->operand()), helper);
@@ -61,9 +58,8 @@ ValueAndType XSharp::NotImpl(UnaryOperatorNode* op,
     return {operand, operand_type};
 }
 
-ValueAndType XSharp::NewImpl(UnaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
-                             const Generator& generator)
+ValueAndType NewImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
+                     const Generator& generator)
 {
     auto node = op->operand()->to<TypeNode>();
     Type* type;
@@ -98,3 +94,4 @@ ValueAndType XSharp::NewImpl(UnaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 }
+}  // namespace XSharp::LLVMCodeGen

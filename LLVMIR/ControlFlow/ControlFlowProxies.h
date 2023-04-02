@@ -4,8 +4,10 @@
 #include "XSharp/Types/TypeAdapter.h"
 
 // TODO: complete implementation for continue/return
-using namespace XSharp;
-template <>
+namespace XSharp {
+namespace LLVMCodeGen {
+
+template <> /* LLVMCodeGen */
 class CodeGenProxy<IfNode>
 {
    public:
@@ -30,3 +32,6 @@ class CodeGenProxy<ReturnNode>
     ValueAndType codeGen(ReturnNode* ast, CodeGenContextHelper* helper,
                          const Generator& generator);
 };
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

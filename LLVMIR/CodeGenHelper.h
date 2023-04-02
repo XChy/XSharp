@@ -21,6 +21,9 @@
 #include "LLVMIR/Target.h"
 #include "LLVMIR/Optimizer.h"
 
+namespace XSharp {
+namespace LLVMCodeGen {
+
 typedef std::tuple<llvm::Value*, XSharp::Type*> ValueAndType;
 
 class CodeGenContextHelper
@@ -61,3 +64,6 @@ class CodeGenContextHelper
 };
 
 ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper);
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

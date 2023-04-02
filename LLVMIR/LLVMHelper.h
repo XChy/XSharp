@@ -19,6 +19,9 @@
 #include "XSharp/XSharpUtils.h"
 #include "fmt/core.h"
 
+namespace XSharp {
+namespace LLVMCodeGen {
+
 class LLVMHelper
 {
    public:
@@ -44,3 +47,6 @@ class LLVMHelper
     std::unordered_map<std::type_index, CodeGenBase*> proxies;
     Generator generator;
 };
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

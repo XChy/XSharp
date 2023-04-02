@@ -7,6 +7,9 @@
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"
 
+using namespace XSharp::LLVMCodeGen;
+using namespace XSharp;
+
 ValueAndType CodeGenProxy<MemberExprNode>::codeGen(MemberExprNode *ast,
                                                    CodeGenContextHelper *helper,
                                                    const Generator &generator)

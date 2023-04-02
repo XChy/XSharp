@@ -3,6 +3,8 @@
 #include "XSharp/ASTNodes.h"
 
 // TODO: Scope-related Variable
+namespace XSharp {
+namespace LLVMCodeGen {
 template <>
 class CodeGenProxy<VariableNode>
 {
@@ -19,3 +21,6 @@ ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
 
 ValueAndType genDataMember(VariableNode* ast, CodeGenContextHelper* helper,
                            const Generator& generator);
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

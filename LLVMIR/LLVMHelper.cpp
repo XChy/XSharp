@@ -30,6 +30,8 @@
 #include "XSharp/XSharpUtils.h"
 #include "XSharp/XString.h"
 
+using namespace XSharp::LLVMCodeGen;
+
 LLVMHelper::LLVMHelper()
 {
     // module.setDataLayout("");

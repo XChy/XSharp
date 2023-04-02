@@ -4,6 +4,9 @@
 #include "LLVMIR/UnaryOP/UnaryOpImpl.h"
 #include "XSharp/ASTNodes.h"
 
+namespace XSharp {
+namespace LLVMCodeGen {
+
 template <>
 class CodeGenProxy<UnaryOperatorNode>
 {
@@ -15,3 +18,6 @@ class CodeGenProxy<UnaryOperatorNode>
    private:
     std::unordered_map<XString, UnaryOpImpl*> processors;
 };
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

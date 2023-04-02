@@ -2,6 +2,7 @@
 
 #include <string>
 #include <system_error>
+#include "XSharp/XString.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/BasicBlock.h"
@@ -25,7 +26,7 @@ std::string target_triple();
 
 std::string data_layout();
 
-std::error_code emit_object_code(const std::string& path, llvm::Module& module);
+std::error_code emit_object_code(const XString& path, llvm::Module& module);
 
-int link_object(const std::string& object_path, const std::string& lib_path,
-                const std::string& exe_path);
+int link_object(const XString& object_path, const XString& lib_path,
+                const XString& exe_path);

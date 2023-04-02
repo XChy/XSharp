@@ -4,6 +4,9 @@
 #include <llvm/IR/Type.h>
 #include "XSharp/Class/XClass.h"
 
+namespace XSharp {
+namespace LLVMCodeGen {
+
 llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
 {
     using XSharp::BasicType;
@@ -79,3 +82,6 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
     }
     return nullptr;
 }
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

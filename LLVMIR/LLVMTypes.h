@@ -7,4 +7,10 @@
 #include <llvm/IR/TypeFinder.h>
 #include "XSharp/Types/Type.h"
 
+namespace XSharp {
+namespace LLVMCodeGen {
+
 llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context);
+
+}
+}  // namespace XSharp

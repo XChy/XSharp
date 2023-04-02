@@ -67,7 +67,7 @@ Symbol SymbolTable::findFunctionFor(
         if (std::equal(argumentTypes.begin(), argumentTypes.end(),
                        parameterTypes.begin(), parameterTypes.end(),
                        [](Type* a, Type* b) -> bool {
-                           if (a->category == Type::Reference)
+                           if (a->category == Type::Reference && !a->isObject())
                                return a->derefType()->equals(b);
                            else
                                return a->equals(b);
@@ -85,6 +85,7 @@ Symbol SymbolTable::findFunctionFor(
 
         if (adaptable) return funcSymbol;
     }
+
     return Symbol{.symbolType = SymbolType::NoneSymbol};
 }
 

@@ -6,6 +6,10 @@
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/Types/TypeSystem.h"
+
+using namespace XSharp;
+using namespace XSharp::LLVMCodeGen;
+
 ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
                                            CodeGenContextHelper* helper,
                                            const Generator& generator)

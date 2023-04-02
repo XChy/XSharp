@@ -98,6 +98,7 @@ class XSharp_EXPORT XString
 
     // If 'sub' is not the substring of XString ,return -1
     int subStringIndex(const XString& sub) const;
+    int lastSubStringIndex(const XString& sub) const;
 
     XString subString(int begin, int end) const;
 

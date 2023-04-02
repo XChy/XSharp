@@ -22,16 +22,3 @@ jobs:
         run: ./test.sh
       - name: Test Result
         run: cat ./Testing/Temporary/LastTest.log
-
-  #test:
-  #needs: build
-  #runs-on: ubuntu-latest
-  #steps:
-  #- run: |
-  #ls -la
-  #cd /home/runner/work/XSharp/XSharp
-  #ls -la
-  #- uses: actions/checkout@v3
-  #- name: GTest
-  #working-directory: ${{github.workspace}}
-  #run: ./test.sh

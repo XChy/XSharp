@@ -22,7 +22,9 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/CodeGenHelper.h"
 
-using namespace XSharp;
+namespace XSharp {
+namespace LLVMCodeGen {
+
 typedef std::function<ValueAndType(ASTNode*)> Generator;
 
 // interface for codegen
@@ -107,3 +109,6 @@ class CodeGenProxy<VariableExprNode>
     ValueAndType codeGen(VariableExprNode* ast, CodeGenContextHelper* helper,
                          const Generator& generator);
 };
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

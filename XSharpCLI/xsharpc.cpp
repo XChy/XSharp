@@ -26,6 +26,7 @@ int compile(const char *path);
 bool isAOT = true;
 bool hasDefaultOutputName = false;
 XString defaultOutputName;
+XString projectPath;
 std::vector<XString> inputFiles;
 
 int main(int argc, char *argv[])
@@ -37,10 +38,16 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    projectPath = argv[0];
+    projectPath =
+        projectPath.subString(0, projectPath.lastSubStringIndex("/") + 1);
+    printf(projectPath.toStdString().c_str());
+    projectPath.append("../");
+
     int optionChar;
     char *argumentStr;
 
-    opterr = 0;
+    // opterr = 0;
     extern char *optarg;
 
     while ((optionChar = getopt(argc, argv, "-so:")) != -1) {
@@ -93,37 +100,37 @@ int compile(const char *path)
     auto tokens = lexer.tokenize(code);
 
     Parser parser;
-    std::unique_ptr<ASTNode> ast(parser.parse(tokens));
+    std::unique_ptr<XSharp::ASTNode> ast(parser.parse(tokens));
     fmt::print("{}", ast->dump());
 
-    LLVMHelper helper;
+    XSharp::LLVMCodeGen::LLVMHelper helper;
     TypeAdapter::setLLVMBuilder(&helper.contextHelper.builder);
     TypeAdapter::setLLVMContext(&helper.contextHelper.context);
     helper.generateLLVMIR(ast.get(), XString(path).append(".bc"));
 
     if (!helper.contextHelper._errors.empty()) {
-        std::cout << "Semantic error:\n";
+        std::cout << "Semantic error:";
         for (auto error : helper.contextHelper._errors)
-            std::cout << error.errorInfo.toStdString() << "\n";
+            std::cout << '\n' << error.errorInfo.toStdString();
         return -1;
     }
 
-    auto object_path = XString(path).append(".o").toStdString();
+    auto object_path = XString(path).append(".o");
 
     emit_object_code(object_path, helper.contextHelper.module);
 
     if (!hasDefaultOutputName) {
-        if (XString(path).subStringIndex("xsharp") ==
+        if (XString(path).lastSubStringIndex("xsharp") ==
             strlen(path) - strlen("xsharp")) {
             defaultOutputName = XString(path).subString(
-                0, XString(path).subStringIndex("xsharp") - 1);
+                0, XString(path).lastSubStringIndex("xsharp") - 1);
         } else {
             defaultOutputName = XString(path).append(".out");
         }
     }
 
-    link_object(object_path, "./lib/libXSharpRuntime.so",
-                defaultOutputName.toStdString());
+    link_object(object_path, projectPath + "lib/libXSharpRuntime.so",
+                defaultOutputName);
 
     std::cout << std::endl;
 

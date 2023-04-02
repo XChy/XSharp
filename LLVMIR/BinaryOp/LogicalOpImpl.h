@@ -5,6 +5,8 @@
 
 namespace XSharp {
 
+namespace LLVMCodeGen {
+
 ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
                        const Generator& generator);
 
@@ -30,4 +32,6 @@ ValueAndType LogicalAndImpl(BinaryOperatorNode* op,
 
 ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContextHelper* header,
                            const Generator& generator);
+}  // namespace LLVMCodeGen
+
 }  // namespace XSharp

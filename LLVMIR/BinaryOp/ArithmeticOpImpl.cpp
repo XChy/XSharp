@@ -3,11 +3,11 @@
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/Types/Type.h"
 #include "XSharp/Types/TypeSystem.h"
-using namespace XSharp;
+namespace XSharp {
+namespace LLVMCodeGen {
 
-ValueAndType XSharp::AssignImpl(BinaryOperatorNode* op,
-                                CodeGenContextHelper* helper,
-                                const Generator& generator)
+ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                        const Generator& generator)
 {
     auto [lhs, lhs_type] = generator(op->left());
     auto [rhs, rhs_type] = generator(op->right());
@@ -29,9 +29,8 @@ ValueAndType XSharp::AssignImpl(BinaryOperatorNode* op,
     return {lhs, lhs_type};
 }
 
-ValueAndType XSharp::AddImpl(BinaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
-                             const Generator& generator)
+ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                     const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
@@ -43,7 +42,7 @@ ValueAndType XSharp::AddImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -51,9 +50,8 @@ ValueAndType XSharp::AddImpl(BinaryOperatorNode* op,
     return {helper->builder.CreateAdd(lhs, rhs), merged_type};
 }
 
-ValueAndType XSharp::SubImpl(BinaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
-                             const Generator& generator)
+ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                     const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
@@ -65,7 +63,7 @@ ValueAndType XSharp::SubImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -73,9 +71,8 @@ ValueAndType XSharp::SubImpl(BinaryOperatorNode* op,
     return {helper->builder.CreateSub(lhs, rhs), merged_type};
 }
 
-ValueAndType XSharp::MulImpl(BinaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
-                             const Generator& generator)
+ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                     const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
@@ -87,7 +84,7 @@ ValueAndType XSharp::MulImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -95,9 +92,8 @@ ValueAndType XSharp::MulImpl(BinaryOperatorNode* op,
     return {helper->builder.CreateMul(lhs, rhs), merged_type};
 }
 
-ValueAndType XSharp::DivImpl(BinaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
-                             const Generator& generator)
+ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                     const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
@@ -109,7 +105,7 @@ ValueAndType XSharp::DivImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -121,9 +117,8 @@ ValueAndType XSharp::DivImpl(BinaryOperatorNode* op,
     else
         return {helper->builder.CreateFDiv(lhs, rhs), merged_type};
 }
-ValueAndType XSharp::ModImpl(BinaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
-                             const Generator& generator)
+ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+                     const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
@@ -135,7 +130,7 @@ ValueAndType XSharp::ModImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    Type* merged_type = getMergedType(lhs_type, rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -147,3 +142,6 @@ ValueAndType XSharp::ModImpl(BinaryOperatorNode* op,
     else
         return {helper->builder.CreateFRem(lhs, rhs), merged_type};
 }
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp

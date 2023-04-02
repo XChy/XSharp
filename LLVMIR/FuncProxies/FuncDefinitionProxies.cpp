@@ -9,6 +9,9 @@
 #include "XSharp/Types/TypeNodes.h"
 #include "XSharp/Types/TypeSystem.h"
 
+using namespace XSharp;
+using namespace XSharp::LLVMCodeGen;
+
 ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
                                                  CodeGenContextHelper* helper,
                                                  const Generator& generator)
@@ -48,7 +51,6 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     Function* func = Function::Create(
         (llvm::FunctionType*)castToLLVM(functionType, context),
         Function::ExternalLinkage, ast->name().toStdString(), module);
-    func->setGC("shadow-stack");
 
     functionSymbol.type = functionType;
     functionSymbol.function = func;

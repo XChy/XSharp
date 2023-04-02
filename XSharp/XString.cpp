@@ -269,11 +269,26 @@ int XString::subStringIndex(const XString& sub) const
     return -1;
 }
 
+int XString::lastSubStringIndex(const XString& sub) const
+{
+    if (this->size() < sub.size()) {
+        return -1;
+    }
+
+    for (int i = this->size() - sub.size(); i >= 0; --i) {
+        if (memcmp(data() + i, sub.data(), sub.size() * 2) == 0) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 XString XString::subString(int begin, int end) const
 {
-    XString result(end - begin, Initialization::unInitialization);
+    XString result(end - begin + 1, Initialization::unInitialization);
     int j = 0;
-    for (int i = begin; i < end; ++i, ++j) {
+    for (int i = begin; i <= end; ++i, ++j) {
         result.data()[j] = this->data()[i];
     }
     result.d.mData->size = end - begin;

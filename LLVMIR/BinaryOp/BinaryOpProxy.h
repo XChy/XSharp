@@ -5,6 +5,9 @@
 #include "LLVMIR/BinaryOp/LogicalOpImpl.h"
 #include "XSharp/ASTNodes.h"
 
+namespace XSharp {
+namespace LLVMCodeGen {
+
 template <>
 class CodeGenProxy<BinaryOperatorNode>
 {
@@ -16,3 +19,6 @@ class CodeGenProxy<BinaryOperatorNode>
    private:
     std::unordered_map<XString, BinaryOpImpl*> processors;
 };
+
+}  // namespace LLVMCodeGen
+}  // namespace XSharp
