@@ -12,15 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      #- name: Install LLVM and Clang
-      #uses: KyleMayes/install-llvm-action@v1
-      #with:
-      #version: "14.0"
-      - run: sudo apt install llvm-dev
+      - name: Install LLVM
+        run: sudo apt install llvm-dev
       - name: CMake Configure
         run: cmake .
       - name: Build
-        run: make
+        run: make -j8
       - name: Test
         run: ./test.sh
       - name: Test Result
