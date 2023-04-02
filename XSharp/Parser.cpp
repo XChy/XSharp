@@ -454,7 +454,7 @@ ASTNode* Parser::operand()
             current++;
             IndexNode* index = new IndexNode;
             index->setOperand(operand);
-            index->setIndexExpr(expression({CloseBracket}));
+            index->setIndex(expression({CloseBracket}));
             operand = index;
         } else {
             break;

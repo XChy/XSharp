@@ -269,6 +269,17 @@ int XString::subStringIndex(const XString& sub) const
     return -1;
 }
 
+XString XString::subString(int begin, int end) const
+{
+    XString result(end - begin, Initialization::unInitialization);
+    int j = 0;
+    for (int i = begin; i < end; ++i, ++j) {
+        result.data()[j] = this->data()[i];
+    }
+    result.d.mData->size = end - begin;
+    return result;
+}
+
 void XString::removeAt(int pos)
 {
     if (!isDetach()) {

@@ -53,6 +53,8 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     functionSymbol.type = functionType;
     functionSymbol.function = func;
 
+    helper->currentSymbols->addSymbol(functionSymbol);
+
     BasicBlock* block = BasicBlock::Create(context, "entry", func);
     builder.SetInsertPoint(block);
 
@@ -86,8 +88,6 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     }
 
     helper->exitScope();
-
-    helper->currentSymbols->addSymbol(functionSymbol);
 
     // for debug
     // llvm::verifyFunction(*func);

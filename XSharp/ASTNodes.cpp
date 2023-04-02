@@ -275,13 +275,13 @@ MemberExprNode::~MemberExprNode() { delete _object; }
 
 XString IndexNode::dump() const
 {
-    return fmt::format("{} in {}", _indexExpr->dump(), _operand->dump());
+    return fmt::format("{} in {}", _index->dump(), _operand->dump());
 }
 
 ASTNode* IndexNode::setOperand(ASTNode* operand) { return _operand = operand; }
 
 ASTNode* IndexNode::operand() { return _operand; }
 
-void IndexNode::setIndexExpr(ASTNode* indexExpr) { _indexExpr = indexExpr; }
+void IndexNode::setIndex(ASTNode* indexExpr) { _index = indexExpr; }
 
-ASTNode* IndexNode::indexExpr() { return _indexExpr; }
+ASTNode* IndexNode::index() { return _index; }

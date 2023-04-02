@@ -5,7 +5,9 @@
 #include <LLVMIR/LLVMHelper.h>
 #include <cstdio>
 #include <iostream>
+#include <memory>
 #include "LLVMIR/Target.h"
+#include "XSharp/ASTNodes.h"
 #include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/Types/TypeConverter.h"
 #include "XSharp/XString.h"
@@ -91,18 +93,19 @@ int compile(const char *path)
     auto tokens = lexer.tokenize(code);
 
     Parser parser;
-    auto ast = parser.parse(tokens);
+    std::unique_ptr<ASTNode> ast(parser.parse(tokens));
     fmt::print("{}", ast->dump());
 
     LLVMHelper helper;
     TypeAdapter::setLLVMBuilder(&helper.contextHelper.builder);
     TypeAdapter::setLLVMContext(&helper.contextHelper.context);
-    helper.generateLLVMIR(ast, XString(path).append(".bc"));
+    helper.generateLLVMIR(ast.get(), XString(path).append(".bc"));
 
     if (!helper.contextHelper._errors.empty()) {
         std::cout << "Semantic error:\n";
         for (auto error : helper.contextHelper._errors)
             std::cout << error.errorInfo.toStdString() << "\n";
+        return -1;
     }
 
     auto object_path = XString(path).append(".o").toStdString();
@@ -110,13 +113,17 @@ int compile(const char *path)
     emit_object_code(object_path, helper.contextHelper.module);
 
     if (!hasDefaultOutputName) {
-        defaultOutputName = XString(path).append(".out");
+        if (XString(path).subStringIndex("xsharp") ==
+            strlen(path) - strlen("xsharp")) {
+            defaultOutputName = XString(path).subString(
+                0, XString(path).subStringIndex("xsharp") - 1);
+        } else {
+            defaultOutputName = XString(path).append(".out");
+        }
     }
 
     link_object(object_path, "./lib/libXSharpRuntime.so",
                 defaultOutputName.toStdString());
-
-    delete ast;
 
     std::cout << std::endl;
 

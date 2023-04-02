@@ -48,8 +48,15 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
         init_val = TypeAdapter::llvmConvert(init_type, var_type->derefType(),
                                             init_val);
         // validate the type of init_val
-        if (init_val) builder.CreateStore(init_val, var_alloca);
+        if (init_val)
+            builder.CreateStore(init_val, var_alloca);
+        else {
+            helper->error("Cannot convert '{}' to '{}'", init_type->typeName(),
+                          var_type->derefType()->typeName());
+            return {nullptr, nullptr};
+        }
     } else {
+        // TODO: default initialization
     }
 
     helper->currentSymbols->addSymbol(

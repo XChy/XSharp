@@ -12,5 +12,6 @@ i64 main()
     }else{
         print(1);
     }
+    print(12);
     return 10;
 }

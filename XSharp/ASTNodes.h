@@ -254,12 +254,12 @@ class XSharp_EXPORT IndexNode : public ASTNode
     ASTNode* setOperand(ASTNode* operand);
     ASTNode* operand();
 
-    void setIndexExpr(ASTNode* indexExpr);
-    ASTNode* indexExpr();
+    void setIndex(ASTNode* indexExpr);
+    ASTNode* index();
 
    private:
     ASTNode* _operand;
-    ASTNode* _indexExpr;
+    ASTNode* _index;
 };
 
 // Control Flow's ASTNode
