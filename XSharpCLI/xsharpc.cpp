@@ -5,6 +5,7 @@
 #include <LLVMIR/LLVMHelper.h>
 #include <cstdio>
 #include <iostream>
+#include "LLVMIR/Target.h"
 #include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/Types/TypeConverter.h"
 #include "XSharp/XString.h"
@@ -86,6 +87,13 @@ void compile(const char *path)
         for (auto error : helper.contextHelper._errors)
             std::cout << error.errorInfo.toStdString() << "\n";
     }
+
+    auto object_path = XString(path).append(".o").toStdString();
+
+    emit_object_code(object_path, helper.contextHelper.module);
+
+    link_object(object_path, "./lib/libXSharpRuntime.so",
+                XString(path).append(".out").toStdString());
 
     delete ast;
 

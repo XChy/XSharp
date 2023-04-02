@@ -51,3 +51,4 @@ testcases/isprime.xsharp.bc
 testcases/isprime.xsharp.o
 testcases/types
 testcases/types.xsharp.o
+a.out
