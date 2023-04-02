@@ -52,3 +52,7 @@ testcases/isprime.xsharp.o
 testcases/types
 testcases/types.xsharp.o
 a.out
+testcases/class
+testcases/class.xsharp.bc
+testcases/class.xsharp.o
+testcases/class.xsharp.out

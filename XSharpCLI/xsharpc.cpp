@@ -18,7 +18,13 @@
 
 #include "XSharp/XSharpEngine.h"
 #include "XSharp/XString.h"
-void compile(const char *path);
+
+int compile(const char *path);
+
+bool isAOT = true;
+bool hasDefaultOutputName = false;
+XString defaultOutputName;
+std::vector<XString> inputFiles;
 
 int main(int argc, char *argv[])
 {
@@ -32,31 +38,35 @@ int main(int argc, char *argv[])
     int optionChar;
     char *argumentStr;
 
-    bool isAOT = true;
+    opterr = 0;
+    extern char *optarg;
 
-    while ((optionChar = getopt(argc, argv, "so:")) != -1) {
+    while ((optionChar = getopt(argc, argv, "-so:")) != -1) {
         switch (optionChar) {
             case 's':
                 isAOT = false;
-                // LLVM IR
+                break;
+            case '\1':
+                inputFiles.push_back(optarg);
                 break;
             case 'o':
-                // XSharp IR
+                hasDefaultOutputName = true;
+                printf(optarg);
+                defaultOutputName = optarg;
                 break;
             default:
-                printf("Invalid Option: %c", optionChar);
                 return -1;
         }
     }
 
     if (isAOT) {
-        compile(argv[1]);
+        return compile(inputFiles[0].toStdString().c_str());
     }
 
     return 0;
 }
 
-void compile(const char *path)
+int compile(const char *path)
 {
     using XSharp::Lexer;
     using XSharp::Parser;
@@ -65,11 +75,18 @@ void compile(const char *path)
     char code[2048];
 
     int fd = open(path, O_RDONLY);
+
+    if (fd == -1) {
+        fmt::print("Cannot open file {}", path);
+        return -1;
+    }
+
     int size = read(fd, code, 2048);
     code[size] = '\0';
     close(fd);
 
     printf("Compliation Result of %s:\n", path);
+
     Lexer lexer;
     auto tokens = lexer.tokenize(code);
 
@@ -92,10 +109,16 @@ void compile(const char *path)
 
     emit_object_code(object_path, helper.contextHelper.module);
 
+    if (!hasDefaultOutputName) {
+        defaultOutputName = XString(path).append(".out");
+    }
+
     link_object(object_path, "./lib/libXSharpRuntime.so",
-                XString(path).append(".out").toStdString());
+                defaultOutputName.toStdString());
 
     delete ast;
 
     std::cout << std::endl;
+
+    return 0;
 }

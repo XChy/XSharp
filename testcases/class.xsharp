@@ -27,5 +27,9 @@ i32 main()
     a.d.b = 3;
     a.d.c = 4;
     print(sum(a.d));
+
+    while(true){
+        B b = new B;
+    }
     return 123;
 }
