@@ -1,6 +1,6 @@
 #include <XSharp/Lexer.h>
 #include <XSharp/Parser.h>
-#include <LLVMIR/LLVMHelper.h>
+#include <LLVMIR/CodeGenerator.h>
 #include <cstdio>
 #include <iostream>
 #include "XSharp/Types/TypeAdapter.h"
@@ -64,10 +64,10 @@ void test(const char *path)
     auto ast = parser.parse(tokens);
     fmt::print("{}", ast->dump());
 
-    XSharp::LLVMCodeGen::LLVMHelper helper;
+    XSharp::LLVMCodeGen::CodeGenerator helper;
     TypeAdapter::setLLVMBuilder(&helper.contextHelper.builder);
     TypeAdapter::setLLVMContext(&helper.contextHelper.context);
-    helper.generateLLVMIR(ast, XString(path).append(".bc"));
+    helper.generateIR(ast, XString(path).append(".bc"));
 
     if (!helper.contextHelper._errors.empty()) {
         std::cout << "Semantic error:\n";

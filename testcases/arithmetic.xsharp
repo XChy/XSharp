@@ -16,5 +16,7 @@ void main()
     print(a);
     print(b);
     print(c);
+    print(-c);
+    print(!(c == -1));
     return;
 }

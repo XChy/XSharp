@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <XSharp/Lexer.h>
 #include <XSharp/Parser.h>
-#include <LLVMIR/LLVMHelper.h>
+#include <LLVMIR/CodeGenerator.h>
 #include <cstdio>
 #include <iostream>
 #include <memory>
@@ -41,7 +41,6 @@ int main(int argc, char *argv[])
     projectPath = argv[0];
     projectPath =
         projectPath.subString(0, projectPath.lastSubStringIndex("/") + 1);
-    printf(projectPath.toStdString().c_str());
     projectPath.append("../");
 
     int optionChar;
@@ -103,10 +102,10 @@ int compile(const char *path)
     std::unique_ptr<XSharp::ASTNode> ast(parser.parse(tokens));
     fmt::print("{}", ast->dump());
 
-    XSharp::LLVMCodeGen::LLVMHelper helper;
+    XSharp::LLVMCodeGen::CodeGenerator helper;
     TypeAdapter::setLLVMBuilder(&helper.contextHelper.builder);
     TypeAdapter::setLLVMContext(&helper.contextHelper.context);
-    helper.generateLLVMIR(ast.get(), XString(path).append(".bc"));
+    helper.generateIR(ast.get(), XString(path).append(".bc"));
 
     if (!helper.contextHelper._errors.empty()) {
         std::cout << "Semantic error:";

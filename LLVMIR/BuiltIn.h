@@ -3,6 +3,7 @@
 #include "XSharp/SymbolTable.h"
 
 namespace XSharp {
+
 class SymbolTable;
 
 namespace LLVMCodeGen {

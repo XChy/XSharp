@@ -13,4 +13,4 @@ class CodeGenProxy<ClassNode>
                          const Generator& generator);
 };
 
-}  // namespace XSharp
+}  // namespace XSharp::LLVMCodeGen

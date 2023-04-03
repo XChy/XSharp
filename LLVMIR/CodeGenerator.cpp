@@ -1,3 +1,4 @@
+#include "CodeGenerator.h"
 #include <llvm/IR/Argument.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/Value.h>
@@ -17,7 +18,6 @@
 #include <llvm/IR/Module.h>
 #include <functional>
 #include <typeindex>
-#include "LLVMIR/LLVMHelper.h"
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/BuiltIn.h"
 #include "XSharp/ASTNodes.h"
@@ -32,14 +32,12 @@
 
 using namespace XSharp::LLVMCodeGen;
 
-LLVMHelper::LLVMHelper()
+CodeGenerator::CodeGenerator()
 {
-    // module.setDataLayout("");
-    // module.setTargetTriple("i386-pc-linux-gnu");
     setUpBuildIn(contextHelper.module, contextHelper.context,
                  contextHelper.globalSymbols);
 
-    generator = std::bind(&LLVMHelper::codegen, this, std::placeholders::_1);
+    generator = std::bind(&CodeGenerator::codegen, this, std::placeholders::_1);
 
     addProxy<DefinitionsNode>();
     addProxy<IntegerNode>();
@@ -59,15 +57,15 @@ LLVMHelper::LLVMHelper()
     addProxy<MemberExprNode>();
 }
 
-LLVMHelper::~LLVMHelper()
+CodeGenerator::~CodeGenerator()
 {
     for (auto pair : proxies) {
         delete pair.second;
     }
 }
 
-std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
-                                                  const XString& filename)
+std::vector<std::byte> CodeGenerator::generateIR(ASTNode* ast,
+                                                 const XString& filename)
 {
     using namespace llvm;
     std::vector<std::byte> bytecodes;
@@ -85,7 +83,7 @@ std::vector<std::byte> LLVMHelper::generateLLVMIR(ASTNode* ast,
     return bytecodes;
 }
 
-ValueAndType LLVMHelper::codegen(ASTNode* node)
+ValueAndType CodeGenerator::codegen(ASTNode* node)
 {
     auto index = std::type_index(typeid(*node));
     return proxies[index]->codeGen(node, &contextHelper, generator);

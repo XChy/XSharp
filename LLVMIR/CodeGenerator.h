@@ -19,18 +19,17 @@
 #include "XSharp/XSharpUtils.h"
 #include "fmt/core.h"
 
-namespace XSharp {
-namespace LLVMCodeGen {
+namespace XSharp::LLVMCodeGen {
 
-class LLVMHelper
+class CodeGenerator
 {
    public:
-    LLVMHelper();
-    ~LLVMHelper();
-    // generate LLVM IR for the ast
+    CodeGenerator();
+    ~CodeGenerator();
+
+    // generate LLVM-IR for the ast
     // error saved in LLVMHelper's errors
-    std::vector<std::byte> generateLLVMIR(ASTNode* ast,
-                                          const XString& filename);
+    std::vector<std::byte> generateIR(ASTNode* ast, const XString& filename);
     // universal code generation for XSharp's AST
     // return [LLVM-IR's Value, XSharp's Type]
     ValueAndType codegen(ASTNode* node);
@@ -48,5 +47,4 @@ class LLVMHelper
     Generator generator;
 };
 
-}  // namespace LLVMCodeGen
-}  // namespace XSharp
+}  // namespace XSharp::LLVMCodeGen

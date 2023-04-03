@@ -3,8 +3,7 @@
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Types/TypeAdapter.h"
 
-namespace XSharp {
-namespace LLVMCodeGen {
+namespace XSharp::LLVMCodeGen {
 
 typedef ValueAndType UnaryOpImpl(UnaryOperatorNode*, CodeGenContextHelper*,
                                  const Generator&);
@@ -19,5 +18,4 @@ ValueAndType NotImpl(UnaryOperatorNode*, CodeGenContextHelper* helper,
 ValueAndType NewImpl(UnaryOperatorNode*, CodeGenContextHelper* helper,
                      const Generator& generator);
 
-}  // namespace LLVMCodeGen
-}  // namespace XSharp
+}  // namespace XSharp::LLVMCodeGen

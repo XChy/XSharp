@@ -5,7 +5,7 @@
 #include "XSharp/Parser.h"
 
 #ifdef XSharp_LLVMIR_SUPPORT
-#include "LLVMIR/LLVMHelper.h"
+#include "LLVMIR/CodeGenerator.h"
 #endif
 
 namespace XSharp {
