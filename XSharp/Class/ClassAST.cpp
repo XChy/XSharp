@@ -52,3 +52,9 @@ DefinitionsNode::~DefinitionsNode()
 {
     for (auto p : decls) delete p;
 }
+
+InitializerNode::~InitializerNode()
+{
+    for (auto p : parameters) delete p;
+    delete impl;
+}

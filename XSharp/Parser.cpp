@@ -26,14 +26,14 @@ DefinitionsNode* Parser::definitions()
     DefinitionsNode* root = new DefinitionsNode;
     while (current != end) {
         if (current->isKeyword("class")) {
-            root->decls.push_back(classDeclaration());
+            root->decls.push_back(classDecl());
             // root->addClass(classDeclaration());
         } else if (isVariableDecl()) {
-            root->decls.push_back(variableDeclaration({SentenceEnd}));
+            root->decls.push_back(variableDecl({SentenceEnd}));
             // root->addVariable(variableDeclaration({SentenceEnd}));
         } else if (isFunctionDecl()) {
             // root->addFunction(functionDeclaration());
-            root->decls.push_back(functionDeclaration());
+            root->decls.push_back(functionDecl());
         } else {
             throw XSharpError("Not a definition in global");
         }
@@ -41,7 +41,7 @@ DefinitionsNode* Parser::definitions()
     return root;
 }
 
-ClassNode* Parser::classDeclaration()
+ClassNode* Parser::classDecl()
 {
     ClassNode* classNode = new ClassNode;
     // skip 'class'
@@ -60,10 +60,10 @@ ClassNode* Parser::classDeclaration()
 
     while (!current->is(CloseBrace)) {
         if (isVariableDecl()) {
-            auto var = variableDeclaration({SentenceEnd});
+            auto var = variableDecl({SentenceEnd});
             classNode->members.push_back(var);
         } else if (isFunctionDecl()) {
-            auto func = functionDeclaration();
+            auto func = functionDecl();
             classNode->methods.push_back(func);
         } else {
             throw XSharpError("Not a field in class");
@@ -107,7 +107,7 @@ bool Parser::isFunctionDecl() const
 
     return false;
 }
-FunctionNode* Parser::functionDeclaration()
+FunctionNode* Parser::functionDecl()
 {
     FunctionNode* root = new FunctionNode;
 
@@ -122,7 +122,7 @@ FunctionNode* Parser::functionDeclaration()
     }
     forward();
 
-    root->setParams(paramsDefinition());
+    root->setParams(parameters());
     // end with ')', so skip ')'
     forward();
 
@@ -163,8 +163,7 @@ bool Parser::isVariableDecl() const
     return false;
 }
 
-VariableNode* Parser::variableDeclaration(
-    const std::vector<TokenType>& stopwords)
+VariableNode* Parser::variableDecl(const std::vector<TokenType>& stopwords)
 {
     VariableNode* root = new VariableNode;
     root->setType(type());
@@ -189,15 +188,15 @@ VariableNode* Parser::variableDeclaration(
     return root;
 }
 
-std::vector<VariableNode*> Parser::paramsDefinition()
+std::vector<VariableNode*> Parser::parameters()
 {
-    std::vector<VariableNode*> paramsDef;
+    std::vector<VariableNode*> params;
 
     // if no parameter in parentheses, then return empty paramsDef
-    if (current->type == CloseParenthesis) return paramsDef;
+    if (current->type == CloseParenthesis) return params;
 
     while (true) {
-        paramsDef.push_back(variableDeclaration({Comma, CloseParenthesis}));
+        params.push_back(variableDecl({Comma, CloseParenthesis}));
         backward();
 
         if (current->is(CloseParenthesis))
@@ -207,10 +206,10 @@ std::vector<VariableNode*> Parser::paramsDefinition()
         else
             throw XSharpError("')' expected is missing");
     }
-    return paramsDef;
+    return params;
 }
 
-std::vector<ASTNode*> Parser::paramsList()
+std::vector<ASTNode*> Parser::argsList()
 {
     std::vector<ASTNode*> results;
     if (current->is(CloseParenthesis)) return results;
@@ -222,6 +221,7 @@ std::vector<ASTNode*> Parser::paramsList()
         else if (current->is(Comma))
             current++;
     }
+
     return results;
 }
 
@@ -255,7 +255,7 @@ ASTNode* Parser::statement()
     switch (current->type) {
         case Keyword:
             if (current->value == "const") {
-                stmt = variableDeclaration({SentenceEnd});
+                stmt = variableDecl({SentenceEnd});
             } else if (current->value == "return") {
                 forward();
                 stmt = new ReturnNode(expression({SentenceEnd}));
@@ -273,9 +273,9 @@ ASTNode* Parser::statement()
         case Identifier:
             if ((current + 1)->type == OpenBracket &&
                 (current + 2)->type == CloseBracket) {
-                stmt = variableDeclaration({SentenceEnd});
+                stmt = variableDecl({SentenceEnd});
             } else if ((current + 1)->type == Identifier) {
-                stmt = variableDeclaration({SentenceEnd});
+                stmt = variableDecl({SentenceEnd});
             } else {
                 stmt = expression({SentenceEnd});
                 forward();
@@ -401,37 +401,14 @@ ASTNode* Parser::operand()
     UnaryOperatorNode* before = nullptr;
     UnaryOperatorNode* after = nullptr;
     ASTNode* operand = nullptr;
+
     if (current->type == Operator) {
         before = new UnaryOperatorNode;
         before->setOperatorStr(current->value);
         forward();
-    } else if (current->isKeyword("new")) {
-        before = new UnaryOperatorNode;
-        before->setOperatorStr(current->value);
-        forward();
-        before->setOperand(type());
-        return before;
     }
 
-    if (current->type == Integer) {
-        operand = new IntegerNode(current->value.toInteger<int64_t>());
-    } else if (current->type == DecimalFraction) {
-        operand = new DecimalFractionNode(current->value.toDouble());
-    } else if (current->type == Boolean) {
-        operand = new BooleanNode(current->value == "true");
-    } else if (current->type == String) {
-        operand = new StringNode(current->value);
-    } else if (current->type == OpenParenthesis) {
-        forward();
-        operand = expression({CloseParenthesis});
-    } else if (current->type == Identifier) {
-        operand = new VariableExprNode(current->value);
-    } else {
-        delete before;
-        throw XSharpError("Not a operand");
-    }
-
-    current++;
+    operand = factor();
 
     while (true) {
         if (current->type == Dot) {
@@ -447,7 +424,7 @@ ASTNode* Parser::operand()
         } else if (current->type == OpenParenthesis) {
             current++;
             FunctionCallNode* funcCall = new FunctionCallNode;
-            funcCall->setArgs(paramsList());
+            funcCall->setArgs(argsList());
             funcCall->setFunction(operand);
             operand = funcCall;
         } else if (current->type == OpenBracket) {
@@ -496,11 +473,57 @@ ASTNode* Parser::operand()
     }
 }
 
+ASTNode* Parser::factor()
+{
+    ASTNode* factor;
+    if (current->type == Integer) {
+        factor = new IntegerNode(current->value.toInteger<int64_t>());
+    } else if (current->type == DecimalFraction) {
+        factor = new DecimalFractionNode(current->value.toDouble());
+    } else if (current->type == Boolean) {
+        factor = new BooleanNode(current->value == "true");
+    } else if (current->type == String) {
+        factor = new StringNode(current->value);
+    } else if (current->type == OpenParenthesis) {
+        forward();
+        factor = expression({CloseParenthesis});
+    } else if (current->type == Identifier) {
+        factor = new VariableExprNode(current->value);
+    } else if (current->isKeyword("new")) {
+        auto new_operator = new UnaryOperatorNode;
+        new_operator->setOperatorStr(current->value);
+        forward();
+
+        auto allocatedType = type();
+        std::vector<ASTNode*> args;
+        if (current->is(OpenParenthesis)) {
+            forward();
+            args = argsList();
+        } else {
+            current--;
+        }
+
+        auto init_called = new FunctionCallNode;
+        init_called->setFunction(allocatedType);
+        init_called->setArgs(args);
+        new_operator->setOperand(init_called);
+
+        factor = new_operator;
+    } else {
+        throw XSharpError("Not a operand");
+    }
+
+    current++;
+
+    return factor;
+}
+
 TypeNode* Parser::type()
 {
     Decoration decoration = {.isMutable = true, .isConstexpr = false};
     int arrayDimension = 0;
     XString baseName;
+
     if (current->isKeyword("immutable")) {
         decoration.isMutable = false;
         forward();

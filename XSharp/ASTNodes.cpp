@@ -220,7 +220,7 @@ void FunctionCallNode::setArgs(std::vector<ASTNode*> params) { _args = params; }
 
 void FunctionCallNode::addArg(ASTNode* param) { _args.push_back(param); }
 
-std::vector<ASTNode*> FunctionCallNode::params() const { return _args; }
+std::vector<ASTNode*> FunctionCallNode::args() const { return _args; }
 
 FunctionCallNode::~FunctionCallNode()
 {

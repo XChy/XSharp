@@ -46,6 +46,9 @@ struct ArrayType {
 struct FunctionType {
     std::vector<Type*> paramTypes;
     Type* returnValueType;
+    bool isInitializer;
+    bool isMethod;
+    bool isVarArgs;
 };
 
 // Closure
@@ -62,7 +65,6 @@ class Type
 {
    public:
     Type();
-    Type(const Type& other);
     bool equals(const Type& other) const;
     bool equals(const Type* other) const { return equals(*other); };
     bool operator==(const Type& other) const { return equals(other); }
@@ -86,6 +88,9 @@ class Type
     // Function type, TODO complete below
     Type* returnValueType() const;
     std::vector<Type*> parameterTypes() const;
+    bool isInitializer() const;
+    bool isMethod() const;
+    bool isVarArgs() const;
 
     // Array type, TODO complete below
     uint arrayDimension() const;

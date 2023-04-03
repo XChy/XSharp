@@ -15,6 +15,10 @@ CodeGenContextHelper::CodeGenContextHelper()
     module.setDataLayout(data_layout());
 }
 
+void CodeGenContextHelper::optimize()
+{
+    optimizer.modulePassManager.run(module);
+}
 XSharp::SymbolTable* CodeGenContextHelper::enterScope()
 {
     auto newScopeSymbolTable = currentSymbols->createChild();

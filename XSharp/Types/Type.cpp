@@ -6,15 +6,6 @@ using namespace XSharp;
 
 Type::Type() {}
 
-Type::Type(const Type& other)
-{
-    typeID = other.typeID;
-    baseName = other.baseName;
-    category = other.category;
-    isConst = other.isConst;
-    typeinfo = other.typeinfo;
-}
-
 bool Type::isRef() const { return category == Reference; }
 
 Type* Type::derefType() const
@@ -38,20 +29,28 @@ bool Type::equals(const Type& other) const
         case Function:
             if (!returnValueType()->equals(*other.returnValueType()))
                 return false;
+
             if (parameterTypes().size() != other.parameterTypes().size())
                 return false;
+
             for (int i = 0; i < parameterTypes().size(); ++i) {
                 if (!parameterTypes()[i]->equals(*other.parameterTypes()[i])) {
                     return false;
                 }
             }
-            return true;
+
+            return this->isInitializer() == other.isInitializer() &&
+                   this->isMethod() == other.isMethod() &&
+                   this->isVarArgs() == other.isVarArgs();
+
         case Class:
+            // TODO: how to handle the generics
             return getObjectClass()->name == other.getObjectClass()->name;
         case Closure:
             // TODO: Closure related
             return true;
     }
+
     return false;
 }
 
@@ -62,6 +61,19 @@ Type* Type::returnValueType() const
 std::vector<Type*> Type::parameterTypes() const
 {
     return std::get<FunctionType>(typeinfo).paramTypes;
+}
+
+bool Type::isInitializer() const
+{
+    return std::get<FunctionType>(typeinfo).isInitializer;
+}
+bool Type::isMethod() const
+{
+    return std::get<FunctionType>(typeinfo).isMethod;
+}
+bool Type::isVarArgs() const
+{
+    return std::get<FunctionType>(typeinfo).isVarArgs;
 }
 
 // Array type, TODO complete below

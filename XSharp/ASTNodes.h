@@ -203,7 +203,7 @@ class XSharp_EXPORT FunctionCallNode : public ASTNode
 
     void setArgs(std::vector<ASTNode*> args);
     void addArg(ASTNode* arg);
-    std::vector<ASTNode*> params() const;
+    std::vector<ASTNode*> args() const;
 
     ~FunctionCallNode();
 

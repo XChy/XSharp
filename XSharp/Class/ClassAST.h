@@ -29,4 +29,14 @@ class XSharp_EXPORT DefinitionsNode : public ASTNode
 
     std::vector<ASTNode*> decls;
 };
+
+class XSharp_EXPORT InitializerNode : public ASTNode
+{
+   public:
+    ~InitializerNode();
+
+    std::vector<VariableNode*> parameters;
+    BlockNode* impl;
+};
+
 }  // namespace XSharp

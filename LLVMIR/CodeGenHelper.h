@@ -31,6 +31,8 @@ class CodeGenContextHelper
    public:
     CodeGenContextHelper();
 
+    void optimize();
+
     XSharp::SymbolTable* enterScope();
     XSharp::SymbolTable* exitScope();
 

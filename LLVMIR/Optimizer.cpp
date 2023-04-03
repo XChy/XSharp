@@ -4,6 +4,9 @@
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Transforms/InstCombine/InstCombine.h"
 #include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms/Vectorize.h"
+#include "llvm/Transforms/IPO.h"
+
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Utils.h"
 
@@ -22,7 +25,23 @@ Optimizer::Optimizer(llvm::Module* module) : functionPassManager(module)
     functionPassManager.add(llvm::createCFGSimplificationPass());
     functionPassManager.add(llvm::createGVNPass());
     functionPassManager.add(llvm::createFloat2IntPass());
+    functionPassManager.add(llvm::createLICMPass());
     functionPassManager.add(llvm::createInstructionCombiningPass());
     functionPassManager.add(llvm::createReassociatePass());
+    functionPassManager.add(llvm::createConstraintEliminationPass());
+    functionPassManager.add(llvm::createLoopSinkPass());
+    functionPassManager.add(llvm::createGVNSinkPass());
+    functionPassManager.add(llvm::createGVNPass());
+    functionPassManager.add(llvm::createDivRemPairsPass());
+    functionPassManager.add(llvm::createBitTrackingDCEPass());
+    functionPassManager.add(llvm::createDeadStoreEliminationPass());
+    functionPassManager.add(llvm::createLibCallsShrinkWrapPass());
+    functionPassManager.add(llvm::createSeparateConstOffsetFromGEPPass());
+    functionPassManager.add(llvm::createMergedLoadStoreMotionPass());
+    functionPassManager.add(llvm::createTailCallEliminationPass());
+    functionPassManager.add(llvm::createVectorCombinePass());
+    functionPassManager.add(llvm::createLoadStoreVectorizerPass());
     functionPassManager.doInitialization();
+
+    modulePassManager.add(llvm::createFunctionInliningPass());
 }

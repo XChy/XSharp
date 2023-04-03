@@ -1,4 +1,5 @@
 #include "TypeSystem.h"
+#include <cmath>
 #include "XSharp/Types/Type.h"
 #include "XSharp/Class/XClass.h"
 
@@ -73,8 +74,13 @@ Type* XSharp::getFunctionType(Type* returnValueType,
 {
     Type* node = new Type;
     node->category = Type::Function;
-    node->typeinfo = FunctionType{.paramTypes = paramTypes,
-                                  .returnValueType = returnValueType};
+    node->typeinfo = FunctionType{
+        .paramTypes = paramTypes,
+        .returnValueType = returnValueType,
+        .isInitializer = false,
+        .isMethod = false,
+        .isVarArgs = false,
+    };
     if (!Types::get(node->typeName())) {
         globalTypeContext.registerType(node);
         return node;

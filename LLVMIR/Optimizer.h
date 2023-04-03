@@ -10,6 +10,7 @@ class Optimizer
     Optimizer(llvm::Module* module);
 
     llvm::legacy::FunctionPassManager functionPassManager;
+    llvm::legacy::PassManager modulePassManager;
 };
 
 }  // namespace LLVMCodeGen

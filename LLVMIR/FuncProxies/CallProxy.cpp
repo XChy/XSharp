@@ -24,7 +24,7 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
 
         std::vector<llvm::Value*> argumentValues;
         std::vector<Type*> argumentTypes;
-        for (auto ast : ast->params()) {
+        for (auto ast : ast->args()) {
             auto [arg_val, arg_type] = generator(ast);
             if (arg_type == nullptr) return {nullptr, nullptr};
             argumentTypes.push_back(arg_type);

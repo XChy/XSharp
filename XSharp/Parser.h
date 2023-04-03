@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Class/ClassAST.h"
 #include "XSharp/Types/TypeSystem.h"
@@ -20,20 +21,20 @@ class XSharp_EXPORT Parser
                        tokenList);  // The astnode pointer is managed by caller
    private:
     DefinitionsNode* definitions();
-    ClassNode* classDeclaration();
+    ClassNode* classDecl();
     // <type> <name> (paramlist)
     bool isFunctionDecl() const;
-    FunctionNode* functionDeclaration();
+    FunctionNode* functionDecl();
 
     // end after the stopword
     // <type> <name> (( = <initial value> ))
     bool isVariableDecl() const;
-    VariableNode* variableDeclaration(const std::vector<TokenType>& stopwords);
+    VariableNode* variableDecl(const std::vector<TokenType>& stopwords);
 
-    std::vector<VariableNode*> paramsDefinition();
+    std::vector<VariableNode*> parameters();
 
     // end at the right parenthesis
-    std::vector<ASTNode*> paramsList();
+    std::vector<ASTNode*> argsList();
 
     BlockNode* block();
     ASTNode* statement();
@@ -44,6 +45,7 @@ class XSharp_EXPORT Parser
     // end at the pos of stopwords
     ASTNode* expression(std::vector<TokenType> stopwords, int priority = 0);
     ASTNode* operand();
+    ASTNode* factor();
 
     TypeNode* type();
 

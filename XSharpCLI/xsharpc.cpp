@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
                 break;
             case 'o':
                 hasDefaultOutputName = true;
-                printf(optarg);
                 defaultOutputName = optarg;
                 break;
             default:

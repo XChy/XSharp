@@ -73,6 +73,8 @@ std::vector<std::byte> CodeGenerator::generateIR(ASTNode* ast,
     auto [val, type] = codegen(ast);
     if (!type) return bytecodes;
 
+    contextHelper.optimizer.modulePassManager.run(contextHelper.module);
+
     SmallVector<char> buffer;
     BitcodeWriter bitcodeWriter(buffer);
     bitcodeWriter.writeModule(contextHelper.module);
