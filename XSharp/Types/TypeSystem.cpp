@@ -51,7 +51,7 @@ TypeContext::~TypeContext()
 void TypeContext::registerType(Type* type)
 {
     if (type->category == Type::Class) {
-        classDecls[type->typeName()] = type->getObjectClass();
+        classDecls[type->typeName()] = type->getClassDecl();
     }
 
     types[type->typeName()] = type;

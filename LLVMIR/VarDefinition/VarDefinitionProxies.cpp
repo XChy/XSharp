@@ -32,7 +32,7 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
     }
 
     Type* var_type;
-    if (ast->type()->toType()->isBasic())
+    if (ast->type()->toType()->isBasic() || ast->type()->toType()->isArray())
         var_type = XSharp::getReferenceType(ast->type()->toType());
     else
         var_type = XSharp::getReferenceType(

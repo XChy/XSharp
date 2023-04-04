@@ -45,7 +45,7 @@ bool Type::equals(const Type& other) const
 
         case Class:
             // TODO: how to handle the generics
-            return getObjectClass()->name == other.getObjectClass()->name;
+            return getClassDecl()->name == other.getClassDecl()->name;
         case Closure:
             // TODO: Closure related
             return true;
@@ -76,7 +76,8 @@ bool Type::isVarArgs() const
     return std::get<FunctionType>(typeinfo).isVarArgs;
 }
 
-// Array type, TODO complete below
+bool Type::isArray() const { return category == Array; }
+
 uint Type::arrayDimension() const
 {
     return std::get<ArrayType>(typeinfo).arrayDimension;
@@ -150,6 +151,8 @@ bool Type::isNumber() const
     return false;
 }
 
+bool Type::isClass() const { return category == Class; }
+
 bool Type::isObject() const
 {
     return category == Reference && derefType()->category == Class;
@@ -160,11 +163,11 @@ bool Type::isObjectRef() const
     return category == Reference && derefType()->isObject();
 }
 
-XClass* Type::getObjectClass() const
+XClass* Type::getClassDecl() const
 {
     if (category == Reference && derefType()->category == Class) {
         // Easily get classDecl
-        return derefType()->getObjectClass();
+        return derefType()->getClassDecl();
     } else if (category == Class) {
         return std::get<ClassType>(typeinfo).classDecl;
     } else {
@@ -204,7 +207,7 @@ uint Type::bits() const
 
         case Class: {
             uint bits = sizeof(uintptr_t) * 8;
-            for (auto fieid : getObjectClass()->dataFields) {
+            for (auto fieid : getClassDecl()->dataFields) {
                 if (fieid.type->category != Function)
                     bits += fieid.type->bits();
             }

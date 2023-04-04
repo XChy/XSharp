@@ -425,7 +425,7 @@ ASTNode* Parser::operand()
             current++;
             FunctionCallNode* funcCall = new FunctionCallNode;
             funcCall->setArgs(argsList());
-            funcCall->setFunction(operand);
+            funcCall->setCallee(operand);
             operand = funcCall;
         } else if (current->type == OpenBracket) {
             current++;
@@ -490,8 +490,6 @@ ASTNode* Parser::factor()
     } else if (current->type == Identifier) {
         factor = new VariableExprNode(current->value);
     } else if (current->isKeyword("new")) {
-        auto new_operator = new UnaryOperatorNode;
-        new_operator->setOperatorStr(current->value);
         forward();
 
         auto allocatedType = type();
@@ -504,11 +502,10 @@ ASTNode* Parser::factor()
         }
 
         auto init_called = new FunctionCallNode;
-        init_called->setFunction(allocatedType);
+        init_called->setCallee(allocatedType);
         init_called->setArgs(args);
-        new_operator->setOperand(init_called);
 
-        factor = new_operator;
+        factor = init_called;
     } else {
         throw XSharpError("Not a operand");
     }
@@ -546,7 +543,6 @@ TypeNode* Parser::type()
         throw XSharpError("No typename matched");
     }
 
-    // TODO: Complete the type for Identifier and Array
     // TODO: add decoration
     if (arrayDimension == 0) {
         return new IdentifierNode(baseName);

@@ -64,7 +64,7 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
             llvmTypes.push_back(
                 llvm::Type::getIntNTy(context, sizeof(uintptr_t) * 8));
 
-            for (auto fieid : type->getObjectClass()->dataFields) {
+            for (auto fieid : type->getClassDecl()->dataFields) {
                 llvmTypes.push_back(castToLLVM(fieid.type, context));
             }
             auto structType = llvm::StructType::get(context, llvmTypes);

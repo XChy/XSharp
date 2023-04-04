@@ -198,8 +198,8 @@ class XSharp_EXPORT FunctionCallNode : public ASTNode
    public:
     XString dump() const;
 
-    void setFunction(ASTNode* func);
-    ASTNode* function();
+    void setCallee(ASTNode* func);
+    ASTNode* callee();
 
     void setArgs(std::vector<ASTNode*> args);
     void addArg(ASTNode* arg);
@@ -208,7 +208,7 @@ class XSharp_EXPORT FunctionCallNode : public ASTNode
     ~FunctionCallNode();
 
    private:
-    ASTNode* _function;
+    ASTNode* _callee;
     std::vector<ASTNode*> _args;
 };
 
@@ -249,6 +249,7 @@ class XSharp_EXPORT MemberExprNode : public ASTNode
 class XSharp_EXPORT IndexNode : public ASTNode
 {
    public:
+    ~IndexNode();
     XString dump() const;
 
     ASTNode* setOperand(ASTNode* operand);

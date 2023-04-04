@@ -13,7 +13,7 @@ ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     auto [rhs, rhs_type] = generator(op->right());
     if (!lhs_type || !rhs_type) return {nullptr, nullptr};
     // Only the reference can be assigned to value
-    if (lhs_type->category != Type::Reference) {
+    if (lhs_type->category != Type::Reference || lhs_type->isObject()) {
         helper->error("Cannot assign value to non-reference");
         return {nullptr, nullptr};
     }

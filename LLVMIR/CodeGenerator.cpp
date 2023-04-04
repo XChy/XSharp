@@ -55,6 +55,7 @@ CodeGenerator::CodeGenerator()
     addProxy<UnaryOperatorNode>();
     addProxy<ClassNode>();
     addProxy<MemberExprNode>();
+    addProxy<IndexNode>();
 }
 
 CodeGenerator::~CodeGenerator()

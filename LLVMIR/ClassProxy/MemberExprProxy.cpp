@@ -1,5 +1,5 @@
 #include "MemberExprProxy.h"
-#include <llvm-14/llvm/ADT/APInt.h>
+#include <llvm/ADT/APInt.h>
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/CodeGenProxy.h"
 #include "LLVMIR/LLVMTypes.h"
@@ -19,7 +19,7 @@ ValueAndType CodeGenProxy<MemberExprNode>::codeGen(MemberExprNode *ast,
     if (!obj_type) return {nullptr, nullptr};
 
     if (obj_type->isObject()) {
-        XClass *classinfo = obj_type->getObjectClass();
+        XClass *classinfo = obj_type->getClassDecl();
 
         // start from virtual table
         int index = 1;

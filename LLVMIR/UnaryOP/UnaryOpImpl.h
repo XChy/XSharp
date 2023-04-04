@@ -14,8 +14,4 @@ ValueAndType NegativeImpl(UnaryOperatorNode*, CodeGenContextHelper* helper,
                           const Generator& generator);
 ValueAndType NotImpl(UnaryOperatorNode*, CodeGenContextHelper* helper,
                      const Generator& generator);
-
-ValueAndType NewImpl(UnaryOperatorNode*, CodeGenContextHelper* helper,
-                     const Generator& generator);
-
 }  // namespace XSharp::LLVMCodeGen

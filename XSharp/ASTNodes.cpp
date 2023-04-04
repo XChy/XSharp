@@ -5,6 +5,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include "XSharp/Tokens.h"
 #include "XSharp/Types/TypeNodes.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"
@@ -208,13 +209,13 @@ XString FunctionCallNode::dump() const
         paramDumps.push_back(param->dump().toStdString());
     }
 
-    return fmt::format("call {}({})", _function->dump(),
+    return fmt::format("call {}({})", _callee->dump(),
                        fmt::join(paramDumps, ","));
 }
 
-void FunctionCallNode::setFunction(ASTNode* func) { _function = func; }
+void FunctionCallNode::setCallee(ASTNode* func) { _callee = func; }
 
-ASTNode* FunctionCallNode::function() { return _function; }
+ASTNode* FunctionCallNode::callee() { return _callee; }
 
 void FunctionCallNode::setArgs(std::vector<ASTNode*> params) { _args = params; }
 
@@ -225,7 +226,7 @@ std::vector<ASTNode*> FunctionCallNode::args() const { return _args; }
 FunctionCallNode::~FunctionCallNode()
 {
     for (auto i : _args) delete i;
-    delete _function;
+    delete _callee;
 }
 
 XString UnaryOperatorNode::dump() const
@@ -272,6 +273,12 @@ void MemberExprNode::setObject(ASTNode* object) { _object = object; }
 
 ASTNode* MemberExprNode::object() { return _object; }
 MemberExprNode::~MemberExprNode() { delete _object; }
+
+IndexNode::~IndexNode()
+{
+    delete _operand;
+    delete _index;
+}
 
 XString IndexNode::dump() const
 {

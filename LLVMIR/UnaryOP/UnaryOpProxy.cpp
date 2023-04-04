@@ -9,7 +9,6 @@ CodeGenProxy<UnaryOperatorNode>::CodeGenProxy()
     processors["+"] = PositiveImpl;
     processors["-"] = NegativeImpl;
     processors["!"] = NotImpl;
-    processors["new"] = NewImpl;
 }
 
 ValueAndType CodeGenProxy<UnaryOperatorNode>::codeGen(

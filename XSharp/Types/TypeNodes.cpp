@@ -30,7 +30,14 @@ Type* ArrayNode::toType() const
 {
     auto elementType = element->toType();
 
-    if (elementType) return getArrayType(element->toType(), dimension);
+    if (elementType) {
+        if (elementType->isBasic())
+            return getArrayType(elementType, dimension);
+        else if (elementType->isClass()) {
+            auto object_type = getReferenceType(elementType);
+            return getArrayType(object_type, dimension);
+        }
+    }
 
     return nullptr;
 }

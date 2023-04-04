@@ -13,6 +13,7 @@
 #include "LLVMIR/VarDefinition/VarDefinitionProxies.h"
 #include "LLVMIR/ClassProxy/ClassProxy.h"
 #include "LLVMIR/ClassProxy/MemberExprProxy.h"
+#include "LLVMIR/ClassProxy/IndexProxy.h"
 
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/Optimizer.h"

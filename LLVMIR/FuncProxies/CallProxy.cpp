@@ -1,6 +1,11 @@
 #include "CallProxy.h"
+#include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Types/Type.h"
 #include "XSharp/Types/TypeAdapter.h"
+#include "XSharp/Types/TypeNodes.h"
+#include "XSharp/Types/TypeSystem.h"
+#include "XSharp/XString.h"
 
 using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
@@ -18,9 +23,8 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
     using llvm::ConstantInt;
     using llvm::Function;
 
-    if (ast->function()->is<VariableExprNode>()) {
-        VariableExprNode* nameNode = ast->function()->to<VariableExprNode>();
-        XString calleeName = nameNode->name();
+    if (ast->callee()->is<VariableExprNode>()) {
+        XString calleeName = ast->callee()->to<VariableExprNode>()->name();
 
         std::vector<llvm::Value*> argumentValues;
         std::vector<Type*> argumentTypes;
@@ -55,11 +59,51 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
         return {builder.CreateCall(symbol.function->getFunctionType(),
                                    symbol.definition, argumentValues),
                 symbol.type->returnValueType()};
+    } else if (ast->callee()->is<TypeNode>()) {
+        auto callee_type = ast->callee()->to<TypeNode>()->toType();
+
+        if (!callee_type) {
+            helper->error("No type called '{}'", callee_type->typeName());
+            return {nullptr, nullptr};
+        }
+
+        if (callee_type->isClass()) {
+            auto object_type = getReferenceType(callee_type);
+            auto malloc_code = genObjectMalloc(helper, object_type);
+
+            if (malloc_code)
+                return {malloc_code, object_type};
+            else
+                return {nullptr, nullptr};
+        }
+
+        if (callee_type->isArray()) {
+            if (ast->args().size() != 1) {
+                helper->error("Lack of arguments for array's initialization");
+                return {nullptr, nullptr};
+            }
+
+            auto [length, length_type] = generator(ast->args()[0]);
+            length = TypeAdapter::llvmConvert(length_type, Types::get("i64"),
+                                              length);
+
+            if (!length) {
+                helper->error("Cannot take '{}' as arg for array constructor",
+                              length_type->typeName());
+                return {nullptr, nullptr};
+            }
+
+            auto malloc_code = genArrayMalloc(helper, callee_type, length);
+
+            if (malloc_code)
+                return {malloc_code, callee_type};
+            else
+                return {nullptr, nullptr};
+        }
     }
     // TODO: thiscall
-    else if (ast->function()->is<MemberExprNode>()) {
-    }
-    // TODO: callable
+    else if (ast->callee()->is<MemberExprNode>()) {
+    }  // TODO: callable
     else {
     }
 

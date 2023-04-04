@@ -93,13 +93,15 @@ class Type
     bool isVarArgs() const;
 
     // Array type, TODO complete below
+    bool isArray() const;
     uint arrayDimension() const;
     Type* elementType() const;
 
     // Class type,  TODO complete below
+    bool isClass() const;
     bool isObject() const;
     bool isObjectRef() const;
-    XClass* getObjectClass() const;
+    XClass* getClassDecl() const;
 
     // generate a unique name for a type
     XString typeName() const;
