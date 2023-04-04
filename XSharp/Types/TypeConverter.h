@@ -55,4 +55,33 @@ class XSharp_EXPORT ObjectConverter : public TypeConverter
    private:
 };
 
+class XSharp_EXPORT ArrayConverter : public TypeConverter
+{
+   public:
+    ArrayConverter() {}
+    bool convertable(Type* from, Type* to);
+    bool implicitConvertable(Type* from, Type* to);
+
+#ifdef XSharp_LLVMIR_SUPPORT
+    llvm::Value* convert(Type* from, Type* to, llvm::IRBuilder<>* builder,
+                         llvm::LLVMContext* context, llvm::Value* val);
+#endif
+
+   private:
+};
+
+class XSharp_EXPORT EqualConverter : public TypeConverter
+{
+   public:
+    EqualConverter() {}
+    bool convertable(Type* from, Type* to);
+    bool implicitConvertable(Type* from, Type* to);
+
+#ifdef XSharp_LLVMIR_SUPPORT
+    llvm::Value* convert(Type* from, Type* to, llvm::IRBuilder<>* builder,
+                         llvm::LLVMContext* context, llvm::Value* val);
+#endif
+
+   private:
+};
 }  // namespace XSharp

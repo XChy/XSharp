@@ -52,6 +52,10 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
         (llvm::FunctionType*)castToLLVM(functionType, context),
         Function::ExternalLinkage, ast->name().toStdString(), module);
 
+    // func->addFnAttr(llvm::Attribute::get(helper->context, "nounwind"));
+    // func->addFnAttr(llvm::Attribute::get(helper->context, "hot"));
+    // func->addFnAttr(llvm::Attribute::get(helper->context, "memory(read)"));
+
     functionSymbol.type = functionType;
     functionSymbol.function = func;
 

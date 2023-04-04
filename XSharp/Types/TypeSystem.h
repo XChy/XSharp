@@ -28,7 +28,9 @@ class TypeContext
 };
 
 static std::unordered_map<XString, BasicType> nameToBasicType = {
-    {"void", BasicType::Void},       {"i32", BasicType::I32},
+    {"void", BasicType::Void},       {"i8", BasicType::I8},
+    {"ui8", BasicType::UI8},         {"i16", BasicType::I16},
+    {"ui16", BasicType::UI16},       {"i32", BasicType::I32},
     {"i64", BasicType::I64},         {"ui32", BasicType::UI32},
     {"ui64", BasicType::UI64},       {"float", BasicType::Float},
     {"double", BasicType::Double},   {"char", BasicType::Char},

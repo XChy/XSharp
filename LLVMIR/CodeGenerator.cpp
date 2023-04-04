@@ -41,6 +41,8 @@ CodeGenerator::CodeGenerator()
 
     addProxy<DefinitionsNode>();
     addProxy<IntegerNode>();
+    addProxy<CharNode>();
+    addProxy<StringNode>();
     addProxy<BooleanNode>();
     addProxy<DecimalFractionNode>();
     addProxy<VariableExprNode>();

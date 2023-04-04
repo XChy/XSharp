@@ -12,6 +12,9 @@ XString Token::dump() const
         case TokenType::DecimalFraction:
             result.append("DecimalFraction:");
             break;
+        case TokenType::Char:
+            result.append("Char:");
+            break;
         case TokenType::String:
             result.append("String:");
             break;
@@ -29,6 +32,9 @@ XString Token::dump() const
             break;
         case TokenType::Dot:
             result.append("Dot:");
+            break;
+        case TokenType::Colon:
+            result.append("Colon:");
             break;
         case TokenType::OpenParenthesis:
             result.append("OpenParenthesis:");

@@ -66,6 +66,15 @@ class XSharp_EXPORT BooleanNode : public ASTNode
     bool _value;
 };
 
+class XSharp_EXPORT CharNode : public ASTNode
+{
+   public:
+    CharNode(const XChar& value);
+    XString dump() const;
+
+    XChar value;
+};
+
 class XSharp_EXPORT StringNode : public ASTNode
 {
    public:

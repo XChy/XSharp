@@ -187,9 +187,9 @@ uint Type::bits() const
                     return 1;
                 case BasicType::I8:
                 case BasicType::UI8:
-                case BasicType::Char:
                     return 8;
                 case BasicType::I16:
+                case BasicType::Char:
                 case BasicType::UI16:
                     return 16;
                 case BasicType::I32:

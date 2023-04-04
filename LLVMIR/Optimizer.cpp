@@ -4,6 +4,7 @@
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Transforms/InstCombine/InstCombine.h"
 #include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms/Vectorize/LoadStoreVectorizer.h"
 #include "llvm/Transforms/Vectorize.h"
 #include "llvm/Transforms/IPO.h"
 
@@ -24,6 +25,9 @@ Optimizer::Optimizer(llvm::Module* module) : functionPassManager(module)
     functionPassManager.add(llvm::createConstraintEliminationPass());
     functionPassManager.add(llvm::createCFGSimplificationPass());
     functionPassManager.add(llvm::createGVNPass());
+    functionPassManager.add(llvm::createNewGVNPass());
+    functionPassManager.add(llvm::createMemCpyOptPass());
+    functionPassManager.add(llvm::createLoopStrengthReducePass());
     functionPassManager.add(llvm::createFloat2IntPass());
     functionPassManager.add(llvm::createLICMPass());
     functionPassManager.add(llvm::createInstructionCombiningPass());
@@ -34,6 +38,9 @@ Optimizer::Optimizer(llvm::Module* module) : functionPassManager(module)
     functionPassManager.add(llvm::createGVNPass());
     functionPassManager.add(llvm::createDivRemPairsPass());
     functionPassManager.add(llvm::createBitTrackingDCEPass());
+    functionPassManager.add(llvm::createNaryReassociatePass());
+    functionPassManager.add(llvm::createSLPVectorizerPass());
+    functionPassManager.add(llvm::createSROAPass());
     functionPassManager.add(llvm::createDeadStoreEliminationPass());
     functionPassManager.add(llvm::createLibCallsShrinkWrapPass());
     functionPassManager.add(llvm::createSeparateConstOffsetFromGEPPass());
@@ -41,7 +48,14 @@ Optimizer::Optimizer(llvm::Module* module) : functionPassManager(module)
     functionPassManager.add(llvm::createTailCallEliminationPass());
     functionPassManager.add(llvm::createVectorCombinePass());
     functionPassManager.add(llvm::createLoadStoreVectorizerPass());
+    functionPassManager.add(llvm::createInferAddressSpacesPass());
+    functionPassManager.add(llvm::createSeparateConstOffsetFromGEPPass());
+    functionPassManager.add(llvm::createScalarizeMaskedMemIntrinLegacyPass());
+    functionPassManager.add(llvm::createEarlyCSEPass(true));
     functionPassManager.doInitialization();
 
     modulePassManager.add(llvm::createFunctionInliningPass());
+    modulePassManager.add(llvm::createArgumentPromotionPass());
+    modulePassManager.add(llvm::createVectorCombinePass());
+    modulePassManager.add(llvm::createIPSCCPPass());
 }

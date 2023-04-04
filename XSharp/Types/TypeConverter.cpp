@@ -84,3 +84,54 @@ llvm::Value* ObjectConverter::convert(Type* from, Type* to,
     return nullptr;
 }
 #endif
+
+bool ArrayConverter::convertable(Type* from, Type* to)
+{
+    return from->isArray() && to->isArray();
+}
+
+bool ArrayConverter::implicitConvertable(Type* from, Type* to)
+{
+    // TODO: tell apart explict and implicit conversions
+    return convertable(from, to);
+}
+
+#ifdef XSharp_LLVMIR_SUPPORT
+llvm::Value* ArrayConverter::convert(Type* from, Type* to,
+                                     llvm::IRBuilder<>* builder,
+                                     llvm::LLVMContext* context,
+                                     llvm::Value* val)
+{
+    if (from->equals(to)) return val;
+
+    if (!convertable(from, to)) return nullptr;
+
+    // TODO: handle the cases where one extends another one
+
+    return nullptr;
+}
+#endif
+
+bool EqualConverter::convertable(Type* from, Type* to)
+{
+    return from->equals(to);
+}
+
+bool EqualConverter::implicitConvertable(Type* from, Type* to)
+{
+    // TODO: tell apart explict and implicit conversions
+    return convertable(from, to);
+}
+
+#ifdef XSharp_LLVMIR_SUPPORT
+llvm::Value* EqualConverter::convert(Type* from, Type* to,
+                                     llvm::IRBuilder<>* builder,
+                                     llvm::LLVMContext* context,
+                                     llvm::Value* val)
+{
+    if (from->equals(to)) return val;
+
+    return nullptr;
+}
+
+#endif

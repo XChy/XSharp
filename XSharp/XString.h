@@ -13,12 +13,13 @@ class XSharp_EXPORT XChar
     friend class XString;
 
    public:
+    XChar(const XChar& other) : ucs(other.ucs) {}
     XChar(char ucs) : ucs(uchar(ucs)) {}
     XChar(uchar ucs) : ucs(ucs) {}
     XChar(short ucs) : ucs(ushort(ucs)) {}
     XChar(ushort ucs) : ucs(ucs) {}
-    XChar(int ucs4) : ucs(ushort(ucs4 | 0xFFFF)) {}
-    XChar(uint ucs4) : ucs(ushort(ucs4 | 0xFFFF)) {}
+    XChar(int ucs4) : ucs(ushort(ucs4 & 0xFFFF)) {}
+    XChar(uint ucs4) : ucs(ushort(ucs4 & 0xFFFF)) {}
     bool isDigit() const;
     bool isSpace() const;
     bool isLetter() const;

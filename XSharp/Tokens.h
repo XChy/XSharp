@@ -31,6 +31,7 @@ enum TokenType {
     Integer,
     DecimalFraction,
     Boolean,
+    Char,
     String,
     Null,
     Operator,

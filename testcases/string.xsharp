@@ -1,0 +1,17 @@
+class String{
+    char[] data;
+    i64 size;
+}
+
+void init(String str,i64 size){
+    str.data = new char[](size);
+    str.size = size;
+    return;
+}
+
+i32 main(){
+    char[] a = new char[](10);
+    a = "12321";
+    print("12123动1232");
+    return 0;
+}

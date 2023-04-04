@@ -37,6 +37,10 @@ void BooleanNode::setValue(bool value) { _value = value; }
 
 bool BooleanNode::value() const { return _value; }
 
+CharNode::CharNode(const XChar& value) : value(value) {}
+
+XString CharNode::dump() const { return XString("\'") + value + "\'"; }
+
 StringNode::StringNode(const XString& value) : _value(value) {}
 
 XString StringNode::dump() const { return "\"" + _value + "\""; }

@@ -1,8 +1,14 @@
 #include "CodeGenProxy.h"
 #include <llvm-14/llvm/ADT/APFloat.h>
 #include <llvm-14/llvm/ADT/APInt.h>
+#include <llvm-14/llvm/IR/Constant.h>
+#include <llvm-14/llvm/IR/Constants.h>
+#include <llvm-14/llvm/IR/DerivedTypes.h>
+#include <llvm-14/llvm/IR/GlobalVariable.h>
+#include "LLVMIR/LLVMTypes.h"
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Types/TypeSystem.h"
+#include "XSharp/XString.h"
 
 using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
@@ -43,6 +49,38 @@ ValueAndType CodeGenProxy<DecimalFractionNode>::codeGen(
     auto val = ConstantFP::get(helper->context, APFloat(ast->value()));
 
     return {val, XSharp::getDoubleType()};
+}
+
+ValueAndType CodeGenProxy<CharNode>::codeGen(CharNode* ast,
+                                             CodeGenContextHelper* helper,
+                                             const Generator& generator)
+{
+    using llvm::APInt;
+    using llvm::ConstantInt;
+
+    auto val = ConstantInt::get(
+        helper->context, APInt(Types::get("char")->bits(), ast->value.value()));
+    return {val, Types::get("char")};
+}
+
+ValueAndType CodeGenProxy<StringNode>::codeGen(StringNode* ast,
+                                               CodeGenContextHelper* helper,
+                                               const Generator& generator)
+{
+    auto llvm_array_type = (llvm::ArrayType*)castToLLVM(
+        XSharp::getArrayType(Types::get("char"), 1), helper->context);
+    std::vector<llvm::Constant*> chars;
+    for (int i = 0; i <= ast->value().size(); ++i) {
+        chars.push_back(
+            helper->builder.getInt(llvm::APInt(16, ast->value()[i].value())));
+    }
+
+    llvm::Constant* data = llvm::ConstantArray::get(llvm_array_type, chars);
+    llvm::GlobalVariable* glob =
+        new llvm::GlobalVariable(helper->module, data->getType(), true,
+                                 llvm::GlobalValue::ExternalLinkage, data);
+
+    return {glob, XSharp::getArrayType(Types::get("char"), 1)};
 }
 
 ValueAndType CodeGenProxy<BooleanNode>::codeGen(BooleanNode* ast,

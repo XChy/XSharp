@@ -18,18 +18,22 @@ i32 sum(A a)
 
 i32 main()
 {
-    B[] c = new B[](2);
-    c[0] = new B();
-    c[1] = new B();
-    B a = new B();
-    a.a = 3;
-    a.b = 3;
-    a.c = 3;
-    a.d = new A(1);
-    a.d.a = 2;
-    a.d.b = 3;
-    a.d.c = 4;
-    print(sum(a.d));
-    print(c[0].a + c[1].b);
+    i64 n = inputI32();
+    A[] c = new A[](10);
+
+    while(n-1>=0)
+    {
+        c[n-1] = new A;
+        print(sum(c[n-1]));
+        n = n - 1;
+    }
+
+    n = 10;
+    i32 a = 0;
+    while(n-1>=0){
+        a = a + n-1;
+        n = n -1;
+    }
+    print(a);
     return 0;
 }

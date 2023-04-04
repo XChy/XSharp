@@ -27,7 +27,7 @@ ValueAndType CodeGenProxy<MemberExprNode>::codeGen(MemberExprNode *ast,
             if (fieid.name == ast->memberName()) {
                 return {helper->builder.CreateStructGEP(
                             castToLLVM(obj_type->derefType(), helper->context),
-                            obj, index),
+                            obj, index, ast->dump().toStdString()),
                         getReferenceType(fieid.type)};
             }
             index++;

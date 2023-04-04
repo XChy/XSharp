@@ -8,9 +8,11 @@ static llvm::LLVMContext* llvmContext;
 
 static NumberConverter numberConverter;
 static ObjectConverter objectConverter;
+static ArrayConverter arrayConverter;
+static EqualConverter equalConverter;
 
-static std::vector<TypeConverter*> converters = {&numberConverter,
-                                                 &objectConverter};
+static std::vector<TypeConverter*> converters = {
+    &numberConverter, &arrayConverter, &objectConverter, &equalConverter};
 
 bool TypeAdapter::canConvert(Type* from, Type* to)
 {

@@ -89,6 +89,6 @@ int link_object(const XString& object_path, const XString& lib_path,
                 const XString& exe_path)
 {
     return system(
-        fmt::format("gcc {} {} -o {}", object_path, lib_path, exe_path)
+        fmt::format("gcc -no-pie {} {} -o {}", object_path, lib_path, exe_path)
             .c_str());
 }

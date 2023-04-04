@@ -482,6 +482,8 @@ ASTNode* Parser::factor()
         factor = new DecimalFractionNode(current->value.toDouble());
     } else if (current->type == Boolean) {
         factor = new BooleanNode(current->value == "true");
+    } else if (current->type == Char) {
+        factor = new CharNode(current->value[0]);
     } else if (current->type == String) {
         factor = new StringNode(current->value);
     } else if (current->type == OpenParenthesis) {

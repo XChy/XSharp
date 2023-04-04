@@ -115,9 +115,14 @@ if(BUILD_XSharpCLI)
   set_target_properties(
     ASTPRINT PROPERTIES OUTPUT_NAME "${PROJECT_SOURCE_DIR}/bin/astprint")
 
+  add_executable(TOKENIZE XSharpCLI/tokenize.cpp)
+  set_target_properties(
+    TOKENIZE PROPERTIES OUTPUT_NAME "${PROJECT_SOURCE_DIR}/bin/tokenize")
+
   if(SUPPORT_LLVMIR)
     target_link_libraries(XSharpC ${llvm_libs} XSharp_STATIC fmt)
     target_link_libraries(ASTPRINT ${llvm_libs} XSharp_STATIC fmt)
+    target_link_libraries(TOKENIZE XSharp_STATIC fmt)
   endif()
 endif()
 

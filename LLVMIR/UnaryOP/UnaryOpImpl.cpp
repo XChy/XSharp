@@ -43,25 +43,7 @@ ValueAndType NegativeImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
     }
 
     llvm::Value* result_val;
-    if (operand_type->isSigned()) {
-        result_val = helper->builder.CreateSub(
-            llvm::ConstantInt::get(helper->context,
-                                   llvm::APInt(operand_type->bits(), 0)),
-            operand);
-    } else if (operand_type->isUnsigned()) {
-        helper->error(
-            "Cannot calculate the minus value of an unsigned integer");
-        return {nullptr, nullptr};
-    } else if (operand_type->basicType() == BasicType::Float) {
-        result_val = helper->builder.CreateSub(
-            llvm::ConstantFP::get(helper->context, llvm::APFloat(0.0f)),
-            operand);
-    } else if (operand_type->basicType() == BasicType::Double) {
-        result_val = helper->builder.CreateSub(
-            llvm::ConstantFP::get(helper->context, llvm::APFloat(double(0.0))),
-            operand);
-    }
-
+    result_val = helper->builder.CreateNeg(operand);
     return {result_val, operand_type};
 }
 

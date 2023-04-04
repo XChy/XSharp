@@ -107,9 +107,9 @@ int compile(const char *path)
     helper.generateIR(ast.get(), XString(path).append(".bc"));
 
     if (!helper.contextHelper._errors.empty()) {
-        std::cout << "Semantic error:";
+        std::cout << "Semantic error:\n";
         for (auto error : helper.contextHelper._errors)
-            std::cout << '\n' << error.errorInfo.toStdString();
+            std::cout << error.errorInfo.toStdString() << "\n";
         return -1;
     }
 
@@ -129,8 +129,6 @@ int compile(const char *path)
 
     link_object(object_path, projectPath + "lib/libXSharpRuntime.so",
                 defaultOutputName);
-
-    std::cout << std::endl;
 
     return 0;
 }

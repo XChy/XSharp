@@ -1,5 +1,5 @@
 #include "XSharp/Lexer.h"
-#include "XSharp/Parser.h"
+#include "fmt/core.h"
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -21,11 +21,13 @@ int main(int argc, char* argv[])
 
     try {
         XSharp::Lexer lexer;
-        XSharp::Parser parser;
-        auto ast = parser.parse(lexer.tokenize(buffer));
-        fmt::print("{}", ast->dump());
-        delete ast;
+        auto tokens = (lexer.tokenize(buffer));
+        std::vector<std::string> dumps;
+        for (auto token : tokens) {
+            dumps.push_back(token.dump().toStdString());
+        }
 
+        fmt::print("{}\n", fmt::join(dumps, ", "));
     } catch (XSharpError& e) {
         fmt::print("ERROR:{}\n", e.errorInfo);
     }

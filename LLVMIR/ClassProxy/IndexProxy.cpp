@@ -33,8 +33,8 @@ ValueAndType CodeGenProxy<IndexNode>::codeGen(IndexNode *ast,
         return {nullptr, nullptr};
     }
 
-    llvm::Value *element = helper->builder.CreateGEP(
+    llvm::Value *element = helper->builder.CreateInBoundsGEP(
         castToLLVM(indexed_type->elementType(), helper->context), indexed,
-        index);
+        index, ast->dump().toStdString());
     return {element, getReferenceType(indexed_type->elementType())};
 }

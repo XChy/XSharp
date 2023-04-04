@@ -86,6 +86,16 @@ std::vector<Token> Lexer::tokenize(const XString &source) const
             result.push_back(Token(Comma, ","));
             ++it;
             ;
+        } else if (*it == '\'') {
+            ++it;
+            XString value;
+            while (*it != '\'' && it->value()) {
+                value.append(*it);
+                ++it;
+            }
+            ++it;
+            // TODO: check count of char, and transfered char
+            result.push_back(Token(Char, value));
         } else if (*it == '\"') {
             ++it;
             XString value;

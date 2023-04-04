@@ -88,6 +88,22 @@ class CodeGenProxy<DecimalFractionNode>
 };
 
 template <>
+class CodeGenProxy<CharNode>
+{
+   public:
+    ValueAndType codeGen(CharNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
+};
+
+template <>
+class CodeGenProxy<StringNode>
+{
+   public:
+    ValueAndType codeGen(StringNode* ast, CodeGenContextHelper* helper,
+                         const Generator& generator);
+};
+
+template <>
 class CodeGenProxy<BooleanNode>
 {
    public:
