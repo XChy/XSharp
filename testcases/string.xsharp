@@ -1,17 +1,17 @@
 class String{
     char[] data;
     i64 size;
-}
 
-String newStr(i64 size){
-    String str = new String;
-    str.data = new char[](size);
-    str.size = size;
-    return str;
+    void init(){
+        self.data = new char[](1024);
+        self.size = 1024;
+        return;
+    }
 }
 
 i32 main(){
     String str = newStr(3);
+    str.init();
     i32 i =0;
     str.data = "123";
     print(str.data);

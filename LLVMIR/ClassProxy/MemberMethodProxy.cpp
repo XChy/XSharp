@@ -26,7 +26,7 @@ ValueAndType CodeGenProxy<MemberMethodNode>::codeGen(
     using llvm::ConstantInt;
     using llvm::Function;
 
-    XString funcName = ast->selfClass->name + "::" + ast->name();
+    XString funcName = ast->selfClass->name + ":" + ast->name();
 
     assertWithError(!helper->currentSymbols->hasSymbol(funcName), helper->error,
                     ErrorFormatString::redefinition_func, funcName);
@@ -65,7 +65,7 @@ ValueAndType CodeGenProxy<MemberMethodNode>::codeGen(
     functionSymbol.type = functionType;
     functionSymbol.function = func;
 
-    helper->currentSymbols->addSymbol(functionSymbol);
+    helper->currentSymbols->parent()->addSymbol(functionSymbol);
 
     BasicBlock* block = BasicBlock::Create(context, "entry", func);
     builder.SetInsertPoint(block);

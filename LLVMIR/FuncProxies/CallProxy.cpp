@@ -1,4 +1,5 @@
 #include "CallProxy.h"
+#include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Types/Type.h"
@@ -71,7 +72,6 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
 
         if (callee_type->isObject()) {
             auto malloc_code = genObjectMalloc(helper, callee_type);
-
             passErrorIfNot(malloc_code);
 
             return {malloc_code, callee_type};
@@ -101,8 +101,53 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
                 return {nullptr, nullptr};
         }
     }
-    // TODO: thiscall
+    // this-call
     else if (ast->callee()->is<MemberExprNode>()) {
+        auto [obj, obj_type] = deReference(
+            generator(ast->callee()->to<MemberExprNode>()->object()), helper);
+        passErrorIfNot(obj_type);
+
+        XString memberName = ast->callee()->to<MemberExprNode>()->memberName();
+
+        assertWithError(obj_type->isObject(), helper->error,
+                        "Cannot get the member '{}' of non-object", memberName);
+
+        XString calleeName = obj_type->getClassDecl()->name + ":" + memberName;
+
+        std::vector<llvm::Value*> argumentValues = {obj};
+        std::vector<Type*> argumentTypes = {obj_type};
+        for (auto ast : ast->args()) {
+            auto [arg_val, arg_type] = generator(ast);
+            passErrorIfNot(arg_type);
+            argumentTypes.push_back(arg_type);
+            argumentValues.push_back(arg_val);
+        }
+
+        auto symbol =
+            helper->currentSymbols->findFunctionFor(calleeName, argumentTypes);
+
+        if (symbol.symbolType == XSharp::SymbolType::NoneSymbol) {
+            helper->error("No matching function for '{} (...)'", calleeName);
+            return {nullptr, nullptr};
+        }
+
+        for (int i = 0; i < argumentValues.size(); ++i) {
+            auto arg = argumentValues[i];
+            auto arg_type = argumentTypes[i];
+            auto param_type = symbol.type->parameterTypes()[i];
+
+            argumentValues[i] =
+                XSharp::TypeAdapter::llvmConvert(arg_type, param_type, arg);
+
+            assertWithError(argumentValues[i], helper->error,
+                            ErrorFormatString::inconvertible,
+                            arg_type->typeName(), param_type->typeName());
+        }
+
+        return {builder.CreateCall(symbol.function->getFunctionType(),
+                                   symbol.definition, argumentValues),
+                symbol.type->returnValueType()};
+
     }  // TODO: callable
     else {
     }

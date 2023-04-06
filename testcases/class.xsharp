@@ -2,8 +2,8 @@ class A{
 i32 a;
 i32 b;
 i32 c;
-i32 e(){
-        return 1;
+i32 sum(){
+        return self.a+self.b+self.c;
     }
 }
 
@@ -12,8 +12,8 @@ class B{
     i32 b;
     i32 c;
     A d;
-    i32 e(){
-        return 1;
+    i32 sum(){
+        return self.a+self.b+self.c;
     }
 }
 
@@ -26,11 +26,12 @@ i32 main()
 {
     i64 n = inputI32();
     A[] c = new A[](10);
+    A b = new A;
 
     while(n-1>=0)
     {
         c[n - 1] = new A;
-        print(sum(c[n - 1]));
+        print(c[n - 1].sum());
         n = n - 1;
     }
 
