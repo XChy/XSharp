@@ -2,6 +2,8 @@
 
 A toy OOP language with lexer, parser, compiler and runtime
 
+**Not completed yet, and your contributions are highly appreciated**
+
 ### Background
 
 Having learned about the theory of compiler, a dull coder try to develop something to have fun.
@@ -23,19 +25,21 @@ sudo apt install llvm-dev
 # Install toolchain for compiling XSharp
 sudo apt install build-essential
 
-git clone git@github.com:XChy/XSharp.git
-cmake . && make -j8 #you can configure CMake yourself
+git clone git@github.com:XChy/XSharp.git where/xsharp/lies/in
+
+cd where/xsharp/lies/in
+./buildRelease.sh
 ```
 
 ### Usage
 
 ```bash
 #default compile into a binary executable
-xsharpc xxx.xsharp
+bin/xsharpc xxx.xsharp
 
-#compile into bytecode
-xsharpc -vm xxx.xsharp # compile into bytecode which can be executed by XSharp's VM
-xsharp xxx.xe          # execute the bytecode
+#compile into bytecode, not supported yet
+bin/xsharpc -vm xxx.xsharp # compile into bytecode which can be executed by XSharp's VM
+bin/xsharp xxx.xe          # execute the bytecode
 ```
 
 ### Third-Party
@@ -56,7 +60,8 @@ xsharp xxx.xe          # execute the bytecode
 
 - ##### simple OOP
 - ##### basic types
-- ##### modules
+- ##### complete type conversion rules
+- ##### module
 - ##### match pattern
 
 ### Grammar
@@ -72,7 +77,7 @@ i32 a = 2333;
 ```C++
 i32 abs(i32 a)
 {
-   if(a >= 0)
+    if(a >= 0)
        return a;
 	else
        return -a;
@@ -84,18 +89,20 @@ i32 abs(i32 a)
 ```C++
 class foo
 {
-    string name();
-    int age();
+    i32 getAge()
+    {
+        return self.age;
+    }
 
-    string _name;
-    int _age;
+    void setAge(i32 age)
+    {
+        self.age = age;
+        return; // I will impliment automatical return in the future
+    }
+
+    i32 age;
 }
-// Or in form below
-class foo
-{
-    string _name{get{}, set{}};
-    int _age{get{}, set{}};
-}
+
 ```
 
 - ### Hierarchy of Source
