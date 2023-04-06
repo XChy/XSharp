@@ -22,16 +22,16 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
                 case BasicType::Char:
                     return llvm::Type::getInt16Ty(context);
                 case BasicType::I8:
-                case BasicType::UI8:
+                case BasicType::U8:
                     return llvm::Type::getInt8Ty(context);
                 case BasicType::I16:
-                case BasicType::UI16:
+                case BasicType::U16:
                     return llvm::Type::getInt16Ty(context);
                 case BasicType::I32:
-                case BasicType::UI32:
+                case BasicType::U32:
                     return llvm::Type::getInt32Ty(context);
                 case BasicType::I64:
-                case BasicType::UI64:
+                case BasicType::U64:
                     return llvm::Type::getInt64Ty(context);
                 case BasicType::Float:
                     return llvm::Type::getFloatTy(context);

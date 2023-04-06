@@ -1,10 +1,20 @@
 #include "Tokens.h"
+#include "XSharp/XString.h"
+#include "fmt/core.h"
+
+XString Span::dump() const { return fmt::format("{}:{}", row, col); }
+
+XString Span::wholeDump() const
+{
+    return fmt::format("'{}' {}", filename, dump());
+}
 
 Token::Token(TokenType type, const XString &value) : type(type), value(value) {}
 
 XString Token::dump() const
 {
-    XString result;
+    XString result = span.dump();
+    result.append(" ");
     switch (type) {
         case TokenType::Integer:
             result.append("Integer:");
@@ -36,10 +46,10 @@ XString Token::dump() const
         case TokenType::Colon:
             result.append("Colon:");
             break;
-        case TokenType::OpenParenthesis:
+        case TokenType::OpenParen:
             result.append("OpenParenthesis:");
             break;
-        case TokenType::CloseParenthesis:
+        case TokenType::CloseParen:
             result.append("CloseParenthesis:");
             break;
         case TokenType::OpenBracket:

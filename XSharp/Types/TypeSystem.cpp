@@ -11,10 +11,10 @@ TypeContext::TypeContext()
 {
     basicTypeToName = {
         {BasicType::Void, "void"},       {BasicType::I8, "i8"},
-        {BasicType::UI8, "ui8"},         {BasicType::I16, "i16"},
-        {BasicType::UI16, "ui16"},       {BasicType::I32, "i32"},
-        {BasicType::UI32, "ui32"},       {BasicType::I64, "i64"},
-        {BasicType::UI64, "ui64"},       {BasicType::Float, "float"},
+        {BasicType::U8, "u8"},           {BasicType::I16, "i16"},
+        {BasicType::U16, "u16"},         {BasicType::I32, "i32"},
+        {BasicType::U32, "u32"},         {BasicType::I64, "i64"},
+        {BasicType::U64, "u64"},         {BasicType::Float, "float"},
         {BasicType::Double, "double"},   {BasicType::Char, "char"},
         {BasicType::Boolean, "boolean"},
     };
@@ -109,6 +109,19 @@ Type* XSharp::getReferenceType(Type* innerType)
     return node;
 }
 
+Type* XSharp::asEntityType(Type* type)
+{
+    if (type == nullptr) return nullptr;
+
+    // Object
+    if (type->isClass()) {
+        // TODO: generics
+        return getReferenceType(type);
+    }
+
+    return type;
+}
+
 Type* XSharp::getArrayType(Type* elementType, uint dimension)
 {
     Type* node = new Type;
@@ -146,6 +159,7 @@ Type* XSharp::getClosureType()
         return Types::get(typeName);
     }
 }
+
 Type* XSharp::getMergedType(Type* lhs_type, Type* rhs_type)
 {
     Type* merged_type;

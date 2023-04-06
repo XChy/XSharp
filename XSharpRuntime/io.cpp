@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <cwchar>
 
-int UCS2toUTF8Code(char16_t ucs2_code, char* utf8_code)
+static int UCS2toUTF8(char16_t ucs2_code, char* utf8_code)
 {
     int length = 0;
     char* out = utf8_code;
@@ -29,18 +29,28 @@ int UCS2toUTF8Code(char16_t ucs2_code, char* utf8_code)
     return length;
 }
 
-bool printChar(char16_t character) { return printf("%lc", character); }
+bool printChar(char16_t character)
+{
+    char buf[4];
+    int len = UCS2toUTF8(character, buf);
+    for (int i = 0; i < len; ++i) {
+        putchar(buf[i]);
+    }
+    return 0;
+}
+
 bool printStr(char16_t* str)
 {
     char buf[4];
 
     while (*str) {
-        int len = UCS2toUTF8Code(*str, buf);
+        int len = UCS2toUTF8(*str, buf);
         for (int i = 0; i < len; ++i) {
             putchar(buf[i]);
         }
         str++;
     }
+    return 0;
 }
 bool printI32(__int32_t x) { return printf("%d\n", x); }
 bool printI64(__int64_t x) { return printf("%ld\n", x); }

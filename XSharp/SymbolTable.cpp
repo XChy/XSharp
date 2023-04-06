@@ -60,9 +60,9 @@ std::vector<Symbol> SymbolTable::findFunctions(const XString& name) const
 Symbol SymbolTable::findFunctionFor(
     const XString& name, const std::vector<Type*> argumentTypes) const
 {
-    auto functions = findFunctions(name);
-    for (auto funcSymbol : functions) {
-        auto parameterTypes = funcSymbol.type->parameterTypes();
+    auto candidates = findFunctions(name);
+    for (auto candidate : candidates) {
+        auto parameterTypes = candidate.type->parameterTypes();
 
         if (std::equal(argumentTypes.begin(), argumentTypes.end(),
                        parameterTypes.begin(), parameterTypes.end(),
@@ -72,18 +72,18 @@ Symbol SymbolTable::findFunctionFor(
                            else
                                return a->equals(b);
                        })) {
-            return funcSymbol;
+            return candidate;
         }
     }
 
-    for (auto funcSymbol : functions) {
-        auto parameterTypes = funcSymbol.type->parameterTypes();
+    for (auto candidate : candidates) {
+        auto parameterTypes = candidate.type->parameterTypes();
 
         bool adaptable = std::equal(
             argumentTypes.begin(), argumentTypes.end(), parameterTypes.begin(),
             parameterTypes.end(), &TypeAdapter::canConvert);
 
-        if (adaptable) return funcSymbol;
+        if (adaptable) return candidate;
     }
 
     return Symbol{.symbolType = SymbolType::NoneSymbol};

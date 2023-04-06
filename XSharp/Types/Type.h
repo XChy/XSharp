@@ -18,10 +18,10 @@ enum class BasicType {
     I16,
     I32,  // signed integer
     I64,
-    UI8,
-    UI16,
-    UI32,
-    UI64,
+    U8,
+    U16,
+    U32,
+    U64,
     Float,
     Double,
     Char,
@@ -118,6 +118,7 @@ class Type
         Array,
         Function,
         Closure,
+        Never,
         Class
     } category;
 

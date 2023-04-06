@@ -1,7 +1,10 @@
 #pragma once
 #include "XSharp/ASTNodes.h"
+#include "XSharp/XString.h"
 
 namespace XSharp {
+
+class MemberMethodNode;
 
 class XSharp_EXPORT ClassNode : public ASTNode
 {
@@ -13,7 +16,15 @@ class XSharp_EXPORT ClassNode : public ASTNode
     XString name;
     // TODO: Design specific Member/MemberMethod AST
     std::vector<VariableNode*> members;
-    std::vector<FunctionNode*> methods;
+    std::vector<MemberMethodNode*> methods;
+};
+
+class XSharp_EXPORT MemberMethodNode : public FunctionNode
+{
+   public:
+    XString dump() const;
+
+    ClassNode* selfClass;
 };
 
 class XSharp_EXPORT DefinitionsNode : public ASTNode

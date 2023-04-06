@@ -47,34 +47,34 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
             auto arg = argumentValues[i];
             auto arg_type = argumentTypes[i];
             auto param_type = symbol.type->parameterTypes()[i];
+
             argumentValues[i] =
                 XSharp::TypeAdapter::llvmConvert(arg_type, param_type, arg);
-            if (!argumentValues[i]) {
-                helper->error("Cannot convert argument from '{}' to '{}'",
-                              arg_type->typeName(), param_type->typeName());
-                return {nullptr, nullptr};
-            }
+
+            assertWithError(argumentValues[i], helper->error,
+                            ErrorFormatString::inconvertible,
+                            arg_type->typeName(), param_type->typeName());
         }
 
         return {builder.CreateCall(symbol.function->getFunctionType(),
                                    symbol.definition, argumentValues),
                 symbol.type->returnValueType()};
+
     } else if (ast->callee()->is<TypeNode>()) {
-        auto callee_type = ast->callee()->to<TypeNode>()->toType();
+        auto callee_type =
+            asEntityType(ast->callee()->to<TypeNode>()->toType());
 
         if (!callee_type) {
             helper->error("No type called '{}'", callee_type->typeName());
             return {nullptr, nullptr};
         }
 
-        if (callee_type->isClass()) {
-            auto object_type = getReferenceType(callee_type);
-            auto malloc_code = genObjectMalloc(helper, object_type);
+        if (callee_type->isObject()) {
+            auto malloc_code = genObjectMalloc(helper, callee_type);
 
-            if (malloc_code)
-                return {malloc_code, object_type};
-            else
-                return {nullptr, nullptr};
+            passErrorIfNot(malloc_code);
+
+            return {malloc_code, callee_type};
         }
 
         if (callee_type->isArray()) {

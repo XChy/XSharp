@@ -25,6 +25,7 @@ class XSharp_EXPORT Parser
     // <type> <name> (paramlist)
     bool isFunctionDecl() const;
     FunctionNode* functionDecl();
+    MemberMethodNode* memberMethodDecl();
 
     // end after the stopword
     // <type> <name> (( = <initial value> ))

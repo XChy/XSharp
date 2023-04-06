@@ -15,4 +15,25 @@ llvm::Value* genObjectMalloc(CodeGenContextHelper* helper, XSharp::Type* type);
 llvm::Value* genArrayMalloc(CodeGenContextHelper* helper, XSharp::Type* type,
                             llvm::Value* element_count);
 
+namespace ErrorFormatString {
+
+constexpr auto illegal_type = "Not a legal type-expression : '{}'";
+constexpr auto redefinition_var = "Redefinition of variable '{}'";
+constexpr auto redefinition_func = "Redefinition of function '{}'";
+constexpr auto redefinition_class = "Redefinition of class '{}'";
+constexpr auto inconvertible = "Cannot convert '{}' to '{}'";
+
+}  // namespace ErrorFormatString
+
+#define assertWithError(cond, error_func, fmt_string, fmt_args...) \
+    if (!(cond)) {                                                 \
+        error_func(fmt_string, fmt_args);                          \
+        return {nullptr, nullptr};                                 \
+    }
+
+#define passErrorIfNot(type)       \
+    if (type == nullptr) {         \
+        return {nullptr, nullptr}; \
+    }
+
 }  // namespace XSharp::LLVMCodeGen

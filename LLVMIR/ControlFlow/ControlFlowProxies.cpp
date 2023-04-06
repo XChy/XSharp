@@ -2,6 +2,7 @@
 #include <llvm-14/llvm/IR/BasicBlock.h>
 #include <llvm-14/llvm/IR/Type.h>
 #include "LLVMIR/CodeGenProxy.h"
+#include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Types/TypeAdapter.h"
@@ -21,12 +22,11 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
     BasicBlock* currentBlock = builder.GetInsertBlock();
 
     auto [cond_val, cond_type] = generator(ast->condition);
+
     cond_val =
         TypeAdapter::llvmConvert(cond_type, XSharp::getBooleanType(), cond_val);
-    if (!cond_val) {
-        helper->error("The condition of <if> is not a boolean");
-        return {nullptr, nullptr};
-    }
+    assertWithError(cond_val, helper->error, ErrorFormatString::inconvertible,
+                    cond_type->typeName(), "boolean");
 
     BasicBlock* thenBlock = BasicBlock::Create(context, "if.then", currentFunc);
     BasicBlock* elseBlock = BasicBlock::Create(context, "if.else");
@@ -73,22 +73,23 @@ ValueAndType CodeGenProxy<WhileNode>::codeGen(WhileNode* ast,
     BasicBlock* loop_end = BasicBlock::Create(context, "while.end");
 
     builder.CreateBr(loop_cond);
-
     builder.SetInsertPoint(loop_cond);
+
     auto [cond_val, cond_type] = generator(ast->condition);
+
     cond_val = XSharp::TypeAdapter::llvmConvert(
         cond_type, XSharp::getBooleanType(), cond_val);
-    if (!cond_val) {
-        helper->error("The condition of <while> is not a boolean");
-        return {nullptr, nullptr};
-    }
+    assertWithError(cond_val, helper->error, ErrorFormatString::inconvertible,
+                    cond_type->typeName(), "boolean");
+
     builder.CreateCondBr(cond_val, loop_body, loop_end);
 
     // Loop inner
     loop_body->insertInto(currentFunc);
     builder.SetInsertPoint(loop_body);
+
     auto [then_val, then_type] = generator(ast->block);
-    if (!then_type) return {nullptr, nullptr};
+    passErrorIfNot(then_type);
 
     builder.CreateBr(loop_cond);
 
@@ -112,11 +113,9 @@ ValueAndType CodeGenProxy<ReturnNode>::codeGen(ReturnNode* ast,
 
         retVal = TypeAdapter::llvmConvert(retType, helper->currentReturnType,
                                           retVal);
-        if (!retVal) {
-            helper->error("Cannot convert '{}' to '{}'", retType->typeName(),
-                          helper->currentReturnType->typeName());
-            return {nullptr, nullptr};
-        }
+        assertWithError(retVal, helper->error, ErrorFormatString::inconvertible,
+                        retType->typeName(),
+                        helper->currentReturnType->typeName());
 
         return {builder.CreateRet(retVal), XSharp::getVoidType()};
     } else {

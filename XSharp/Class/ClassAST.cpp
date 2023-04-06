@@ -23,6 +23,11 @@ ClassNode::~ClassNode()
     for (auto i : methods) delete i;
 }
 
+XString MemberMethodNode::dump() const
+{
+    return fmt::format("{}::{}", selfClass->name, FunctionNode::dump());
+}
+
 XString DefinitionsNode::dump() const
 {
     XString result;

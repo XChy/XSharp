@@ -65,10 +65,10 @@ std::vector<Token> Lexer::tokenize(const XString &source) const
             result.push_back(Token(SentenceEnd, ";"));
             ++it;
         } else if (*it == '(') {
-            result.push_back(Token(OpenParenthesis, "("));
+            result.push_back(Token(OpenParen, "("));
             ++it;
         } else if (*it == ')') {
-            result.push_back(Token(CloseParenthesis, ")"));
+            result.push_back(Token(CloseParen, ")"));
             ++it;
         } else if (*it == '[') {
             result.push_back(Token(OpenBracket, "["));

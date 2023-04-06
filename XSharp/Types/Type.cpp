@@ -120,10 +120,10 @@ BasicType Type::basicType() const { return std::get<BasicType>(typeinfo); }
 bool Type::isInteger() const
 {
     return category == Basic &&
-           (basicType() == BasicType::I8 || basicType() == BasicType::UI8 ||
+           (basicType() == BasicType::I8 || basicType() == BasicType::U8 ||
             basicType() == BasicType::I16 || basicType() == BasicType::I16 ||
-            basicType() == BasicType::I32 || basicType() == BasicType::UI32 ||
-            basicType() == BasicType::I64 || basicType() == BasicType::UI64);
+            basicType() == BasicType::I32 || basicType() == BasicType::U32 ||
+            basicType() == BasicType::I64 || basicType() == BasicType::U64);
 }
 
 bool Type::isSigned() const
@@ -136,8 +136,8 @@ bool Type::isSigned() const
 bool Type::isUnsigned() const
 {
     return category == Basic &&
-           (basicType() == BasicType::UI8 || basicType() == BasicType::UI16 ||
-            basicType() == BasicType::UI32 || basicType() == BasicType::UI64);
+           (basicType() == BasicType::U8 || basicType() == BasicType::U16 ||
+            basicType() == BasicType::U32 || basicType() == BasicType::U64);
 }
 
 bool Type::isNumber() const
@@ -186,18 +186,18 @@ uint Type::bits() const
                 case BasicType::Boolean:
                     return 1;
                 case BasicType::I8:
-                case BasicType::UI8:
+                case BasicType::U8:
                     return 8;
                 case BasicType::I16:
                 case BasicType::Char:
-                case BasicType::UI16:
+                case BasicType::U16:
                     return 16;
                 case BasicType::I32:
-                case BasicType::UI32:
+                case BasicType::U32:
                 case BasicType::Float:
                     return 32;
                 case BasicType::I64:
-                case BasicType::UI64:
+                case BasicType::U64:
                 case BasicType::Double:
                     return 64;
                 default:
@@ -217,6 +217,8 @@ uint Type::bits() const
         case Reference:
         case Array:
             return sizeof(uintptr_t) * 8;
+        case Never:
+            return 0;
     }
     return 0;
 }

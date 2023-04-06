@@ -38,8 +38,8 @@ enum TokenType {
     Comma,
     Dot,
     Colon,
-    OpenParenthesis,
-    CloseParenthesis,
+    OpenParen,
+    CloseParen,
     OpenBracket,
     CloseBracket,
     OpenBrace,
@@ -48,6 +48,14 @@ enum TokenType {
     Identifier,
     Keyword,
     Eof
+};
+
+struct Span {
+    XString filename;
+    uint row;
+    uint col;
+    XString dump() const;
+    XString wholeDump() const;
 };
 
 class XSharp_EXPORT Token
@@ -63,5 +71,6 @@ class XSharp_EXPORT Token
     bool isKeyword(const XString& keyword) const;
 
     TokenType type;
+    Span span;
     XString value;
 };

@@ -1,5 +1,6 @@
 #include "VarDefinitionProxies.h"
 #include <cerrno>
+#include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Symbol.h"
 #include "XSharp/Types/TypeAdapter.h"
@@ -27,16 +28,17 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
     auto& builder = helper->builder;
     auto& context = helper->context;
 
-    if (helper->currentSymbols->hasSymbol(ast->name())) {
-        helper->error("Redefinition of variable '{}'", ast->name());
-    }
+    assertWithError(!helper->currentSymbols->hasSymbol(ast->name()),
+                    helper->error, ErrorFormatString::redefinition_var,
+                    ast->name());
 
-    Type* var_type;
-    if (ast->type()->toType()->isBasic() || ast->type()->toType()->isArray())
-        var_type = XSharp::getReferenceType(ast->type()->toType());
-    else
-        var_type = XSharp::getReferenceType(
-            XSharp::getReferenceType(ast->type()->toType()));
+    Type* var_type = asEntityType(ast->type()->toType());
+
+    assertWithError(var_type, helper->error, ErrorFormatString::illegal_type,
+                    ast->type()->dump());
+
+    // lhs must be a reference
+    var_type = getReferenceType(var_type);
 
     auto var_alloca =
         builder.CreateAlloca(castToLLVM(var_type->derefType(), context),
@@ -45,18 +47,16 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
     if (ast->initValue()) {
         auto [init_val, init_type] = generator(ast->initValue());
         // validate the initialization
-        if (!init_type) return {nullptr, nullptr};
+        passErrorIfNot(init_type);
 
         init_val = TypeAdapter::llvmConvert(init_type, var_type->derefType(),
                                             init_val);
         // validate the type of init_val
-        if (init_val)
-            builder.CreateStore(init_val, var_alloca);
-        else {
-            helper->error("Cannot convert '{}' to '{}'", init_type->typeName(),
-                          var_type->derefType()->typeName());
-            return {nullptr, nullptr};
-        }
+        assertWithError(var_type, helper->error,
+                        ErrorFormatString::inconvertible, init_type->typeName(),
+                        var_type->derefType()->typeName());
+
+        builder.CreateStore(init_val, var_alloca);
     } else {
         // TODO: default initialization
     }
@@ -73,12 +73,17 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
 ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
                                const Generator& generator)
 {
-    if (helper->globalSymbols.hasSymbol(ast->name())) {
-        helper->error("Redefinition of variable {}", ast->name());
-        return {nullptr, nullptr};
-    }
+    assertWithError(!helper->globalSymbols.hasSymbol(ast->name()),
+                    helper->error, "Redefinition of variable '{}'",
+                    ast->name());
 
-    Type* var_type = XSharp::getReferenceType(ast->type()->toType());
+    Type* var_type = asEntityType(ast->type()->toType());
+
+    assertWithError(var_type, helper->error, ErrorFormatString::illegal_type,
+                    ast->type()->dump());
+
+    // lhs must be a reference
+    var_type = getReferenceType(var_type);
 
     // TODO: Global variable's initValue's processing
     llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(
@@ -89,7 +94,7 @@ ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
     helper->globalSymbols.addSymbol(
         {.name = ast->name(),
          .symbolType = XSharp::SymbolType::GlobalVariable,
-         .type = XSharp::getReferenceType(var_type),
+         .type = var_type,
          .definition = globalVar});
 
     return {globalVar, var_type};
@@ -102,6 +107,7 @@ ValueAndType genDataMember(VariableNode* ast, CodeGenContextHelper* helper,
         helper->error("Redefinition of variable {}", ast->name());
         return {nullptr, nullptr};
     }
+    return {nullptr, nullptr};
 }
 
 }  // namespace XSharp::LLVMCodeGen

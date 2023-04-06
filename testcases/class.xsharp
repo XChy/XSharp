@@ -2,13 +2,19 @@ class A{
 i32 a;
 i32 b;
 i32 c;
+i32 e(){
+        return 1;
+    }
 }
 
 class B{
-i32 a;
-i32 b;
-i32 c;
-A d;
+    i32 a;
+    i32 b;
+    i32 c;
+    A d;
+    i32 e(){
+        return 1;
+    }
 }
 
 i32 sum(A a)
@@ -23,16 +29,16 @@ i32 main()
 
     while(n-1>=0)
     {
-        c[n-1] = new A;
-        print(sum(c[n-1]));
+        c[n - 1] = new A;
+        print(sum(c[n - 1]));
         n = n - 1;
     }
 
     n = 10;
     i32 a = 0;
-    while(n-1>=0){
-        a = a + n-1;
-        n = n -1;
+    while(n - 1 >= 0){
+        a = a + n - 1;
+        n = n - 1;
     }
     print(a);
     return 0;

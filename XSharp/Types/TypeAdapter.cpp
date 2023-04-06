@@ -44,6 +44,7 @@ void TypeAdapter::addConverter(TypeConverter* converter)
 llvm::Value* TypeAdapter::llvmConvert(Type* originalType, Type* expectedType,
                                       llvm::Value* val)
 {
+    // No conversions required
     if (originalType->equals(expectedType)) return val;
 
     for (auto converter : converters) {

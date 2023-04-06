@@ -1,21 +1,20 @@
-#include "FuncDefinitionProxies.h"
-#include <llvm/IR/Function.h>
-#include <llvm/IR/Verifier.h>
-#include <cstdio>
+#include "MemberMethodProxy.h"
+#include <llvm/ADT/APInt.h>
+#include "LLVMIR/CodeGenHelper.h"
+#include "LLVMIR/CodeGenProxy.h"
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"
-#include "XSharp/Symbol.h"
-#include "XSharp/Types/Type.h"
+#include "XSharp/Class/ClassAST.h"
 #include "XSharp/Types/TypeNodes.h"
 #include "XSharp/Types/TypeSystem.h"
+#include "XSharp/XString.h"
 
-using namespace XSharp;
-using namespace XSharp::LLVMCodeGen;
+namespace XSharp::LLVMCodeGen {
 
-ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
-                                                 CodeGenContextHelper* helper,
-                                                 const Generator& generator)
+ValueAndType CodeGenProxy<MemberMethodNode>::codeGen(
+    MemberMethodNode* ast, CodeGenContextHelper* helper,
+    const Generator& generator)
 {
     using llvm::BasicBlock;
     using XSharp::Symbol;
@@ -27,16 +26,24 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     using llvm::ConstantInt;
     using llvm::Function;
 
-    assertWithError(!helper->currentSymbols->hasSymbol(ast->name()),
-                    helper->error, ErrorFormatString::redefinition_func,
-                    ast->name());
+    XString funcName = ast->selfClass->name + "::" + ast->name();
+
+    assertWithError(!helper->currentSymbols->hasSymbol(funcName), helper->error,
+                    ErrorFormatString::redefinition_func, funcName);
 
     Symbol functionSymbol{
-        .name = ast->name(),
+        .name = funcName,
         .symbolType = XSharp::SymbolType::Function,
     };
 
     std::vector<Type*> paramsType;
+
+    // regard 'self' as a parameter
+    auto self_type = asEntityType(Types::get(ast->selfClass->name));
+    assertWithError(self_type, helper->error, ErrorFormatString::illegal_type,
+                    ast->selfClass->name);
+
+    paramsType.push_back(self_type);
     for (auto param : ast->params()) {
         auto paramType = param->type()->toType();
         if (paramType->isBasic())
@@ -66,17 +73,32 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     // TODO: maybe support function definition or lambda in function?
     helper->toNewFunctionScope(functionSymbol);
 
+    // the first argument is self
     auto iter = func->arg_begin();
-    for (int i = 0; i < func->arg_size(); ++i) {
+    auto self_alloca = builder.CreateAlloca(iter->getType());
+    builder.CreateStore(iter, self_alloca);
+    iter->setName("self");
+
+    helper->currentSymbols->addSymbol(
+        {.name = "self",
+         .symbolType = XSharp::SymbolType::Argument,
+         .type = getReferenceType(self_type),
+         .definition = self_alloca});
+
+    iter++;
+
+    for (int i = 1; i < func->arg_size(); ++i) {
         auto arg_alloca = builder.CreateAlloca(iter->getType());
         builder.CreateStore(iter, arg_alloca);
 
         iter->setName(ast->params()[i]->name().toStdString());
+
         helper->currentSymbols->addSymbol(
             {.name = ast->params()[i]->name(),
              .symbolType = XSharp::SymbolType::Argument,
              .type = XSharp::getReferenceType(paramsType[i]),
              .definition = arg_alloca});
+
         iter++;
     }
 
@@ -88,7 +110,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
 
     if (!builder.GetInsertBlock()->getTerminator()) {
         helper->error("There must be a terminator/returner for the function {}",
-                      ast->name());
+                      funcName);
         return {nullptr, nullptr};
     }
 
@@ -102,3 +124,5 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
 
     return {func, functionType};
 }
+
+}  // namespace XSharp::LLVMCodeGen

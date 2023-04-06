@@ -27,21 +27,15 @@ class TypeContext
     uint registerNum = 0;
 };
 
-static std::unordered_map<XString, BasicType> nameToBasicType = {
-    {"void", BasicType::Void},       {"i8", BasicType::I8},
-    {"ui8", BasicType::UI8},         {"i16", BasicType::I16},
-    {"ui16", BasicType::UI16},       {"i32", BasicType::I32},
-    {"i64", BasicType::I64},         {"ui32", BasicType::UI32},
-    {"ui64", BasicType::UI64},       {"float", BasicType::Float},
-    {"double", BasicType::Double},   {"char", BasicType::Char},
-    {"boolean", BasicType::Boolean},
-};
-
 TypeContext* getTypeContext();
 
 Type* getBasicType(BasicType type);
 
 Type* getReferenceType(Type* innerType);
+
+// form the actual type from Identifier, as described bleow
+// e.g. convert Class to Object
+Type* asEntityType(Type* type);
 
 // params' memory is managed by TypeSystem
 Type* getFunctionType(Type* returnValueType,
@@ -61,8 +55,8 @@ Type* registerClass(XClass* classDecl);
 inline Type* getVoidType() { return getBasicType(BasicType::Void); }
 inline Type* getI64Type() { return getBasicType(BasicType::I64); }
 inline Type* getI32Type() { return getBasicType(BasicType::I32); }
-inline Type* getUI32Type() { return getBasicType(BasicType::UI32); }
-inline Type* getUI64Type() { return getBasicType(BasicType::UI64); }
+inline Type* getUI32Type() { return getBasicType(BasicType::U32); }
+inline Type* getUI64Type() { return getBasicType(BasicType::U64); }
 inline Type* getFloatType() { return getBasicType(BasicType::Float); }
 inline Type* getDoubleType() { return getBasicType(BasicType::Double); }
 inline Type* getBooleanType() { return getBasicType(BasicType::Boolean); }

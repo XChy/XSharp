@@ -1,5 +1,6 @@
 #include "ClassProxy.h"
 #include "LLVMIR/CodeGenProxy.h"
+#include "LLVMIR/Utils.h"
 #include "XSharp/Class/ClassAST.h"
 #include "XSharp/Types/Type.h"
 #include "XSharp/Types/TypeNodes.h"
@@ -18,31 +19,28 @@ ValueAndType CodeGenProxy<ClassNode>::codeGen(ClassNode* ast,
     helper->enterScope();
 
     classInfo->name = ast->name;
+    registerClass(classInfo);
 
     for (auto member : ast->members) {
-        // TODO: variable definition
         Field field;
         field.name = member->name();
-        if ((field.type = member->type()->toType())) {
-            if (field.type->category == Type::Class) {
-                field.type = getReferenceType(field.type);
-            }
+        field.type = asEntityType(member->type()->toType());
 
-            classInfo->dataFields.push_back(field);
-        } else {
-            helper->error("No typename matched with {}",
-                          member->type()->dump());
-            return {nullptr, nullptr};
-        }
+        assertWithError(field.type, helper->error,
+                        ErrorFormatString::illegal_type,
+                        member->type()->dump());
+
+        classInfo->dataFields.push_back(field);
     }
 
     for (auto method : ast->methods) {
-        // TODO: process class' function
+        auto [_, method_type] = generator(method);
+
+        passErrorIfNot(method_type);
     }
 
     helper->exitScope();
 
     // FIXME: memory leak when no variables with the same type are declared
-    registerClass(classInfo);
     return {nullptr, getVoidType()};
 }

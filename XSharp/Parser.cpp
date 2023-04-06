@@ -63,7 +63,9 @@ ClassNode* Parser::classDecl()
             auto var = variableDecl({SentenceEnd});
             classNode->members.push_back(var);
         } else if (isFunctionDecl()) {
-            auto func = functionDecl();
+            auto func = memberMethodDecl();
+            func->selfClass = classNode;
+
             classNode->methods.push_back(func);
         } else {
             throw XSharpError("Not a field in class");
@@ -103,10 +105,34 @@ bool Parser::isFunctionDecl() const
     localCurrent++;
 
     // '(paramlist)'
-    if (localCurrent->is(OpenParenthesis)) return true;
+    if (localCurrent->is(OpenParen)) return true;
 
     return false;
 }
+
+MemberMethodNode* Parser::memberMethodDecl()
+{
+    MemberMethodNode* root = new MemberMethodNode;
+
+    root->setReturnType(type());
+
+    root->setName(current->value);
+    forward();
+
+    // start with '('
+    if (current->type != OpenParen) {
+        throw XSharpError("No '(' matched");
+    }
+    forward();
+
+    root->setParams(parameters());
+    // end with ')', so skip ')'
+    forward();
+
+    root->setImpl(block());
+    return root;
+}
+
 FunctionNode* Parser::functionDecl()
 {
     FunctionNode* root = new FunctionNode;
@@ -117,7 +143,7 @@ FunctionNode* Parser::functionDecl()
     forward();
 
     // start with '('
-    if (current->type != OpenParenthesis) {
+    if (current->type != OpenParen) {
         throw XSharpError("No '(' matched");
     }
     forward();
@@ -193,13 +219,13 @@ std::vector<VariableNode*> Parser::parameters()
     std::vector<VariableNode*> params;
 
     // if no parameter in parentheses, then return empty paramsDef
-    if (current->type == CloseParenthesis) return params;
+    if (current->type == CloseParen) return params;
 
     while (true) {
-        params.push_back(variableDecl({Comma, CloseParenthesis}));
+        params.push_back(variableDecl({Comma, CloseParen}));
         backward();
 
-        if (current->is(CloseParenthesis))
+        if (current->is(CloseParen))
             break;
         else if (current->is(Comma))
             forward();
@@ -212,11 +238,11 @@ std::vector<VariableNode*> Parser::parameters()
 std::vector<ASTNode*> Parser::argsList()
 {
     std::vector<ASTNode*> results;
-    if (current->is(CloseParenthesis)) return results;
+    if (current->is(CloseParen)) return results;
 
     while (true) {
-        results.push_back(expression({CloseParenthesis, Comma}));
-        if (current->is(CloseParenthesis))
+        results.push_back(expression({CloseParen, Comma}));
+        if (current->is(CloseParen))
             break;
         else if (current->is(Comma))
             current++;
@@ -300,9 +326,9 @@ IfNode* Parser::ifStatement()
     forward();
 
     // Condtion
-    if (current->type == OpenParenthesis) {
+    if (current->type == OpenParen) {
         forward();
-        condition = expression({CloseParenthesis});
+        condition = expression({CloseParen});
         forward();
     } else {
         throw XSharpError(ParsingError, "No 'if' matched");
@@ -342,9 +368,9 @@ WhileNode* Parser::whileStatement()
     forward();
 
     // Condtion
-    if (current->type == OpenParenthesis) {
+    if (current->type == OpenParen) {
         forward();
-        condition = expression({CloseParenthesis});
+        condition = expression({CloseParen});
         forward();
     } else {
         throw XSharpError(ParsingError, "No 'while' matched");
@@ -421,7 +447,7 @@ ASTNode* Parser::operand()
                 throw XSharpError("No member matched with '.'");
             }
 
-        } else if (current->type == OpenParenthesis) {
+        } else if (current->type == OpenParen) {
             current++;
             FunctionCallNode* funcCall = new FunctionCallNode;
             funcCall->setArgs(argsList());
@@ -486,9 +512,9 @@ ASTNode* Parser::factor()
         factor = new CharNode(current->value[0]);
     } else if (current->type == String) {
         factor = new StringNode(current->value);
-    } else if (current->type == OpenParenthesis) {
+    } else if (current->type == OpenParen) {
         forward();
-        factor = expression({CloseParenthesis});
+        factor = expression({CloseParen});
     } else if (current->type == Identifier) {
         factor = new VariableExprNode(current->value);
     } else if (current->isKeyword("new")) {
@@ -496,7 +522,7 @@ ASTNode* Parser::factor()
 
         auto allocatedType = type();
         std::vector<ASTNode*> args;
-        if (current->is(OpenParenthesis)) {
+        if (current->is(OpenParen)) {
             forward();
             args = argsList();
         } else {
