@@ -36,27 +36,26 @@ ValueAndType CodeGenProxy<MemberMethodNode>::codeGen(
         .symbolType = XSharp::SymbolType::Function,
     };
 
-    std::vector<Type*> paramsType;
+    std::vector<Type*> paramTypes;
 
     // regard 'self' as a parameter
     auto self_type = asEntityType(Types::get(ast->selfClass->name));
     assertWithError(self_type, helper->error, ErrorFormatString::illegal_type,
                     ast->selfClass->name);
+    paramTypes.push_back(self_type);
 
-    paramsType.push_back(self_type);
     for (auto param : ast->params()) {
-        auto paramType = param->type()->toType();
-        if (paramType->isBasic())
-            paramsType.push_back(paramType);
-        else if (paramType->category == Type::Class)
-            paramsType.push_back(getReferenceType(paramType));
+        auto paramType = asEntityType(param->type()->toType());
+        assertWithError(paramType, helper->error,
+                        ErrorFormatString::illegal_type, param->type()->dump());
+        paramTypes.push_back(paramType);
     }
 
     auto retType = asEntityType(ast->returnType()->toType());
     assertWithError(retType, helper->error, ErrorFormatString::illegal_type,
                     ast->returnType()->dump());
 
-    Type* functionType = XSharp::getFunctionType(retType, paramsType);
+    Type* functionType = XSharp::getFunctionType(retType, paramTypes);
 
     Function* func = Function::Create(
         (llvm::FunctionType*)castToLLVM(functionType, context),
@@ -91,12 +90,12 @@ ValueAndType CodeGenProxy<MemberMethodNode>::codeGen(
         auto arg_alloca = builder.CreateAlloca(iter->getType());
         builder.CreateStore(iter, arg_alloca);
 
-        iter->setName(ast->params()[i]->name().toStdString());
+        iter->setName(ast->params()[i - 1]->name().toStdString());
 
         helper->currentSymbols->addSymbol(
-            {.name = ast->params()[i]->name(),
+            {.name = ast->params()[i - 1]->name(),
              .symbolType = XSharp::SymbolType::Argument,
-             .type = XSharp::getReferenceType(paramsType[i]),
+             .type = XSharp::getReferenceType(paramTypes[i]),
              .definition = arg_alloca});
 
         iter++;

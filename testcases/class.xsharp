@@ -1,46 +1,40 @@
-class A{
-i32 a;
-i32 b;
-i32 c;
-i32 sum(){
-        return self.a+self.b+self.c;
-    }
+class Foo{
+
+void setAge(i32 age){
+    self.age = age;
 }
 
-class B{
-    i32 a;
-    i32 b;
-    i32 c;
-    A d;
-    i32 sum(){
-        return self.a+self.b+self.c;
-    }
+i32 getAge(){
+    return self.age;
 }
 
-i32 sum(A a)
-{
-    return  a.a + a.b + a.c;
+i32 age;
+
 }
+
 
 i32 main()
 {
     i64 n = inputI32();
-    A[] c = new A[](10);
-    A b = new A;
 
-    while(n-1>=0)
+    Foo[] c = new Foo[](n);
+
+    i64 i = n;
+    while(i-1>=0)
     {
-        c[n - 1] = new A;
-        print(c[n - 1].sum());
-        n = n - 1;
+        c[i - 1] = new Foo;
+        c[i - 1].setAge(inputI32());
+        i = i - 1;
     }
 
-    n = 10;
-    i32 a = 0;
-    while(n - 1 >= 0){
-        a = a + n - 1;
-        n = n - 1;
+    i32 sum = 0;
+    i = n;
+    while(i - 1 >= 0){
+        sum = sum + c[i - 1].getAge();
+        i = i - 1;
     }
-    print(a);
+
+    print("Average age is:");
+    print(sum/n);
     return 0;
 }

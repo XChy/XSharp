@@ -162,7 +162,7 @@ Type* XSharp::getClosureType()
 
 Type* XSharp::getMergedType(Type* lhs_type, Type* rhs_type)
 {
-    Type* merged_type;
+    Type* merged_type = nullptr;
     if (lhs_type->isInteger() && rhs_type->isInteger()) {
         if ((lhs_type->isSigned() && rhs_type->isSigned()) ||
             (lhs_type->isUnsigned() && rhs_type->isUnsigned())) {

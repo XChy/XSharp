@@ -36,9 +36,10 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
         .symbolType = XSharp::SymbolType::Function,
     };
 
-    std::vector<Type*> paramsType;
+    std::vector<Type*> paramTypes;
     for (auto param : ast->params()) {
         auto paramType = asEntityType(param->type()->toType());
+        paramTypes.push_back(paramType);
         assertWithError(paramType, helper->error,
                         ErrorFormatString::illegal_type, param->type()->dump());
     }
@@ -47,7 +48,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     assertWithError(retType, helper->error, ErrorFormatString::illegal_type,
                     ast->returnType()->dump());
 
-    Type* functionType = XSharp::getFunctionType(retType, paramsType);
+    Type* functionType = XSharp::getFunctionType(retType, paramTypes);
 
     Function* func = Function::Create(
         (llvm::FunctionType*)castToLLVM(functionType, context),
@@ -74,7 +75,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
         helper->currentSymbols->addSymbol(
             {.name = ast->params()[i]->name(),
              .symbolType = XSharp::SymbolType::Argument,
-             .type = XSharp::getReferenceType(paramsType[i]),
+             .type = XSharp::getReferenceType(paramTypes[i]),
              .definition = arg_alloca});
         iter++;
     }

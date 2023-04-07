@@ -1,6 +1,7 @@
 #include "ControlFlowProxies.h"
 #include <llvm-14/llvm/IR/BasicBlock.h>
 #include <llvm-14/llvm/IR/Type.h>
+#include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/CodeGenProxy.h"
 #include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"
@@ -22,6 +23,7 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
     BasicBlock* currentBlock = builder.GetInsertBlock();
 
     auto [cond_val, cond_type] = generator(ast->condition);
+    passErrorIfNot(cond_type);
 
     cond_val =
         TypeAdapter::llvmConvert(cond_type, XSharp::getBooleanType(), cond_val);
@@ -37,7 +39,7 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
     // then
     builder.SetInsertPoint(thenBlock);
     auto [then_val, then_type] = generator(ast->block);
-    if (!then_type) return {nullptr, nullptr};
+    passErrorIfNot(then_type);
 
     if (!builder.GetInsertBlock()->getTerminator()) builder.CreateBr(endBlock);
 
@@ -46,7 +48,7 @@ ValueAndType CodeGenProxy<IfNode>::codeGen(IfNode* ast,
     builder.SetInsertPoint(elseBlock);
     if (ast->elseAst) {
         auto [else_val, else_type] = generator(ast->elseAst);
-        if (!else_type) return {nullptr, nullptr};
+        passErrorIfNot(else_type);
     }
     if (!builder.GetInsertBlock()->getTerminator()) builder.CreateBr(endBlock);
 
@@ -76,6 +78,7 @@ ValueAndType CodeGenProxy<WhileNode>::codeGen(WhileNode* ast,
     builder.SetInsertPoint(loop_cond);
 
     auto [cond_val, cond_type] = generator(ast->condition);
+    passErrorIfNot(cond_type);
 
     cond_val = XSharp::TypeAdapter::llvmConvert(
         cond_type, XSharp::getBooleanType(), cond_val);
@@ -108,16 +111,16 @@ ValueAndType CodeGenProxy<ReturnNode>::codeGen(ReturnNode* ast,
     auto& context = helper->context;
 
     if (ast->returnValue()) {
-        auto [retVal, retType] = generator(ast->returnValue());
-        if (!retType) return {nullptr, nullptr};
+        auto [ret_val, ret_type] = generator(ast->returnValue());
+        passErrorIfNot(ret_type);
 
-        retVal = TypeAdapter::llvmConvert(retType, helper->currentReturnType,
-                                          retVal);
-        assertWithError(retVal, helper->error, ErrorFormatString::inconvertible,
-                        retType->typeName(),
+        ret_val = TypeAdapter::llvmConvert(ret_type, helper->currentReturnType,
+                                           ret_val);
+        assertWithError(ret_val, helper->error,
+                        ErrorFormatString::inconvertible, ret_type->typeName(),
                         helper->currentReturnType->typeName());
 
-        return {builder.CreateRet(retVal), XSharp::getVoidType()};
+        return {builder.CreateRet(ret_val), XSharp::getVoidType()};
     } else {
         return {builder.CreateRetVoid(), getVoidType()};
     }

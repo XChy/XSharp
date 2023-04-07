@@ -1,5 +1,6 @@
 #include "LogicalOpImpl.h"
 #include "LLVMIR/CodeGenHelper.h"
+#include "LLVMIR/Utils.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"
 namespace XSharp {
@@ -11,6 +12,9 @@ ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
 
+    passErrorIfNot(lhs_type);
+    passErrorIfNot(rhs_type);
+
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
         helper->error("Cannot compare non-numbers");
@@ -18,6 +22,7 @@ ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     }
 
     Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    passErrorIfNot(merged_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -36,6 +41,9 @@ ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
 
+    passErrorIfNot(lhs_type);
+    passErrorIfNot(rhs_type);
+
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
         helper->error("Cannot compare non-numbers");
@@ -43,6 +51,7 @@ ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     }
 
     Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    passErrorIfNot(merged_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -60,6 +69,9 @@ ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
 
+    passErrorIfNot(lhs_type);
+    passErrorIfNot(rhs_type);
+
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
         helper->error("Cannot compare non-numbers");
@@ -67,6 +79,7 @@ ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     }
 
     Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    passErrorIfNot(merged_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -88,6 +101,9 @@ ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
 
+    passErrorIfNot(lhs_type);
+    passErrorIfNot(rhs_type);
+
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
         helper->error("Cannot compare non-numbers");
@@ -95,6 +111,7 @@ ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     }
 
     Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    passErrorIfNot(merged_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -117,6 +134,9 @@ ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op,
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
 
+    passErrorIfNot(lhs_type);
+    passErrorIfNot(rhs_type);
+
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
         helper->error("Cannot compare non-numbers");
@@ -124,6 +144,7 @@ ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op,
     }
 
     Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    passErrorIfNot(merged_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -146,6 +167,9 @@ ValueAndType LessOrEqualImpl(BinaryOperatorNode* op,
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
     auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
 
+    passErrorIfNot(lhs_type);
+    passErrorIfNot(rhs_type);
+
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
         // TODO: Support customed operator
         helper->error("Cannot compare non-numbers");
@@ -153,6 +177,7 @@ ValueAndType LessOrEqualImpl(BinaryOperatorNode* op,
     }
 
     Type* merged_type = XSharp::getMergedType(lhs_type, rhs_type);
+    passErrorIfNot(merged_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
@@ -175,6 +200,9 @@ ValueAndType LogicalAndImpl(BinaryOperatorNode* op,
     auto [lhs, lhs_type] = generator(op->left());
     auto [rhs, rhs_type] = generator(op->right());
 
+    passErrorIfNot(lhs_type);
+    passErrorIfNot(rhs_type);
+
     lhs = TypeAdapter::llvmConvert(lhs_type, XSharp::getBooleanType(), lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, XSharp::getBooleanType(), rhs);
 
@@ -191,6 +219,9 @@ ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
 {
     auto [lhs, lhs_type] = generator(op->left());
     auto [rhs, rhs_type] = generator(op->right());
+
+    passErrorIfNot(lhs_type);
+    passErrorIfNot(rhs_type);
 
     lhs = TypeAdapter::llvmConvert(lhs_type, XSharp::getBooleanType(), lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, XSharp::getBooleanType(), rhs);

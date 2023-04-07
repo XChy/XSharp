@@ -6,6 +6,7 @@
 #include <llvm-14/llvm/IR/DerivedTypes.h>
 #include <llvm-14/llvm/IR/GlobalVariable.h>
 #include "LLVMIR/LLVMTypes.h"
+#include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"
@@ -109,11 +110,8 @@ ValueAndType CodeGenProxy<VariableExprNode>::codeGen(
     VariableExprNode* ast, CodeGenContextHelper* helper,
     const Generator& generator)
 {
-    if (helper->currentSymbols->hasSymbol(ast->name())) {
-        auto symbol = helper->currentSymbols->findVariable(ast->name());
-        return {symbol.definition, symbol.type};
-    } else {
-        helper->error("No such variable named {}", ast->name());
-        return {nullptr, nullptr};
-    }
+    auto symbol = helper->currentSymbols->findVariable(ast->name());
+    assertWithError(symbol.symbolType != SymbolType::NoneSymbol, helper->error,
+                    "No such variable named {}", ast->name());
+    return {symbol.definition, symbol.type};
 }
