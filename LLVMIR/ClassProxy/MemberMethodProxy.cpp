@@ -109,9 +109,15 @@ ValueAndType CodeGenProxy<MemberMethodNode>::codeGen(
     }
 
     if (!builder.GetInsertBlock()->getTerminator()) {
-        helper->error("There must be a terminator/returner for the function {}",
-                      funcName);
-        return {nullptr, nullptr};
+        if (helper->currentReturnType->isBasic() &&
+            helper->currentReturnType->basicType() == BasicType::Void) {
+            builder.CreateRetVoid();
+        } else {
+            helper->error(
+                "There must be a terminator/returner for the function {}",
+                ast->name());
+            return {nullptr, nullptr};
+        }
     }
 
     helper->exitScope();
