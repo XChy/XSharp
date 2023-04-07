@@ -97,7 +97,7 @@ class foo
     void setAge(i32 age)
     {
         self.age = age;
-        return; // I will impliment automatical return in the future
+        return; // I will implement automatical return in the future
     }
 
     i32 age;
