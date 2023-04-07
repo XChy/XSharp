@@ -38,11 +38,9 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
 
     std::vector<Type*> paramsType;
     for (auto param : ast->params()) {
-        auto paramType = param->type()->toType();
-        if (paramType->isBasic())
-            paramsType.push_back(paramType);
-        else if (paramType->category == Type::Class)
-            paramsType.push_back(getReferenceType(paramType));
+        auto paramType = asEntityType(param->type()->toType());
+        assertWithError(paramType, helper->error,
+                        ErrorFormatString::illegal_type, param->type()->dump());
     }
 
     auto retType = asEntityType(ast->returnType()->toType());
@@ -66,6 +64,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     // TODO: maybe support function definition or lambda in function?
     helper->toNewFunctionScope(functionSymbol);
 
+    // transform parameters to arguments
     auto iter = func->arg_begin();
     for (int i = 0; i < func->arg_size(); ++i) {
         auto arg_alloca = builder.CreateAlloca(iter->getType());
@@ -87,9 +86,15 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     }
 
     if (!builder.GetInsertBlock()->getTerminator()) {
-        helper->error("There must be a terminator/returner for the function {}",
-                      ast->name());
-        return {nullptr, nullptr};
+        if (helper->currentReturnType->isBasic() &&
+            helper->currentReturnType->basicType() == BasicType::Void) {
+            builder.CreateRetVoid();
+        } else {
+            helper->error(
+                "There must be a terminator/returner for the function {}",
+                ast->name());
+            return {nullptr, nullptr};
+        }
     }
 
     helper->exitScope();
