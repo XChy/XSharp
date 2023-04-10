@@ -21,13 +21,13 @@ int main(int argc, char* argv[])
 
     try {
         XSharp::Lexer lexer;
-        auto tokens = (lexer.tokenize(buffer));
+        auto tokens = lexer.tokenize(buffer);
         std::vector<std::string> dumps;
         for (auto token : tokens) {
             dumps.push_back(token.dump().toStdString());
         }
 
-        fmt::print("{}\n", fmt::join(dumps, ", "));
+        fmt::print("{}\n", fmt::join(dumps, ", \n"));
     } catch (XSharpError& e) {
         fmt::print("ERROR:{}\n", e.errorInfo);
     }

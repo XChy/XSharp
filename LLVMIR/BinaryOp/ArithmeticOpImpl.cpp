@@ -47,7 +47,10 @@ ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
-    return {helper->builder.CreateAdd(lhs, rhs), merged_type};
+    if (merged_type->isInteger())
+        return {helper->builder.CreateAdd(lhs, rhs), merged_type};
+    else
+        return {helper->builder.CreateFAdd(lhs, rhs), merged_type};
 }
 
 ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,

@@ -504,7 +504,7 @@ ASTNode* Parser::factor()
     ASTNode* factor;
     if (current->type == Integer) {
         factor = new IntegerNode(current->value.toInteger<int64_t>());
-    } else if (current->type == DecimalFraction) {
+    } else if (current->type == Decimal) {
         factor = new DecimalFractionNode(current->value.toDouble());
     } else if (current->type == Boolean) {
         factor = new BooleanNode(current->value == "true");

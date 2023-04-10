@@ -4,158 +4,176 @@
 
 using namespace XSharp;
 
-Lexer::Lexer() {}
+Lexer::Lexer() : row(1), col(1) {}
 
-std::vector<Token> Lexer::tokenize(const XString &source) const
+std::vector<Token> Lexer::tokenize(const XString &source)
 {
     std::vector<Token> result;
-    XString::const_iterator it = source.begin();
-    while (it != source.end()) {
-        if (it->isDigit()) {  // number
+    currentIter = source.begin();
+    while (!isEof()) {
+        if (cur().isDigit()) {  // number
             XString value;
-            auto tokenBegin = it;
 
-            if (*it == '0') {
-                ++it;
-                if (*it == 'x' || *it == 'X') {
-                    ++it;  // needn't analyze '0x' part
-                    result.push_back(Token(Integer, hex(it)));
-                } else if (*it == 'b' || *it == 'B') {
-                    ++it;  // needn't analyze '0b' part
-                    result.push_back(Token(Integer, bin(it)));
+            if (cur() == '0') {
+                if (peek() == 'x' || peek() == 'X') {
+                    next();
+                    next();
+                    // needn't analyze '0x' part
+                    result.push_back(Token(Integer, hex(), currentSpan()));
+                } else if (peek() == 'b' || peek() == 'B') {
+                    next();
+                    next();
+                    result.push_back(Token(Integer, bin(), currentSpan()));
                 } else {
-                    it = tokenBegin;
-                    result.push_back(dec(it));
+                    result.push_back(dec());
                 }
             } else {
-                result.push_back(dec(it));
+                result.push_back(dec());
             }
-        } else if (XSharp::isOperator(*it)) {
+        } else if (XSharp::isOperator(cur())) {
             XString value;
-            value.append(*it);
-            ++it;
-            while (XSharp::isOperator(*it) &&
-                   XSharp::operatorContains(value + *it)) {
-                value.append(*it);
-                ++it;
+            value.append(cur());
+            next();
+            while (XSharp::isOperator(cur()) &&
+                   XSharp::operatorContains(value + cur())) {
+                value.append(cur());
+                next();
             }
-            result.push_back(Token(Operator, value));
-        } else if (it->isLetter() || *it == '_') {
+            result.push_back(Token(Operator, value, currentSpan()));
+        } else if (cur().isLetter() || cur() == '_') {
             XString value;
-            value.append(*it);
-            ++it;
-            ;
-            while (it->isLetterOrDigit() || *it == '_') {
-                value.append(*it);
-                ++it;
-                ;
+            value.append(cur());
+            next();
+            while (cur().isLetterOrDigit() || cur() == '_') {
+                value.append(cur());
+                next();
             }
             if (value == "true")
-                result.push_back(Token(Boolean, value));
+                result.push_back(Token(Boolean, value, currentSpan()));
             else if (value == "false")
-                result.push_back(Token(Boolean, value));
+                result.push_back(Token(Boolean, value, currentSpan()));
             else if (value == "null")
-                result.push_back(Token(Null, value));
+                result.push_back(Token(Null, value, currentSpan()));
             else if (XSharp::isKeyword(value))
-                result.push_back(Token(Keyword, value));
+                result.push_back(Token(Keyword, value, currentSpan()));
             else
-                result.push_back(Token(Identifier, value));
+                result.push_back(Token(Identifier, value, currentSpan()));
 
-        } else if (*it == ';') {
-            result.push_back(Token(SentenceEnd, ";"));
-            ++it;
-        } else if (*it == '(') {
-            result.push_back(Token(OpenParen, "("));
-            ++it;
-        } else if (*it == ')') {
-            result.push_back(Token(CloseParen, ")"));
-            ++it;
-        } else if (*it == '[') {
-            result.push_back(Token(OpenBracket, "["));
-            ++it;
-        } else if (*it == ']') {
-            result.push_back(Token(CloseBracket, "]"));
-            ++it;
-        } else if (*it == '{') {
-            result.push_back(Token(OpenBrace, "{"));
-            ++it;
-        } else if (*it == '}') {
-            result.push_back(Token(CloseBrace, "}"));
-            ++it;
-        } else if (*it == ',') {
-            result.push_back(Token(Comma, ","));
-            ++it;
-            ;
-        } else if (*it == '\'') {
-            ++it;
+        } else if (cur() == ';') {
+            result.push_back(Token(SentenceEnd, ";", currentSpan()));
+            next();
+        } else if (cur() == '(') {
+            result.push_back(Token(OpenParen, "(", currentSpan()));
+            next();
+        } else if (cur() == ')') {
+            result.push_back(Token(CloseParen, ")", currentSpan()));
+            next();
+        } else if (cur() == '[') {
+            result.push_back(Token(OpenBracket, "[", currentSpan()));
+            next();
+        } else if (cur() == ']') {
+            result.push_back(Token(CloseBracket, "]", currentSpan()));
+            next();
+        } else if (cur() == '{') {
+            result.push_back(Token(OpenBrace, "{", currentSpan()));
+            next();
+        } else if (cur() == '}') {
+            result.push_back(Token(CloseBrace, "}", currentSpan()));
+            next();
+        } else if (cur() == ',') {
+            result.push_back(Token(Comma, ",", currentSpan()));
+            next();
+        } else if (cur() == '\'') {
+            next();
             XString value;
-            while (*it != '\'' && it->value()) {
-                value.append(*it);
-                ++it;
+            while (cur() != '\'' && cur() != '\n' && !isEof()) {
+                value.append(cur());
+                next();
             }
-            ++it;
+            next();
             // TODO: check count of char, and transfered char
-            result.push_back(Token(Char, value));
-        } else if (*it == '\"') {
-            ++it;
+            result.push_back(Token(Char, value, currentSpan()));
+        } else if (cur() == '\"') {
+            next();
             XString value;
-            while (*it != '\"') {
-                value.append(*it);
-                ++it;
+            while (cur() != '\"') {
+                value.append(cur());
+                next();
             }
-            ++it;
-            result.push_back(Token(String, value));
-        } else if (*it == '.') {
-            ++it;
-            result.push_back(Token(Dot, "."));
-        } else if (*it == ':') {
-            ++it;
-            result.push_back(Token(Colon, ":"));
-        } else if (it->isSpace() || *it == '\n' || *it == '\r') {
-            ++it;
+            next();
+            result.push_back(Token(String, value, currentSpan()));
+        } else if (cur() == '.') {
+            next();
+            result.push_back(Token(Dot, ".", currentSpan()));
+        } else if (cur() == ':') {
+            next();
+            result.push_back(Token(Colon, ":", currentSpan()));
+        } else if (cur() == '\n' || cur() == '\r') {
+            next();
+            row++;
+            col = 1;
+        } else if (cur().isSpace()) {
+            next();
         } else {
-            throw XSharpError(XString("Unknown char:").append(*it));
+            throw XSharpError(XString("Unknown char:").append(cur()));
         }
     }
     return result;
 }
 
-XString Lexer::hex(XString::const_iterator &it) const
+XString Lexer::hex()
 {
     XString result;
-    while (it->isDigit() || (*it >= 'a' && *it <= 'f') ||
-           (*it >= 'A' && *it <= 'F')) {
-        result.append(*it);
-        ++it;
+    while (cur().isDigit() || (cur() >= 'a' && cur() <= 'f') ||
+           (cur() >= 'A' && cur() <= 'F')) {
+        result.append(cur());
+        next();
     }
     return XString::fromInterger(result.toInteger<int64_t>(16), 10);
 }
 
-XString Lexer::bin(XString::const_iterator &it) const
+XString Lexer::bin()
 {
     XString result;
-    while (it->isDigit()) {
-        result.append(*it);
-        ++it;
+    while (cur().isDigit()) {
+        result.append(cur());
+        next();
     }
     return XString::fromInterger(result.toInteger<int64_t>(2), 10);
 }
 
-Token Lexer::dec(XString::const_iterator &it) const
+Token Lexer::dec()
 {
     XString result;
-    bool isDecimalFraction = false;
+    bool isDecimal = false;
 
-    while (it->isDigit() || *it == '.') {
-        if (*it == '.') {
-            isDecimalFraction = true;
-        }
-        result.append(*it);
-        ++it;
+    while (cur().isDigit() || cur() == '.') {
+        if (cur() == '.') isDecimal = true;
+
+        result.append(cur());
+        next();
     }
 
-    if (isDecimalFraction)
-        return Token(DecimalFraction, result);
+    if (isDecimal)
+        return Token(Decimal, result, currentSpan());
     else
-        return Token(Integer, result);
+        return Token(Integer, result, currentSpan());
+}
+
+bool Lexer::next()
+{
+    currentIter++;
+    col++;
+    return *currentIter != '\0';
+}
+
+bool Lexer::isEof() { return *currentIter == '\0'; }
+
+XChar Lexer::peek() const { return *(currentIter + 1); }
+
+XChar Lexer::cur() const { return *currentIter; }
+
+Span Lexer::currentSpan() const
+{
+    return Span{.filename = filename, .row = row, .col = col};
 }

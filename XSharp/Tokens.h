@@ -29,7 +29,7 @@ bool operatorContains(const XString& part);
 
 enum TokenType {
     Integer,
-    DecimalFraction,
+    Decimal,
     Boolean,
     Char,
     String,
@@ -47,7 +47,8 @@ enum TokenType {
     SentenceEnd,
     Identifier,
     Keyword,
-    Eof
+    Eof,
+    LexerError
 };
 
 struct Span {
@@ -63,6 +64,7 @@ class XSharp_EXPORT Token
    public:
     Token() = default;
     Token(TokenType type, const XString& value);
+    Token(TokenType type, const XString& value, const Span& span);
 
     XString dump() const;
 
@@ -71,6 +73,6 @@ class XSharp_EXPORT Token
     bool isKeyword(const XString& keyword) const;
 
     TokenType type;
-    Span span;
     XString value;
+    Span span;
 };

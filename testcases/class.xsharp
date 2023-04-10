@@ -27,7 +27,7 @@ i32 main()
         i = i - 1;
     }
 
-    i32 sum = 0;
+    double sum = 0;
     i = n;
     while(i - 1 >= 0){
         sum = sum + c[i - 1].getAge();
@@ -35,6 +35,6 @@ i32 main()
     }
 
     print("Average age is:");
-    print(sum/n);
+    print(sum / n);
     return 0;
 }

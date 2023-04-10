@@ -11,6 +11,11 @@ XString Span::wholeDump() const
 
 Token::Token(TokenType type, const XString &value) : type(type), value(value) {}
 
+Token::Token(TokenType type, const XString &value, const Span &span)
+    : type(type), value(value), span(span)
+{
+}
+
 XString Token::dump() const
 {
     XString result = span.dump();
@@ -19,7 +24,7 @@ XString Token::dump() const
         case TokenType::Integer:
             result.append("Integer:");
             break;
-        case TokenType::DecimalFraction:
+        case TokenType::Decimal:
             result.append("DecimalFraction:");
             break;
         case TokenType::Char:
@@ -77,7 +82,7 @@ XString Token::dump() const
             result.append("Unknown");
             break;
     }
-    result.append(value);
+    result.append(fmt::format("'{}'", value));
     return result;
 }
 

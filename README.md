@@ -87,6 +87,7 @@ i32 abs(i32 a)
 - ### Class Declaration
 
 ```C++
+
 class foo
 {
     i32 getAge()
@@ -97,10 +98,19 @@ class foo
     void setAge(i32 age)
     {
         self.age = age;
-        return; // I will implement automatical return in the future
     }
 
     i32 age;
+}
+
+```
+
+- ### HelloWorld
+
+```C++
+
+void main(){
+    print("Hello,World!");
 }
 
 ```

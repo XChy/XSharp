@@ -1,5 +1,5 @@
 #include "Utils.h"
-#include <llvm-14/llvm/IR/Value.h>
+#include <llvm/IR/Value.h>
 #include "XSharp/Types/Type.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"

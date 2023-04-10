@@ -59,3 +59,8 @@ testcases/class.xsharp.out
 testcases/recursive.xsharp.bc
 testcases/recursive.xsharp.o
 testcases/recursive.xsharp.out
+testcases/recursive
+testcases/string
+testcases/string
+testcases/string.xsharp.bc
+testcases/string.xsharp.o

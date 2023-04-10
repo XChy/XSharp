@@ -1,15 +1,5 @@
-i64 add(i64 g,i64 h){
-    return g+h;
-}
-
 void main(){
-    i64 a;
-    i64 b;
-    a = 10086;
-    b = 100;
-    print(add(a,b)+add(b,a));
-    print(add(b,b)+add(b,b));
-    return;
+    print("Hello,World!");
 }
 
 
