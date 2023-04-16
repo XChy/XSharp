@@ -9,7 +9,7 @@ template <>
 class CodeGenProxy<MemberExprNode>
 {
    public:
-    ValueAndType codeGen(MemberExprNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(MemberExprNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 

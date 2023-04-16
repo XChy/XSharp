@@ -14,9 +14,9 @@
 using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
 
-ValueAndType CodeGenProxy<DefinitionsNode>::codeGen(
-    DefinitionsNode* ast, CodeGenContextHelper* helper,
-    const Generator& generator)
+ValueAndType CodeGenProxy<DefinitionsNode>::codeGen(DefinitionsNode* ast,
+                                                    CodeGenContext* helper,
+                                                    const Generator& generator)
 {
     if (ast->is<DefinitionsNode>()) {
         DefinitionsNode* definitions = ast->to<DefinitionsNode>();
@@ -31,49 +31,50 @@ ValueAndType CodeGenProxy<DefinitionsNode>::codeGen(
 }
 
 ValueAndType CodeGenProxy<IntegerNode>::codeGen(IntegerNode* ast,
-                                                CodeGenContextHelper* helper,
+                                                CodeGenContext* helper,
                                                 const Generator& generator)
 {
     using llvm::APInt;
     using llvm::ConstantInt;
-    auto val = ConstantInt::get(helper->context, APInt(64, ast->value()));
+    auto val = ConstantInt::get(helper->llvm_ctx, APInt(64, ast->value()));
 
     return {val, XSharp::getI64Type()};
 }
 
 ValueAndType CodeGenProxy<DecimalFractionNode>::codeGen(
-    DecimalFractionNode* ast, CodeGenContextHelper* helper,
+    DecimalFractionNode* ast, CodeGenContext* helper,
     const Generator& generator)
 {
     using llvm::APFloat;
     using llvm::ConstantFP;
-    auto val = ConstantFP::get(helper->context, APFloat(ast->value()));
+    auto val = ConstantFP::get(helper->llvm_ctx, APFloat(ast->value()));
 
     return {val, XSharp::getDoubleType()};
 }
 
 ValueAndType CodeGenProxy<CharNode>::codeGen(CharNode* ast,
-                                             CodeGenContextHelper* helper,
+                                             CodeGenContext* helper,
                                              const Generator& generator)
 {
     using llvm::APInt;
     using llvm::ConstantInt;
 
-    auto val = ConstantInt::get(
-        helper->context, APInt(Types::get("char")->bits(), ast->value.value()));
+    auto val =
+        ConstantInt::get(helper->llvm_ctx,
+                         APInt(Types::get("char")->bits(), ast->value.value()));
     return {val, Types::get("char")};
 }
 
 ValueAndType CodeGenProxy<StringNode>::codeGen(StringNode* ast,
-                                               CodeGenContextHelper* helper,
+                                               CodeGenContext* helper,
                                                const Generator& generator)
 {
     auto llvm_array_type = (llvm::ArrayType*)castToLLVM(
-        XSharp::getArrayType(Types::get("char"), 1), helper->context);
+        XSharp::getArrayType(Types::get("char"), 1), helper->llvm_ctx);
     std::vector<llvm::Constant*> chars;
     for (int i = 0; i <= ast->value().size(); ++i) {
-        chars.push_back(
-            helper->builder.getInt(llvm::APInt(16, ast->value()[i].value())));
+        chars.push_back(helper->llvm_builder.getInt(
+            llvm::APInt(16, ast->value()[i].value())));
     }
 
     llvm::Constant* data = llvm::ConstantArray::get(llvm_array_type, chars);
@@ -85,18 +86,18 @@ ValueAndType CodeGenProxy<StringNode>::codeGen(StringNode* ast,
 }
 
 ValueAndType CodeGenProxy<BooleanNode>::codeGen(BooleanNode* ast,
-                                                CodeGenContextHelper* helper,
+                                                CodeGenContext* helper,
                                                 const Generator& generator)
 {
     using llvm::APInt;
     using llvm::ConstantInt;
 
-    auto val = ConstantInt::get(helper->context, APInt(1, ast->value()));
+    auto val = ConstantInt::get(helper->llvm_ctx, APInt(1, ast->value()));
     return {val, XSharp::getBooleanType()};
 }
 
 ValueAndType CodeGenProxy<BlockNode>::codeGen(BlockNode* ast,
-                                              CodeGenContextHelper* helper,
+                                              CodeGenContext* helper,
                                               const Generator& generator)
 {
     for (ASTNode* content : ast->contents()) {
@@ -106,9 +107,9 @@ ValueAndType CodeGenProxy<BlockNode>::codeGen(BlockNode* ast,
     return {nullptr, XSharp::getVoidType()};
 }
 
-ValueAndType CodeGenProxy<VariableExprNode>::codeGen(
-    VariableExprNode* ast, CodeGenContextHelper* helper,
-    const Generator& generator)
+ValueAndType CodeGenProxy<VariableExprNode>::codeGen(VariableExprNode* ast,
+                                                     CodeGenContext* helper,
+                                                     const Generator& generator)
 {
     auto symbol = helper->currentSymbols->findVariable(ast->name());
     assertWithError(symbol.symbolType != SymbolType::NoneSymbol, helper->error,

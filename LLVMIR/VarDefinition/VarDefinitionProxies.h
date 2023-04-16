@@ -9,17 +9,17 @@ template <>
 class CodeGenProxy<VariableNode>
 {
    public:
-    ValueAndType codeGen(VariableNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(VariableNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
-ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
+ValueAndType genLocalVariable(VariableNode* ast, CodeGenContext* helper,
                               const Generator& generator);
 
-ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
+ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContext* helper,
                                const Generator& generator);
 
-ValueAndType genDataMember(VariableNode* ast, CodeGenContextHelper* helper,
+ValueAndType genDataMember(VariableNode* ast, CodeGenContext* helper,
                            const Generator& generator);
 
 }  // namespace LLVMCodeGen

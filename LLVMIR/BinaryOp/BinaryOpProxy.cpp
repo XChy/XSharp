@@ -24,8 +24,7 @@ CodeGenProxy<BinaryOperatorNode>::CodeGenProxy()
 }
 
 ValueAndType CodeGenProxy<BinaryOperatorNode>::codeGen(
-    BinaryOperatorNode* ast, CodeGenContextHelper* helper,
-    const Generator& generator)
+    BinaryOperatorNode* ast, CodeGenContext* helper, const Generator& generator)
 {
     auto iter = processors.find(ast->operatorStr());
     if (iter != processors.end())

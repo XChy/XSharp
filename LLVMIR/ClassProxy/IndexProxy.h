@@ -9,7 +9,7 @@ template <>
 class CodeGenProxy<IndexNode>
 {
    public:
-    ValueAndType codeGen(IndexNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(IndexNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 

@@ -102,8 +102,8 @@ int compile(const char *path)
     fmt::print("{}", ast->dump());
 
     XSharp::LLVMCodeGen::CodeGenerator helper;
-    TypeAdapter::setLLVMBuilder(&helper.contextHelper.builder);
-    TypeAdapter::setLLVMContext(&helper.contextHelper.context);
+    TypeAdapter::setLLVMBuilder(&helper.contextHelper.llvm_builder);
+    TypeAdapter::setLLVMContext(&helper.contextHelper.llvm_ctx);
     helper.generateIR(ast.get(), XString(path).append(".bc"));
 
     if (!helper.contextHelper._errors.empty()) {

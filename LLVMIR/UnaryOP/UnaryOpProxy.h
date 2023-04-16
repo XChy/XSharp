@@ -11,7 +11,7 @@ class CodeGenProxy<UnaryOperatorNode>
 {
    public:
     CodeGenProxy();
-    ValueAndType codeGen(UnaryOperatorNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(UnaryOperatorNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 
    private:

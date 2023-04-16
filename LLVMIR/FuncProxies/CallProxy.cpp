@@ -11,13 +11,13 @@
 using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
 
-ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(
-    FunctionCallNode* ast, CodeGenContextHelper* helper,
-    const Generator& generator)
+ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(FunctionCallNode* ast,
+                                                     CodeGenContext* helper,
+                                                     const Generator& generator)
 {
     using llvm::BasicBlock;
-    auto& builder = helper->builder;
-    auto& context = helper->context;
+    auto& builder = helper->llvm_builder;
+    auto& context = helper->llvm_ctx;
     auto& module = helper->module;
 
     using llvm::BasicBlock;

@@ -6,10 +6,10 @@
 
 namespace XSharp::LLVMCodeGen {
 
-llvm::Value* genObjectMalloc(CodeGenContextHelper* helper, XSharp::Type* type)
+llvm::Value* genObjectMalloc(CodeGenContext* helper, XSharp::Type* type)
 {
     auto& module = helper->module;
-    auto& context = helper->context;
+    auto& context = helper->llvm_ctx;
     llvm::FunctionCallee newFunc = module.getOrInsertFunction(
         "GC_new_object",
         llvm::FunctionType::get(castToLLVM(type, context),
@@ -22,18 +22,18 @@ llvm::Value* genObjectMalloc(CodeGenContextHelper* helper, XSharp::Type* type)
         auto sizeofObject =
             llvm::ConstantInt::get(context, llvm::APInt(64, type->size()));
 
-        return helper->builder.CreateCall(newFunc, {sizeofObject});
+        return helper->llvm_builder.CreateCall(newFunc, {sizeofObject});
     } else {
         helper->error("Do not support 'new' operator for {}", type->typeName());
         return nullptr;
     }
 }
 
-llvm::Value* genArrayMalloc(CodeGenContextHelper* helper, XSharp::Type* type,
+llvm::Value* genArrayMalloc(CodeGenContext* helper, XSharp::Type* type,
                             llvm::Value* element_count)
 {
     auto& module = helper->module;
-    auto& context = helper->context;
+    auto& context = helper->llvm_ctx;
     llvm::FunctionCallee newFunc = module.getOrInsertFunction(
         "GC_new_object",
         llvm::FunctionType::get(castToLLVM(type, context),
@@ -44,9 +44,9 @@ llvm::Value* genArrayMalloc(CodeGenContextHelper* helper, XSharp::Type* type,
             context, llvm::APInt(64, type->elementType()->size()));
 
         llvm::Value* sizeofArray =
-            helper->builder.CreateMul(element_count, sizeofElement);
+            helper->llvm_builder.CreateMul(element_count, sizeofElement);
 
-        return helper->builder.CreateCall(newFunc, {sizeofArray});
+        return helper->llvm_builder.CreateCall(newFunc, {sizeofArray});
 
     } else {
         helper->error("Do not support 'new' operator for {}", type->typeName());

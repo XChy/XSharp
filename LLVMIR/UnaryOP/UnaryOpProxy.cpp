@@ -12,8 +12,7 @@ CodeGenProxy<UnaryOperatorNode>::CodeGenProxy()
 }
 
 ValueAndType CodeGenProxy<UnaryOperatorNode>::codeGen(
-    UnaryOperatorNode* ast, CodeGenContextHelper* helper,
-    const Generator& generator)
+    UnaryOperatorNode* ast, CodeGenContext* helper, const Generator& generator)
 {
     if (processors.contains(ast->operatorStr()))
         return processors[ast->operatorStr()](ast, helper, generator);

@@ -7,30 +7,27 @@ namespace XSharp {
 
 namespace LLVMCodeGen {
 
-ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                        const Generator& generator);
 
-ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                           const Generator& generator);
 
-ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                          const Generator& generator);
 
-ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                       const Generator& generator);
 
-ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op,
-                                CodeGenContextHelper* helper,
+ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                                 const Generator& generator);
-ValueAndType LessOrEqualImpl(BinaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
+ValueAndType LessOrEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                              const Generator& generator);
 
-ValueAndType LogicalAndImpl(BinaryOperatorNode* op,
-                            CodeGenContextHelper* header,
+ValueAndType LogicalAndImpl(BinaryOperatorNode* op, CodeGenContext* header,
                             const Generator& generator);
 
-ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContextHelper* header,
+ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContext* header,
                            const Generator& generator);
 }  // namespace LLVMCodeGen
 

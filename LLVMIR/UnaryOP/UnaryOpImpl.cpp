@@ -11,7 +11,7 @@
 
 namespace XSharp::LLVMCodeGen {
 
-ValueAndType PositiveImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType PositiveImpl(UnaryOperatorNode* op, CodeGenContext* helper,
                           const Generator& generator)
 {
     auto [operand, operand_type] =
@@ -28,7 +28,7 @@ ValueAndType PositiveImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
     return {operand, operand_type};
 }
 
-ValueAndType NegativeImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType NegativeImpl(UnaryOperatorNode* op, CodeGenContext* helper,
                           const Generator& generator)
 {
     auto [operand, operand_type] =
@@ -43,11 +43,11 @@ ValueAndType NegativeImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
     }
 
     llvm::Value* result_val;
-    result_val = helper->builder.CreateNeg(operand);
+    result_val = helper->llvm_builder.CreateNeg(operand);
     return {result_val, operand_type};
 }
 
-ValueAndType NotImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType NotImpl(UnaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
     auto [operand, operand_type] =
@@ -64,6 +64,6 @@ ValueAndType NotImpl(UnaryOperatorNode* op, CodeGenContextHelper* helper,
         return {nullptr, nullptr};
     }
 
-    return {helper->builder.CreateNot(operand), operand_type};
+    return {helper->llvm_builder.CreateNot(operand), operand_type};
 }
 }  // namespace XSharp::LLVMCodeGen

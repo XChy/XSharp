@@ -12,7 +12,7 @@ using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
 
 ValueAndType CodeGenProxy<ClassNode>::codeGen(ClassNode* ast,
-                                              CodeGenContextHelper* helper,
+                                              CodeGenContext* helper,
                                               const Generator& generator)
 {
     XClass* classInfo = new XClass;

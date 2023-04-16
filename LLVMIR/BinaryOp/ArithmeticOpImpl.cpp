@@ -6,7 +6,7 @@
 namespace XSharp {
 namespace LLVMCodeGen {
 
-ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                         const Generator& generator)
 {
     auto [lhs, lhs_type] = generator(op->left());
@@ -25,11 +25,11 @@ ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
                       rhs_type->typeName(), lhs_type->derefType()->typeName());
         return {nullptr, nullptr};
     }
-    helper->builder.CreateStore(rhs, lhs);
+    helper->llvm_builder.CreateStore(rhs, lhs);
     return {lhs, lhs_type};
 }
 
-ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -48,12 +48,12 @@ ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isInteger())
-        return {helper->builder.CreateAdd(lhs, rhs), merged_type};
+        return {helper->llvm_builder.CreateAdd(lhs, rhs), merged_type};
     else
-        return {helper->builder.CreateFAdd(lhs, rhs), merged_type};
+        return {helper->llvm_builder.CreateFAdd(lhs, rhs), merged_type};
 }
 
-ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -71,10 +71,10 @@ ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
-    return {helper->builder.CreateSub(lhs, rhs), merged_type};
+    return {helper->llvm_builder.CreateSub(lhs, rhs), merged_type};
 }
 
-ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -92,10 +92,10 @@ ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     lhs = TypeAdapter::llvmConvert(lhs_type, merged_type, lhs);
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
-    return {helper->builder.CreateMul(lhs, rhs), merged_type};
+    return {helper->llvm_builder.CreateMul(lhs, rhs), merged_type};
 }
 
-ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -114,13 +114,13 @@ ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isSigned())
-        return {helper->builder.CreateSDiv(lhs, rhs), merged_type};
+        return {helper->llvm_builder.CreateSDiv(lhs, rhs), merged_type};
     else if (merged_type->isUnsigned())
-        return {helper->builder.CreateUDiv(lhs, rhs), merged_type};
+        return {helper->llvm_builder.CreateUDiv(lhs, rhs), merged_type};
     else
-        return {helper->builder.CreateFDiv(lhs, rhs), merged_type};
+        return {helper->llvm_builder.CreateFDiv(lhs, rhs), merged_type};
 }
-ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -139,11 +139,11 @@ ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isSigned())
-        return {helper->builder.CreateSRem(lhs, rhs), merged_type};
+        return {helper->llvm_builder.CreateSRem(lhs, rhs), merged_type};
     else if (merged_type->isUnsigned())
-        return {helper->builder.CreateURem(lhs, rhs), merged_type};
+        return {helper->llvm_builder.CreateURem(lhs, rhs), merged_type};
     else
-        return {helper->builder.CreateFRem(lhs, rhs), merged_type};
+        return {helper->llvm_builder.CreateFRem(lhs, rhs), merged_type};
 }
 
 }  // namespace LLVMCodeGen

@@ -32,7 +32,7 @@ class CodeGenBase
 {
    public:
     CodeGenBase() = default;
-    virtual ValueAndType codeGen(ASTNode* ast, CodeGenContextHelper* helper,
+    virtual ValueAndType codeGen(ASTNode* ast, CodeGenContext* helper,
                                  const Generator& generator) = 0;
     virtual ~CodeGenBase() = default;
 };
@@ -43,7 +43,7 @@ class CodeGenProxy
    public:
     CodeGenProxy() = default;
 
-    ValueAndType codeGen(T* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(T* ast, CodeGenContext* helper,
                          const Generator& generator)
     {
         return {nullptr, nullptr};
@@ -54,7 +54,7 @@ class ASTVisitor : public CodeGenBase
 {
    public:
     ASTVisitor() = default;
-    ValueAndType codeGen(ASTNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(ASTNode* ast, CodeGenContext* helper,
                          const Generator& generator)
     {
         return proxy.codeGen((T*)ast, helper, generator);
@@ -67,7 +67,7 @@ template <>
 class CodeGenProxy<DefinitionsNode>
 {
    public:
-    ValueAndType codeGen(DefinitionsNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(DefinitionsNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
@@ -75,7 +75,7 @@ template <>
 class CodeGenProxy<IntegerNode>
 {
    public:
-    ValueAndType codeGen(IntegerNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(IntegerNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
@@ -83,7 +83,7 @@ template <>
 class CodeGenProxy<DecimalFractionNode>
 {
    public:
-    ValueAndType codeGen(DecimalFractionNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(DecimalFractionNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
@@ -91,7 +91,7 @@ template <>
 class CodeGenProxy<CharNode>
 {
    public:
-    ValueAndType codeGen(CharNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(CharNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
@@ -99,7 +99,7 @@ template <>
 class CodeGenProxy<StringNode>
 {
    public:
-    ValueAndType codeGen(StringNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(StringNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
@@ -107,14 +107,14 @@ template <>
 class CodeGenProxy<BooleanNode>
 {
    public:
-    ValueAndType codeGen(BooleanNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(BooleanNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 template <>
 class CodeGenProxy<BlockNode>
 {
    public:
-    ValueAndType codeGen(BlockNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(BlockNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
@@ -122,7 +122,7 @@ template <>
 class CodeGenProxy<VariableExprNode>
 {
    public:
-    ValueAndType codeGen(VariableExprNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(VariableExprNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 

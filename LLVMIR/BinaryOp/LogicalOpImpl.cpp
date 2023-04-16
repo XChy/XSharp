@@ -6,7 +6,7 @@
 namespace XSharp {
 namespace LLVMCodeGen {
 
-ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                        const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -28,14 +28,14 @@ ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isInteger())
-        return {helper->builder.CreateICmpEQ(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpEQ(lhs, rhs),
                 XSharp::getBooleanType()};
     else
-        return {helper->builder.CreateFCmpUEQ(lhs, rhs),
+        return {helper->llvm_builder.CreateFCmpUEQ(lhs, rhs),
                 XSharp::getBooleanType()};
 }
 
-ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                           const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -57,13 +57,13 @@ ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isInteger())
-        return {helper->builder.CreateICmpNE(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpNE(lhs, rhs),
                 XSharp::getBooleanType()};
     else
-        return {helper->builder.CreateFCmpUNE(lhs, rhs),
+        return {helper->llvm_builder.CreateFCmpUNE(lhs, rhs),
                 XSharp::getBooleanType()};
 }
-ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                          const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -85,17 +85,17 @@ ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isSigned())
-        return {helper->builder.CreateICmpSGT(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpSGT(lhs, rhs),
                 XSharp::getBooleanType()};
     else if (merged_type->isUnsigned())
-        return {helper->builder.CreateICmpUGT(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpUGT(lhs, rhs),
                 XSharp::getBooleanType()};
     else
-        return {helper->builder.CreateFCmpUGT(lhs, rhs),
+        return {helper->llvm_builder.CreateFCmpUGT(lhs, rhs),
                 XSharp::getBooleanType()};
 }
 
-ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                       const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -117,18 +117,17 @@ ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isSigned())
-        return {helper->builder.CreateICmpSLT(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpSLT(lhs, rhs),
                 XSharp::getBooleanType()};
     else if (merged_type->isUnsigned())
-        return {helper->builder.CreateICmpULT(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpULT(lhs, rhs),
                 XSharp::getBooleanType()};
     else
-        return {helper->builder.CreateFCmpULT(lhs, rhs),
+        return {helper->llvm_builder.CreateFCmpULT(lhs, rhs),
                 XSharp::getBooleanType()};
 }
 
-ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op,
-                                CodeGenContextHelper* helper,
+ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                                 const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -150,18 +149,17 @@ ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isSigned())
-        return {helper->builder.CreateICmpSGE(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpSGE(lhs, rhs),
                 XSharp::getBooleanType()};
     else if (merged_type->isUnsigned())
-        return {helper->builder.CreateICmpUGE(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpUGE(lhs, rhs),
                 XSharp::getBooleanType()};
     else
-        return {helper->builder.CreateFCmpUGE(lhs, rhs),
+        return {helper->llvm_builder.CreateFCmpUGE(lhs, rhs),
                 XSharp::getBooleanType()};
 }
 
-ValueAndType LessOrEqualImpl(BinaryOperatorNode* op,
-                             CodeGenContextHelper* helper,
+ValueAndType LessOrEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                              const Generator& generator)
 {
     auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
@@ -183,18 +181,17 @@ ValueAndType LessOrEqualImpl(BinaryOperatorNode* op,
     rhs = TypeAdapter::llvmConvert(rhs_type, merged_type, rhs);
 
     if (merged_type->isSigned())
-        return {helper->builder.CreateICmpSLE(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpSLE(lhs, rhs),
                 XSharp::getBooleanType()};
     else if (merged_type->isUnsigned())
-        return {helper->builder.CreateICmpULE(lhs, rhs),
+        return {helper->llvm_builder.CreateICmpULE(lhs, rhs),
                 XSharp::getBooleanType()};
     else
-        return {helper->builder.CreateFCmpULE(lhs, rhs),
+        return {helper->llvm_builder.CreateFCmpULE(lhs, rhs),
                 XSharp::getBooleanType()};
 }
 
-ValueAndType LogicalAndImpl(BinaryOperatorNode* op,
-                            CodeGenContextHelper* helper,
+ValueAndType LogicalAndImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                             const Generator& generator)
 {
     auto [lhs, lhs_type] = generator(op->left());
@@ -211,10 +208,10 @@ ValueAndType LogicalAndImpl(BinaryOperatorNode* op,
         return {nullptr, nullptr};
     }
 
-    return {helper->builder.CreateAnd(lhs, rhs), XSharp::getBooleanType()};
+    return {helper->llvm_builder.CreateAnd(lhs, rhs), XSharp::getBooleanType()};
 }
 
-ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                            const Generator& generator)
 {
     auto [lhs, lhs_type] = generator(op->left());
@@ -231,7 +228,7 @@ ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
         return {nullptr, nullptr};
     }
 
-    return {helper->builder.CreateOr(lhs, rhs), XSharp::getBooleanType()};
+    return {helper->llvm_builder.CreateOr(lhs, rhs), XSharp::getBooleanType()};
 }
 
 }  // namespace LLVMCodeGen

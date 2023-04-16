@@ -10,6 +10,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/TypeFinder.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
+#include <stack>
 #include "XSharp/ASTNodes.h"
 #include "XSharp/ControlFlow/ControlFlowAST.h"
 #include "XSharp/Types/Type.h"
@@ -21,22 +22,30 @@
 #include "LLVMIR/Target.h"
 #include "LLVMIR/Optimizer.h"
 
-namespace XSharp {
-namespace LLVMCodeGen {
+namespace XSharp::LLVMCodeGen {
 
 typedef std::tuple<llvm::Value*, XSharp::Type*> ValueAndType;
 
-class CodeGenContextHelper
+struct Loop {
+    llvm::BasicBlock* cond;
+    llvm::BasicBlock* body;
+    llvm::BasicBlock* end;
+};
+
+class CodeGenContext
 {
    public:
-    CodeGenContextHelper();
+    CodeGenContext();
 
     void optimize();
 
     XSharp::SymbolTable* enterScope();
     XSharp::SymbolTable* exitScope();
 
-    void toNewFunctionScope(const XSharp::Symbol& funcSymbol);
+    void enterFunctionScope(const XSharp::Symbol& funcSymbol);
+    void exitFunctionScope();
+
+    Type* currentRetType() const;
 
     bool isGlobalScope() const;
 
@@ -48,9 +57,9 @@ class CodeGenContextHelper
                         vformat(info, fmt::make_format_args(formatargs...))));
     }
 
-    llvm::LLVMContext context;
+    llvm::LLVMContext llvm_ctx;
     llvm::Module module;
-    llvm::IRBuilder<> builder;
+    llvm::IRBuilder<> llvm_builder;
 
     std::vector<XSharpError> _errors;
     Optimizer optimizer;
@@ -58,14 +67,12 @@ class CodeGenContextHelper
     XSharp::SymbolTable globalSymbols;
     XSharp::SymbolTable* currentSymbols;
 
-    XSharp::Type* currentReturnType;
+    std::stack<Type*> retTypes;
 
     // TODO: Apply proxy to change the BasicBlock below
-    llvm::BasicBlock* loopStart;
-    llvm::BasicBlock* loopEnd;
+    std::stack<Loop> loops;
 };
 
-ValueAndType deReference(ValueAndType ref, CodeGenContextHelper* helper);
+ValueAndType deReference(ValueAndType ref, CodeGenContext* ctx);
 
-}  // namespace LLVMCodeGen
-}  // namespace XSharp
+}  // namespace XSharp::LLVMCodeGen

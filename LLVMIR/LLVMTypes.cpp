@@ -68,7 +68,6 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
                 llvmTypes.push_back(castToLLVM(fieid.type, context));
             }
             auto structType = llvm::StructType::get(context, llvmTypes);
-            structType->setName("a");
             return structType;
         }
 

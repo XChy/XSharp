@@ -11,7 +11,7 @@ template <> /* LLVMCodeGen */
 class CodeGenProxy<IfNode>
 {
    public:
-    ValueAndType codeGen(IfNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(IfNode* ast, CodeGenContext* ctx,
                          const Generator& generator);
 };
 
@@ -20,7 +20,16 @@ template <>
 class CodeGenProxy<WhileNode>
 {
    public:
-    ValueAndType codeGen(WhileNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(WhileNode* ast, CodeGenContext* ctx,
+                         const Generator& generator);
+};
+
+using namespace XSharp;
+template <>
+class CodeGenProxy<ContinueNode>
+{
+   public:
+    ValueAndType codeGen(ContinueNode* ast, CodeGenContext* ctx,
                          const Generator& generator);
 };
 
@@ -29,7 +38,7 @@ template <>
 class CodeGenProxy<ReturnNode>
 {
    public:
-    ValueAndType codeGen(ReturnNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(ReturnNode* ast, CodeGenContext* ctx,
                          const Generator& generator);
 };
 

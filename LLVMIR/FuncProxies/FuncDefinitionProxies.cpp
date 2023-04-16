@@ -14,13 +14,13 @@ using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
 
 ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
-                                                 CodeGenContextHelper* helper,
+                                                 CodeGenContext* helper,
                                                  const Generator& generator)
 {
     using llvm::BasicBlock;
     using XSharp::Symbol;
-    auto& builder = helper->builder;
-    auto& context = helper->context;
+    auto& builder = helper->llvm_builder;
+    auto& context = helper->llvm_ctx;
     auto& module = helper->module;
 
     using llvm::BasicBlock;
@@ -63,7 +63,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     builder.SetInsertPoint(block);
 
     // TODO: maybe support function definition or lambda in function?
-    helper->toNewFunctionScope(functionSymbol);
+    helper->enterFunctionScope(functionSymbol);
 
     // transform parameters to arguments
     auto iter = func->arg_begin();
@@ -87,8 +87,8 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
     }
 
     if (!builder.GetInsertBlock()->getTerminator()) {
-        if (helper->currentReturnType->isBasic() &&
-            helper->currentReturnType->basicType() == BasicType::Void) {
+        if (helper->currentRetType()->isBasic() &&
+            helper->currentRetType()->basicType() == BasicType::Void) {
             builder.CreateRetVoid();
         } else {
             helper->error(
@@ -98,7 +98,7 @@ ValueAndType CodeGenProxy<FunctionNode>::codeGen(FunctionNode* ast,
         }
     }
 
-    helper->exitScope();
+    helper->exitFunctionScope();
 
     // for debug
     // llvm::verifyFunction(*func);

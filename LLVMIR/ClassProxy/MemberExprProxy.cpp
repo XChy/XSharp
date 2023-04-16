@@ -11,7 +11,7 @@ using namespace XSharp::LLVMCodeGen;
 using namespace XSharp;
 
 ValueAndType CodeGenProxy<MemberExprNode>::codeGen(MemberExprNode *ast,
-                                                   CodeGenContextHelper *helper,
+                                                   CodeGenContext *helper,
                                                    const Generator &generator)
 {
     auto [obj, obj_type] = deReference(generator(ast->object()), helper);
@@ -25,8 +25,8 @@ ValueAndType CodeGenProxy<MemberExprNode>::codeGen(MemberExprNode *ast,
         int index = 1;
         for (auto fieid : classinfo->dataFields) {
             if (fieid.name == ast->memberName()) {
-                return {helper->builder.CreateStructGEP(
-                            castToLLVM(obj_type->derefType(), helper->context),
+                return {helper->llvm_builder.CreateStructGEP(
+                            castToLLVM(obj_type->derefType(), helper->llvm_ctx),
                             obj, index, ast->dump().toStdString()),
                         getReferenceType(fieid.type)};
             }

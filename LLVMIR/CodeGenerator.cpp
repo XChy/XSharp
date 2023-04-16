@@ -34,7 +34,7 @@ using namespace XSharp::LLVMCodeGen;
 
 CodeGenerator::CodeGenerator()
 {
-    setUpBuildIn(contextHelper.module, contextHelper.context,
+    setUpBuildIn(contextHelper.module, contextHelper.llvm_ctx,
                  contextHelper.globalSymbols);
 
     generator = std::bind(&CodeGenerator::codegen, this, std::placeholders::_1);

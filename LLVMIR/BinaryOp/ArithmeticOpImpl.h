@@ -6,24 +6,24 @@
 namespace XSharp {
 namespace LLVMCodeGen {
 
-typedef ValueAndType BinaryOpImpl(BinaryOperatorNode*, CodeGenContextHelper*,
+typedef ValueAndType BinaryOpImpl(BinaryOperatorNode*, CodeGenContext*,
                                   const Generator& generator);
 
-ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                         const Generator& generator);
 
-ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator);
 
-ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator);
 
-ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator);
 
-ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator);
-ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContextHelper* helper,
+ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator);
 
 }  // namespace LLVMCodeGen

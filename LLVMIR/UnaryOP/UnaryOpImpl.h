@@ -5,13 +5,13 @@
 
 namespace XSharp::LLVMCodeGen {
 
-typedef ValueAndType UnaryOpImpl(UnaryOperatorNode*, CodeGenContextHelper*,
+typedef ValueAndType UnaryOpImpl(UnaryOperatorNode*, CodeGenContext*,
                                  const Generator&);
 
-ValueAndType PositiveImpl(UnaryOperatorNode*, CodeGenContextHelper* helper,
+ValueAndType PositiveImpl(UnaryOperatorNode*, CodeGenContext* helper,
                           const Generator& generator);
-ValueAndType NegativeImpl(UnaryOperatorNode*, CodeGenContextHelper* helper,
+ValueAndType NegativeImpl(UnaryOperatorNode*, CodeGenContext* helper,
                           const Generator& generator);
-ValueAndType NotImpl(UnaryOperatorNode*, CodeGenContextHelper* helper,
+ValueAndType NotImpl(UnaryOperatorNode*, CodeGenContext* helper,
                      const Generator& generator);
 }  // namespace XSharp::LLVMCodeGen

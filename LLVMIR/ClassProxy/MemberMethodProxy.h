@@ -10,7 +10,7 @@ template <>
 class CodeGenProxy<MemberMethodNode>
 {
    public:
-    ValueAndType codeGen(MemberMethodNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(MemberMethodNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 

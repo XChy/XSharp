@@ -8,11 +8,11 @@ namespace XSharp::LLVMCodeGen {
 
 // Inject instructions to malloc a XSharp Object with GC
 // @param type : type of object to malloc
-llvm::Value* genObjectMalloc(CodeGenContextHelper* helper, XSharp::Type* type);
+llvm::Value* genObjectMalloc(CodeGenContext* helper, XSharp::Type* type);
 
 // Inject instructions to malloc a XSharp Array with GC
 // @param type : type of array to malloc
-llvm::Value* genArrayMalloc(CodeGenContextHelper* helper, XSharp::Type* type,
+llvm::Value* genArrayMalloc(CodeGenContext* helper, XSharp::Type* type,
                             llvm::Value* element_count);
 
 namespace ErrorFormatString {

@@ -13,11 +13,11 @@ enum class SymbolType {
     LocalVariable,
     Argument,
     Function,
+    Operator,
     Member,
     MemberEvaler,
     MemberMethod,
     BuiltInFunction,
-    Class,
     NoneSymbol
 };
 

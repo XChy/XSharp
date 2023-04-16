@@ -11,7 +11,7 @@ using namespace XSharp::LLVMCodeGen;
 using namespace XSharp;
 
 ValueAndType CodeGenProxy<IndexNode>::codeGen(IndexNode *ast,
-                                              CodeGenContextHelper *helper,
+                                              CodeGenContext *helper,
                                               const Generator &generator)
 {
     auto [index, index_type] = generator(ast->index());
@@ -33,8 +33,8 @@ ValueAndType CodeGenProxy<IndexNode>::codeGen(IndexNode *ast,
         return {nullptr, nullptr};
     }
 
-    llvm::Value *element = helper->builder.CreateInBoundsGEP(
-        castToLLVM(indexed_type->elementType(), helper->context), indexed,
+    llvm::Value *element = helper->llvm_builder.CreateInBoundsGEP(
+        castToLLVM(indexed_type->elementType(), helper->llvm_ctx), indexed,
         index, ast->dump().toStdString());
     return {element, getReferenceType(indexed_type->elementType())};
 }

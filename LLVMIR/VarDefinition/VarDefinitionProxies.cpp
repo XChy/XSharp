@@ -10,7 +10,7 @@
 namespace XSharp::LLVMCodeGen {
 
 ValueAndType CodeGenProxy<VariableNode>::codeGen(VariableNode* ast,
-                                                 CodeGenContextHelper* helper,
+                                                 CodeGenContext* helper,
                                                  const Generator& generator)
 {
     if (helper->isGlobalScope()) {
@@ -20,13 +20,13 @@ ValueAndType CodeGenProxy<VariableNode>::codeGen(VariableNode* ast,
     }
 }
 
-ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
+ValueAndType genLocalVariable(VariableNode* ast, CodeGenContext* helper,
                               const Generator& generator)
 {
     using XSharp::TypeAdapter;
     // Local Variable
-    auto& builder = helper->builder;
-    auto& context = helper->context;
+    auto& builder = helper->llvm_builder;
+    auto& context = helper->llvm_ctx;
 
     assertWithError(!helper->currentSymbols->hasSymbol(ast->name()),
                     helper->error, ErrorFormatString::redefinition_var,
@@ -70,7 +70,7 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContextHelper* helper,
     return {var_alloca, var_type};
 }
 
-ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
+ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContext* helper,
                                const Generator& generator)
 {
     assertWithError(!helper->globalSymbols.hasSymbol(ast->name()),
@@ -87,7 +87,7 @@ ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
 
     // TODO: Global variable's initValue's processing
     llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(
-        helper->module, castToLLVM(var_type->derefType(), helper->context),
+        helper->module, castToLLVM(var_type->derefType(), helper->llvm_ctx),
         var_type->isConst, llvm::GlobalVariable::ExternalLinkage, nullptr,
         ast->name().toStdString());
 
@@ -100,7 +100,7 @@ ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContextHelper* helper,
     return {globalVar, var_type};
 }
 
-ValueAndType genDataMember(VariableNode* ast, CodeGenContextHelper* helper,
+ValueAndType genDataMember(VariableNode* ast, CodeGenContext* helper,
                            const Generator& generator)
 {
     if (helper->currentSymbols->hasSymbol(ast->name())) {

@@ -12,7 +12,7 @@ class CodeGenProxy<BinaryOperatorNode>
 {
    public:
     CodeGenProxy();
-    ValueAndType codeGen(BinaryOperatorNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(BinaryOperatorNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 
    private:

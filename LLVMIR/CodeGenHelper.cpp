@@ -4,10 +4,10 @@
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
 
-using namespace XSharp::LLVMCodeGen;
+namespace XSharp::LLVMCodeGen {
 
-CodeGenContextHelper::CodeGenContextHelper()
-    : module("XSharp", context), builder(context), optimizer(&module)
+CodeGenContext::CodeGenContext()
+    : module("XSharp", llvm_ctx), llvm_builder(llvm_ctx), optimizer(&module)
 {
     currentSymbols = &globalSymbols;
 
@@ -15,37 +15,41 @@ CodeGenContextHelper::CodeGenContextHelper()
     module.setDataLayout(data_layout());
 }
 
-void CodeGenContextHelper::optimize()
-{
-    optimizer.modulePassManager.run(module);
-}
-XSharp::SymbolTable* CodeGenContextHelper::enterScope()
+void CodeGenContext::optimize() { optimizer.modulePassManager.run(module); }
+XSharp::SymbolTable* CodeGenContext::enterScope()
 {
     auto newScopeSymbolTable = currentSymbols->createChild();
     currentSymbols = newScopeSymbolTable;
     return currentSymbols;
 }
 
-XSharp::SymbolTable* CodeGenContextHelper::exitScope()
+XSharp::SymbolTable* CodeGenContext::exitScope()
 {
     if (isGlobalScope()) return nullptr;
     currentSymbols = currentSymbols->parent();
     return currentSymbols;
 }
 
-void CodeGenContextHelper::toNewFunctionScope(const XSharp::Symbol& funcSymbol)
+void CodeGenContext::enterFunctionScope(const XSharp::Symbol& funcSymbol)
 {
-    currentReturnType = funcSymbol.type->returnValueType();
+    retTypes.push(funcSymbol.type->returnValueType());
     enterScope();
 }
 
-bool CodeGenContextHelper::isGlobalScope() const
+void CodeGenContext::exitFunctionScope()
+{
+    retTypes.pop();
+    exitScope();
+}
+
+Type* CodeGenContext::currentRetType() const { return retTypes.top(); }
+
+bool CodeGenContext::isGlobalScope() const
 {
     return currentSymbols == &globalSymbols;
 }
 
-ValueAndType XSharp::LLVMCodeGen::deReference(ValueAndType ref,
-                                              CodeGenContextHelper* helper)
+ValueAndType deReference(ValueAndType ref, CodeGenContext* helper)
 {
     auto [ref_val, ref_type] = ref;
     if (!ref_type) {
@@ -53,10 +57,11 @@ ValueAndType XSharp::LLVMCodeGen::deReference(ValueAndType ref,
     }
     if (ref_type->category == XSharp::Type::Reference) {
         return {
-            helper->builder.CreateLoad(
-                castToLLVM(ref_type->derefType(), helper->context), ref_val),
+            helper->llvm_builder.CreateLoad(
+                castToLLVM(ref_type->derefType(), helper->llvm_ctx), ref_val),
             ref_type->derefType()};
     } else {
         return ref;
     }
 }
+}  // namespace XSharp::LLVMCodeGen

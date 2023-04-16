@@ -7,7 +7,7 @@ template <>
 class CodeGenProxy<FunctionCallNode>
 {
    public:
-    ValueAndType codeGen(FunctionCallNode* ast, CodeGenContextHelper* helper,
+    ValueAndType codeGen(FunctionCallNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
