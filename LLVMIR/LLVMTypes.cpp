@@ -12,6 +12,7 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
     using XSharp::BasicType;
     // TODO complete XSharp's Type to Variable
     using XSharp::Type;
+
     switch (type->category) {
         case Type::Basic:
             switch (type->basicType()) {
@@ -43,7 +44,7 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
 
         case Type::Function: {
             std::vector<llvm::Type*> llvmTypesForParams;
-            for (Type* paramType : type->parameterTypes())
+            for (XSharp::Type* paramType : type->parameterTypes())
                 llvmTypesForParams.push_back(castToLLVM(paramType, context));
 
             return llvm::FunctionType::get(
@@ -79,6 +80,7 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
         default:
             return nullptr;
     }
+
     return nullptr;
 }
 

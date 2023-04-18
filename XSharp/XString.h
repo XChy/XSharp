@@ -13,6 +13,7 @@ class XSharp_EXPORT XChar
     friend class XString;
 
    public:
+    XChar() = default;
     XChar(const XChar& other) : ucs(other.ucs) {}
     XChar(char ucs) : ucs(uchar(ucs)) {}
     XChar(uchar ucs) : ucs(ucs) {}
@@ -213,6 +214,11 @@ struct fmt::formatter<XString> {
 };
 
 namespace std {
+
+template <>
+struct hash<XChar> {
+    size_t operator()(XChar character) const { return character.value(); }
+};
 
 template <>
 struct hash<XString> {

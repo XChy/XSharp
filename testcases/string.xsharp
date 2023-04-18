@@ -10,15 +10,8 @@ class String{
 }
 
 i32 main(){
-    String str = newStr(3);
-    str.init();
-    i32 i =0;
-    str.data = "123";
-    print(str.data);
-    while (i < str.size)
-    {
-        print(str.data[i]);
-        i=i+1;
-    }
+    char[] str = new char[](10);
+    str = "123\n123\n";
+    print(str);
     return 0;
 }

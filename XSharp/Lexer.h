@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_map>
 #include <vector>
 #include "XSharp/XString.h"
 #include "xsharp_global.h"
@@ -7,6 +8,9 @@
 #include "XSharpUtils.h"
 
 namespace XSharp {
+
+static std::unordered_map<XChar, XChar> transferMap = {
+    {'0', '\0'}, {'n', '\n'}, {'t', '\t'}, {'\\', '\\'}};
 
 class XSharp_EXPORT Lexer
 {

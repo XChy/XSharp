@@ -1,6 +1,7 @@
 #include "Lexer.h"
 #include <cstdint>
 #include "XSharp/Tokens.h"
+#include "XSharp/XString.h"
 
 using namespace XSharp;
 
@@ -86,21 +87,44 @@ std::vector<Token> Lexer::tokenize(const XString &source)
         } else if (cur() == '\'') {
             next();
             XString value;
+
             while (cur() != '\'' && cur() != '\n' && !isEof()) {
-                value.append(cur());
+                if (cur() == '\\') {
+                    next();
+                    value.append(transferMap[cur()]);
+                } else {
+                    value.append(cur());
+                }
                 next();
             }
-            next();
-            // TODO: check count of char, and transfered char
+
+            if (cur() == '\'') {
+                next();
+            } else {
+                // TODO: Error?
+            }
+            // TODO: check count of char
             result.push_back(Token(Char, value, currentSpan()));
         } else if (cur() == '\"') {
             next();
             XString value;
+
             while (cur() != '\"') {
-                value.append(cur());
+                if (cur() == '\\') {
+                    next();
+                    value.append(transferMap[cur()]);
+                } else {
+                    value.append(cur());
+                }
                 next();
             }
-            next();
+
+            if (cur() == '\"') {
+                next();
+            } else {
+                // TODO: Error?
+            }
+
             result.push_back(Token(String, value, currentSpan()));
         } else if (cur() == '.') {
             next();
