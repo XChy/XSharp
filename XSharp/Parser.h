@@ -27,9 +27,10 @@ class XSharp_EXPORT Parser
     FunctionNode* functionDecl();
     MemberMethodNode* memberMethodDecl();
 
+    bool isVariableDecl() const;
+
     // end after the stopword
     // <type> <name> (( = <initial value> ))
-    bool isVariableDecl() const;
     VariableNode* variableDecl(const std::vector<TokenType>& stopwords);
 
     std::vector<VariableNode*> parameters();

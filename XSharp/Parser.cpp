@@ -292,6 +292,14 @@ ASTNode* Parser::statement()
                 stmt = whileStatement();
             } else if (current->value == "new") {
                 stmt = expression({SentenceEnd});
+            } else if (current->value == "continue") {
+                stmt = new ContinueNode;
+                forward();
+                forward();
+            } else if (current->value == "break") {
+                stmt = new BreakNode;
+                forward();
+                forward();
             } else {
                 throw XSharpError("Not a statement");
             }

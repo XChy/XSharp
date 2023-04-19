@@ -73,7 +73,8 @@ ValueAndType CodeGenProxy<WhileNode>::codeGen(WhileNode* ast,
     BasicBlock* loop_body = BasicBlock::Create(context, "while.body");
     BasicBlock* loop_end = BasicBlock::Create(context, "while.end");
 
-    builder.CreateBr(loop_cond);
+    if (!builder.GetInsertBlock()->getTerminator()) builder.CreateBr(loop_cond);
+
     builder.SetInsertPoint(loop_cond);
 
     ctx->enterScope();
@@ -88,7 +89,8 @@ ValueAndType CodeGenProxy<WhileNode>::codeGen(WhileNode* ast,
     assertWithError(cond_val, ctx->error, ErrorFormatString::inconvertible,
                     cond_type->typeName(), "boolean");
 
-    builder.CreateCondBr(cond_val, loop_body, loop_end);
+    if (!builder.GetInsertBlock()->getTerminator())
+        builder.CreateCondBr(cond_val, loop_body, loop_end);
 
     // Loop inner
     loop_body->insertInto(currentFunc);
@@ -99,7 +101,7 @@ ValueAndType CodeGenProxy<WhileNode>::codeGen(WhileNode* ast,
 
     ctx->exitScope();
 
-    builder.CreateBr(loop_cond);
+    if (!builder.GetInsertBlock()->getTerminator()) builder.CreateBr(loop_cond);
 
     // end loop
     loop_end->insertInto(currentFunc);
@@ -112,6 +114,36 @@ ValueAndType CodeGenProxy<ContinueNode>::codeGen(ContinueNode* ast,
                                                  CodeGenContext* ctx,
                                                  const Generator& generator)
 {
+    using llvm::BasicBlock;
+    assertWithError(!ctx->loops.empty(), ctx->error, "No loop to continue", 0);
+
+    if (!ctx->llvm_builder.GetInsertBlock()->getTerminator()) {
+        ctx->llvm_builder.CreateBr(ctx->loops.top().cond);
+        BasicBlock* deadblock =
+            BasicBlock::Create(ctx->llvm_ctx, "deadblock",
+                               ctx->llvm_builder.GetInsertBlock()->getParent());
+        ctx->llvm_builder.SetInsertPoint(deadblock);
+    }
+
+    return {nullptr, getVoidType()};
+}
+
+ValueAndType CodeGenProxy<BreakNode>::codeGen(BreakNode* ast,
+                                              CodeGenContext* ctx,
+                                              const Generator& generator)
+{
+    using llvm::BasicBlock;
+    assertWithError(!ctx->loops.empty(), ctx->error, "No loop to break", 0);
+
+    if (!ctx->llvm_builder.GetInsertBlock()->getTerminator()) {
+        auto i = ctx->llvm_builder.CreateBr(ctx->loops.top().end);
+        BasicBlock* deadblock =
+            BasicBlock::Create(ctx->llvm_ctx, "deadblock",
+                               ctx->llvm_builder.GetInsertBlock()->getParent());
+        ctx->llvm_builder.SetInsertPoint(deadblock);
+    }
+
+    return {nullptr, getVoidType()};
 }
 
 ValueAndType CodeGenProxy<ReturnNode>::codeGen(ReturnNode* ast,

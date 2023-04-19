@@ -11,7 +11,7 @@ class String{
 
 i32 main(){
     char[] str = new char[](10);
-    str = "123\n123\n";
+    str = "123\n\t123\n";
     print(str);
     return 0;
 }

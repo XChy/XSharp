@@ -52,6 +52,8 @@ CodeGenerator::CodeGenerator()
     addProxy<BlockNode>();
     addProxy<IfNode>();
     addProxy<WhileNode>();
+    addProxy<ContinueNode>();
+    addProxy<BreakNode>();
     addProxy<ReturnNode>();
     addProxy<BinaryOperatorNode>();
     addProxy<UnaryOperatorNode>();

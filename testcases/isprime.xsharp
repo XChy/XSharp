@@ -1,4 +1,6 @@
 boolean isPrime(i32 x){
+    if(x <= 1)
+        return false;
     i32 i = 2;
     while(i*i <= x){
         if(x%i == 0){return false;}
@@ -9,8 +11,10 @@ boolean isPrime(i32 x){
 
 i32 main()
 {
-    while(true){
+    boolean a = true;
+    while(a){
         i32 x = inputI32();
+        continue;
         print(isPrime(x));
     }
     return 32;

@@ -50,7 +50,7 @@ std::error_code emit_object_code(const XString& path, llvm::Module& module)
 
     if (!target) {
         llvm::errs() << error;
-        return std::error_code();
+        return error_code;
     }
 
     auto CPU = "generic";
@@ -69,6 +69,7 @@ std::error_code emit_object_code(const XString& path, llvm::Module& module)
         delete targetMachine;
         return error_code;
     }
+
     llvm::legacy::PassManager pass;
     auto FileType = llvm::CGFT_ObjectFile;
 

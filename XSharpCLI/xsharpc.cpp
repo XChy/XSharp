@@ -115,7 +115,11 @@ int compile(const char *path)
 
     auto object_path = XString(path).append(".o");
 
-    emit_object_code(object_path, helper.contextHelper.module);
+    auto error_code =
+        emit_object_code(object_path, helper.contextHelper.module);
+    if (error_code.value() != 0) {
+        std::cout << error_code.message();
+    }
 
     if (!hasDefaultOutputName) {
         if (XString(path).lastSubStringIndex("xsharp") ==

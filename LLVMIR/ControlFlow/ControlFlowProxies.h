@@ -15,7 +15,6 @@ class CodeGenProxy<IfNode>
                          const Generator& generator);
 };
 
-using namespace XSharp;
 template <>
 class CodeGenProxy<WhileNode>
 {
@@ -24,7 +23,6 @@ class CodeGenProxy<WhileNode>
                          const Generator& generator);
 };
 
-using namespace XSharp;
 template <>
 class CodeGenProxy<ContinueNode>
 {
@@ -33,7 +31,14 @@ class CodeGenProxy<ContinueNode>
                          const Generator& generator);
 };
 
-using namespace XSharp;
+template <>
+class CodeGenProxy<BreakNode>
+{
+   public:
+    ValueAndType codeGen(BreakNode* ast, CodeGenContext* ctx,
+                         const Generator& generator);
+};
+
 template <>
 class CodeGenProxy<ReturnNode>
 {
