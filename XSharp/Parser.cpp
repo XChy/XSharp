@@ -65,8 +65,9 @@ ClassNode* Parser::classDecl()
         } else if (isFunctionDecl()) {
             auto func = memberMethodDecl();
             func->selfClass = classNode;
-
             classNode->methods.push_back(func);
+        } else if (current->isKeyword("new")) {
+            classNode->constructors.push_back(constructor());
         } else {
             throw XSharpError("Not a field in class");
         }
@@ -130,6 +131,28 @@ MemberMethodNode* Parser::memberMethodDecl()
     forward();
 
     root->setImpl(block());
+    return root;
+}
+
+ConstructorNode* Parser::constructor()
+{
+    ConstructorNode* root = new ConstructorNode;
+
+    // skip keyword 'new'
+    forward();
+
+    // start with '('
+    if (current->type != OpenParen) {
+        throw XSharpError("No '(' matched");
+    }
+    forward();
+
+    root->parameters = parameters();
+    // end with ')', so skip ')'
+    forward();
+
+    root->impl = block();
+
     return root;
 }
 

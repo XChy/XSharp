@@ -1,5 +1,7 @@
 #include "ClassAST.h"
+#include <cmath>
 #include "XSharp/XString.h"
+#include "fmt/core.h"
 #include "fmt/format.h"
 
 using namespace XSharp;
@@ -13,6 +15,9 @@ XString ClassNode::dump() const
     for (auto method : methods) {
         fieldDumps.push_back(fmt::format("field : {}", method->dump()));
     }
+    for (auto constructor : constructors) {
+        fieldDumps.push_back(fmt::format("field : {}", constructor->dump()));
+    }
 
     return fmt::format("Class {}{{\n{}\n}}", name, fmt::join(fieldDumps, "\n"));
 }
@@ -21,6 +26,7 @@ ClassNode::~ClassNode()
 {
     for (auto i : members) delete i;
     for (auto i : methods) delete i;
+    for (auto i : constructors) delete i;
 }
 
 XString MemberMethodNode::dump() const
@@ -58,7 +64,18 @@ DefinitionsNode::~DefinitionsNode()
     for (auto p : decls) delete p;
 }
 
-InitializerNode::~InitializerNode()
+XString ConstructorNode::dump() const
+{
+    std::vector<std::string> paramDumps;
+
+    for (auto param : parameters)
+        paramDumps.push_back(param->dump().toStdString());
+
+    return fmt::format("constructor({}){{{}}}", fmt::join(paramDumps, ","),
+                       impl->dump());
+}
+
+ConstructorNode::~ConstructorNode()
 {
     for (auto p : parameters) delete p;
     delete impl;

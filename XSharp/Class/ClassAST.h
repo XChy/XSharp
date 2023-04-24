@@ -5,6 +5,7 @@
 namespace XSharp {
 
 class MemberMethodNode;
+class ConstructorNode;
 
 class XSharp_EXPORT ClassNode : public ASTNode
 {
@@ -17,6 +18,7 @@ class XSharp_EXPORT ClassNode : public ASTNode
     // TODO: Design specific Member/MemberMethod AST
     std::vector<VariableNode*> members;
     std::vector<MemberMethodNode*> methods;
+    std::vector<ConstructorNode*> constructors;
 };
 
 class XSharp_EXPORT MemberMethodNode : public FunctionNode
@@ -41,10 +43,12 @@ class XSharp_EXPORT DefinitionsNode : public ASTNode
     std::vector<ASTNode*> decls;
 };
 
-class XSharp_EXPORT InitializerNode : public ASTNode
+class XSharp_EXPORT ConstructorNode : public ASTNode
 {
    public:
-    ~InitializerNode();
+    XString dump() const;
+
+    ~ConstructorNode();
 
     std::vector<VariableNode*> parameters;
     BlockNode* impl;

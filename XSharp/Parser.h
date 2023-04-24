@@ -22,10 +22,12 @@ class XSharp_EXPORT Parser
    private:
     DefinitionsNode* definitions();
     ClassNode* classDecl();
+
     // <type> <name> (paramlist)
     bool isFunctionDecl() const;
     FunctionNode* functionDecl();
     MemberMethodNode* memberMethodDecl();
+    ConstructorNode* constructor();
 
     bool isVariableDecl() const;
 

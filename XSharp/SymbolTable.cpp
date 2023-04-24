@@ -41,7 +41,9 @@ std::vector<Symbol> SymbolTable::findFunctions(const XString& name) const
     auto symbolCount = symbols.count(name);
     std::vector<Symbol> result;
     for (int i = 0; i < symbolCount; ++i) {
-        if (symbolIterator->second.symbolType == SymbolType::Function)
+        auto symbolType = symbolIterator->second.symbolType;
+        if (symbolType == SymbolType::Function ||
+            symbolType == SymbolType::MemberMethod)
             result.push_back(symbolIterator->second);
 
         ++symbolIterator;
