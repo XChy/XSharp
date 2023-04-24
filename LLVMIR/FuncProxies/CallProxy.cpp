@@ -2,6 +2,7 @@
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"
+#include "XSharp/Symbol.h"
 #include "XSharp/Types/Type.h"
 #include "XSharp/Types/TypeAdapter.h"
 #include "XSharp/Types/TypeNodes.h"
@@ -71,10 +72,33 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(FunctionCallNode* ast,
         }
 
         if (callee_type->isObject()) {
-            auto malloc_code = genObjectMalloc(helper, callee_type);
-            passErrorIfNot(malloc_code);
+            std::vector<llvm::Value*> argValues;
+            std::vector<Type*> argTypes;
 
-            return {malloc_code, callee_type};
+            for (auto arg : ast->args()) {
+                auto [arg_val, arg_type] = generator(arg);
+                passErrorIfNot(arg_type);
+                argTypes.push_back(arg_type);
+                argValues.push_back(arg_val);
+            }
+
+            // TODO: check whether callee to type is legal
+            auto symbol = helper->currentSymbols->findFunctionFor(
+                ast->callee()->to<TypeNode>()->toType()->typeName() + ":new",
+                argTypes);
+
+            assertWithError(symbol.symbolType != SymbolType::NoneSymbol,
+                            helper->error, "No such constructor for {}",
+                            ast->callee()->to<TypeNode>()->dump());
+
+            return {builder.CreateCall(symbol.function->getFunctionType(),
+                                       symbol.function, argValues),
+                    symbol.type->returnValueType()};
+
+            // TODO: default constructor
+            //  auto malloc_code = genMalloc(helper, callee_type);
+            //  passErrorIfNot(malloc_code);
+            // return {malloc_code, callee_type};
         }
 
         if (callee_type->isArray()) {
@@ -148,7 +172,8 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(FunctionCallNode* ast,
                                    symbol.definition, argumentValues),
                 symbol.type->returnValueType()};
 
-    }  // TODO: callable
+    }
+    // TODO: callable
     else {
     }
 

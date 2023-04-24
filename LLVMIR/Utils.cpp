@@ -6,7 +6,7 @@
 
 namespace XSharp::LLVMCodeGen {
 
-llvm::Value* genObjectMalloc(CodeGenContext* helper, XSharp::Type* type)
+llvm::Value* genMalloc(CodeGenContext* helper, XSharp::Type* type)
 {
     auto& module = helper->module;
     auto& context = helper->llvm_ctx;

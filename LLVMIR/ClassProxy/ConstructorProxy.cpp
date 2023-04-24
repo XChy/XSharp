@@ -67,8 +67,7 @@ ValueAndType CodeGenProxy<ConstructorNode>::codeGen(ConstructorNode* ast,
     // implicitly emit self-malloc code
     auto self_alloca =
         builder.CreateAlloca(castToLLVM(self_type, ctx->llvm_ctx));
-    auto malloced_object =
-        genObjectMalloc(ctx, Types::get(ast->selfClass->name));
+    auto malloced_object = genMalloc(ctx, Types::get(ast->selfClass->name));
     builder.CreateStore(malloced_object, self_alloca);
 
     ctx->currentSymbols->addSymbol({.name = "self",

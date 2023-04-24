@@ -8,7 +8,7 @@ namespace XSharp::LLVMCodeGen {
 
 // Inject instructions to malloc a XSharp Object with GC
 // @param type : type of object to malloc
-llvm::Value* genObjectMalloc(CodeGenContext* helper, XSharp::Type* type);
+llvm::Value* genMalloc(CodeGenContext* helper, XSharp::Type* type);
 
 // Inject instructions to malloc a XSharp Array with GC
 // @param type : type of array to malloc

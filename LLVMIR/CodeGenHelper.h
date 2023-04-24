@@ -68,8 +68,6 @@ class CodeGenContext
     XSharp::SymbolTable* currentSymbols;
 
     std::stack<Type*> retTypes;
-
-    // TODO: Apply proxy to change the BasicBlock below
     std::stack<Loop> loops;
 };
 
