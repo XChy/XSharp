@@ -1,6 +1,7 @@
 class Foo{
 
 new(){
+    self.age = 0;
 }
 
 void setAge(i32 age){

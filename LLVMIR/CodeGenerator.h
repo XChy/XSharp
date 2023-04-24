@@ -14,6 +14,7 @@
 #include "LLVMIR/ClassProxy/ClassProxy.h"
 #include "LLVMIR/ClassProxy/MemberMethodProxy.h"
 #include "LLVMIR/ClassProxy/MemberExprProxy.h"
+#include "LLVMIR/ClassProxy/ConstructorProxy.h"
 #include "LLVMIR/ClassProxy/IndexProxy.h"
 
 #include "LLVMIR/LLVMTypes.h"

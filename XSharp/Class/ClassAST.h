@@ -29,6 +29,18 @@ class XSharp_EXPORT MemberMethodNode : public FunctionNode
     ClassNode* selfClass;
 };
 
+class XSharp_EXPORT ConstructorNode : public ASTNode
+{
+   public:
+    XString dump() const;
+
+    ~ConstructorNode();
+
+    ClassNode* selfClass;
+    std::vector<VariableNode*> parameters;
+    BlockNode* impl;
+};
+
 class XSharp_EXPORT DefinitionsNode : public ASTNode
 {
    public:
@@ -41,17 +53,6 @@ class XSharp_EXPORT DefinitionsNode : public ASTNode
     ~DefinitionsNode();
 
     std::vector<ASTNode*> decls;
-};
-
-class XSharp_EXPORT ConstructorNode : public ASTNode
-{
-   public:
-    XString dump() const;
-
-    ~ConstructorNode();
-
-    std::vector<VariableNode*> parameters;
-    BlockNode* impl;
 };
 
 }  // namespace XSharp

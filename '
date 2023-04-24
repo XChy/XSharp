@@ -1,0 +1,4 @@
+#include "ConstructorProxy.h"
+
+ValueAndType codeGen(ConstructorNode* ast, CodeGenContext* ctx,
+                     const Generator& generator);

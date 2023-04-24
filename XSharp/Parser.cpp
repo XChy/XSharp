@@ -67,7 +67,9 @@ ClassNode* Parser::classDecl()
             func->selfClass = classNode;
             classNode->methods.push_back(func);
         } else if (current->isKeyword("new")) {
-            classNode->constructors.push_back(constructor());
+            auto cons = constructor();
+            cons->selfClass = classNode;
+            classNode->constructors.push_back(cons);
         } else {
             throw XSharpError("Not a field in class");
         }

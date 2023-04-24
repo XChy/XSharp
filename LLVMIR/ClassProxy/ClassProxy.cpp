@@ -35,7 +35,11 @@ ValueAndType CodeGenProxy<ClassNode>::codeGen(ClassNode* ast,
 
     for (auto method : ast->methods) {
         auto [_, method_type] = generator(method);
+        passErrorIfNot(method_type);
+    }
 
+    for (auto constructor : ast->constructors) {
+        auto [_, method_type] = generator(constructor);
         passErrorIfNot(method_type);
     }
 
