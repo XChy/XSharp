@@ -41,9 +41,6 @@ if(SUPPORT_LLVMIR)
     OUTPUT_VARIABLE llvm_libs
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  # llvm_map_components_to_libnames( llvm_libs all support core codegen irreader
-  # mc mca target asmprinter)
-
   message(STATUS "LLVM LIBS: ${llvm_libs}")
 
 endif()

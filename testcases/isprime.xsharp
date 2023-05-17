@@ -14,7 +14,6 @@ i32 main()
     boolean a = true;
     while(a){
         i32 x = inputI32();
-        continue;
         print(isPrime(x));
     }
     return 32;

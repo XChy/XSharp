@@ -37,7 +37,7 @@ class CodeGenerator
     // return [LLVM-IR's Value, XSharp's Type]
     ValueAndType codegen(ASTNode* node);
 
-    CodeGenContext contextHelper;
+    CodeGenContext ctx;
 
     template <typename ASTType>
     void addProxy()

@@ -27,12 +27,9 @@ DefinitionsNode* Parser::definitions()
     while (current != end) {
         if (current->isKeyword("class")) {
             root->decls.push_back(classDecl());
-            // root->addClass(classDeclaration());
         } else if (isVariableDecl()) {
             root->decls.push_back(variableDecl({SentenceEnd}));
-            // root->addVariable(variableDeclaration({SentenceEnd}));
         } else if (isFunctionDecl()) {
-            // root->addFunction(functionDeclaration());
             root->decls.push_back(functionDecl());
         } else {
             throw XSharpError("Not a definition in global");

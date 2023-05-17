@@ -34,8 +34,7 @@ using namespace XSharp::LLVMCodeGen;
 
 CodeGenerator::CodeGenerator()
 {
-    setUpBuildIn(contextHelper.module, contextHelper.llvm_ctx,
-                 contextHelper.globalSymbols);
+    setUpBuildIn(ctx.module, ctx.llvm_ctx, ctx.globalSymbols);
 
     generator = std::bind(&CodeGenerator::codegen, this, std::placeholders::_1);
 
@@ -80,20 +79,20 @@ std::vector<std::byte> CodeGenerator::generateIR(ASTNode* ast,
     auto [val, type] = codegen(ast);
     if (!type) return bytecodes;
 
-    contextHelper.optimizer.modulePassManager.run(contextHelper.module);
+    ctx.optimizer.modulePassManager.run(ctx.module);
 
     SmallVector<char> buffer;
     BitcodeWriter bitcodeWriter(buffer);
-    bitcodeWriter.writeModule(contextHelper.module);
+    bitcodeWriter.writeModule(ctx.module);
     std::error_code code;
     llvm::raw_fd_ostream out(filename.toStdString(), code);
-    WriteBitcodeToFile(contextHelper.module, out);
-    contextHelper.module.dump();
+    WriteBitcodeToFile(ctx.module, out);
+    ctx.module.dump();
     return bytecodes;
 }
 
 ValueAndType CodeGenerator::codegen(ASTNode* node)
 {
     auto index = std::type_index(typeid(*node));
-    return proxies[index]->codeGen(node, &contextHelper, generator);
+    return proxies[index]->codeGen(node, &ctx, generator);
 }

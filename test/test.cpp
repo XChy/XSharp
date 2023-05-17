@@ -65,13 +65,13 @@ void test(const char *path)
     fmt::print("{}", ast->dump());
 
     XSharp::LLVMCodeGen::CodeGenerator helper;
-    TypeAdapter::setLLVMBuilder(&helper.contextHelper.llvm_builder);
-    TypeAdapter::setLLVMContext(&helper.contextHelper.llvm_ctx);
+    TypeAdapter::setLLVMBuilder(&helper.ctx.llvm_builder);
+    TypeAdapter::setLLVMContext(&helper.ctx.llvm_ctx);
     helper.generateIR(ast, XString(path).append(".bc"));
 
-    if (!helper.contextHelper._errors.empty()) {
+    if (!helper.ctx._errors.empty()) {
         std::cout << "Semantic error:\n";
-        for (auto error : helper.contextHelper._errors)
+        for (auto error : helper.ctx._errors)
             std::cout << error.errorInfo.toStdString() << "\n";
     }
 

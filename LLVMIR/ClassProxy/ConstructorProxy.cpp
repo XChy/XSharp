@@ -111,9 +111,6 @@ ValueAndType CodeGenProxy<ConstructorNode>::codeGen(ConstructorNode* ast,
 
     ctx->exitFunctionScope();
 
-    // for debug
-    // llvm::verifyFunction(*func);
-
     // optimize the function
     ctx->optimizer.functionPassManager.run(*func);
 

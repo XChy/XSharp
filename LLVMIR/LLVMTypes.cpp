@@ -2,6 +2,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
+#include <cstddef>
 #include "XSharp/Class/XClass.h"
 
 namespace XSharp {
@@ -9,6 +10,7 @@ namespace LLVMCodeGen {
 
 llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
 {
+    std::byte a;
     using XSharp::BasicType;
     // TODO complete XSharp's Type to Variable
     using XSharp::Type;
