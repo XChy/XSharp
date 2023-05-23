@@ -62,7 +62,7 @@ llvm::Value* genArrayMalloc(CodeGenContext* helper, XSharp::Type* type,
         auto elements_ptr_ptr = helper->llvm_builder.CreateStructGEP(
             array_struct_type, array_value, 1);
 
-        helper->llvm_builder.CreateStore(sizeofElement, length_ptr);
+        helper->llvm_builder.CreateStore(element_count, length_ptr);
         helper->llvm_builder.CreateStore(elements_ptr, elements_ptr_ptr);
 
         return array_value;

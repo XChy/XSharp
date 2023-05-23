@@ -1,4 +1,5 @@
 #include "MemberExprProxy.h"
+#include <llvm-14/llvm/IR/Value.h>
 #include <llvm/ADT/APInt.h>
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/CodeGenProxy.h"
@@ -31,6 +32,15 @@ ValueAndType CodeGenProxy<MemberExprNode>::codeGen(MemberExprNode *ast,
                         getReferenceType(fieid.type)};
             }
             index++;
+        }
+    } else if (obj_type->isArray()) {
+        if (ast->memberName() == "length") {
+            llvm::Value *length_ptr = helper->llvm_builder.CreateStructGEP(
+                obj->getType()->getContainedType(0), obj, 0);
+
+            llvm::Value *length = helper->llvm_builder.CreateLoad(
+                length_ptr->getType()->getContainedType(0), length_ptr);
+            return {deReference({length, XSharp::getI32Type()}, helper)};
         }
     }
 
