@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include <llvm/IR/Value.h>
+#include "LLVMIR/LLVMTypes.h"
 #include "XSharp/Types/Type.h"
 #include "XSharp/Types/TypeSystem.h"
 #include "XSharp/XString.h"
@@ -36,8 +37,11 @@ llvm::Value* genArrayMalloc(CodeGenContext* helper, XSharp::Type* type,
     auto& context = helper->llvm_ctx;
     llvm::FunctionCallee newFunc = module.getOrInsertFunction(
         "GC_new_object",
-        llvm::FunctionType::get(castToLLVM(type, context),
-                                {llvm::Type::getInt64Ty(context)}, false));
+        llvm::FunctionType::get(
+            castToLLVM(type->elementType(), context)->getPointerTo(),
+            {llvm::Type::getInt64Ty(context)}, false));
+
+    auto array_struct_type = castToLLVM(type, context)->getContainedType(0);
 
     if (type->isArray()) {
         llvm::Value* sizeofElement = llvm::ConstantInt::get(
@@ -46,7 +50,22 @@ llvm::Value* genArrayMalloc(CodeGenContext* helper, XSharp::Type* type,
         llvm::Value* sizeofArray =
             helper->llvm_builder.CreateMul(element_count, sizeofElement);
 
-        return helper->llvm_builder.CreateCall(newFunc, {sizeofArray});
+        llvm::Value* array_value =
+            helper->llvm_builder.CreateAlloca(array_struct_type);
+
+        auto elements_ptr =
+            helper->llvm_builder.CreateCall(newFunc, {sizeofArray});
+
+        auto length_ptr = helper->llvm_builder.CreateStructGEP(
+            array_struct_type, array_value, 0);
+
+        auto elements_ptr_ptr = helper->llvm_builder.CreateStructGEP(
+            array_struct_type, array_value, 1);
+
+        helper->llvm_builder.CreateStore(sizeofElement, length_ptr);
+        helper->llvm_builder.CreateStore(elements_ptr, elements_ptr_ptr);
+
+        return array_value;
 
     } else {
         helper->error("Do not support 'new' operator for {}", type->typeName());

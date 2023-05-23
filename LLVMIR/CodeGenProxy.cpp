@@ -69,18 +69,38 @@ ValueAndType CodeGenProxy<StringNode>::codeGen(StringNode* ast,
                                                CodeGenContext* helper,
                                                const Generator& generator)
 {
-    auto llvm_array_type = (llvm::ArrayType*)castToLLVM(
-        XSharp::getArrayType(Types::get("char"), 1), helper->llvm_ctx);
+    auto x_array_type = XSharp::getArrayType(Types::get("char"), 1);
+    auto llvm_array_type = castToLLVM(x_array_type, helper->llvm_ctx);
+
+    llvm::StructType* array_struct_type =
+        (llvm::StructType*)llvm_array_type->getContainedType(0);
+
+    llvm::ArrayType* array_data_type = llvm::ArrayType::get(
+        castToLLVM(x_array_type->elementType(), helper->llvm_ctx),
+        ast->value().size());
+
     std::vector<llvm::Constant*> chars;
-    for (int i = 0; i <= ast->value().size(); ++i) {
+
+    for (int i = 0; i < ast->value().size(); ++i) {
         chars.push_back(helper->llvm_builder.getInt(
             llvm::APInt(16, ast->value()[i].value())));
     }
 
-    llvm::Constant* data = llvm::ConstantArray::get(llvm_array_type, chars);
-    llvm::GlobalVariable* glob =
-        new llvm::GlobalVariable(helper->module, data->getType(), true,
-                                 llvm::GlobalValue::ExternalLinkage, data);
+    llvm::ConstantInt* length_data = llvm::ConstantInt::get(
+        helper->llvm_ctx, llvm::APInt(64, ast->value().size()));
+
+    llvm::Constant* chars_data =
+        llvm::ConstantArray::get(array_data_type, chars);
+    llvm::GlobalVariable* glob_chars = new llvm::GlobalVariable(
+        helper->module, chars_data->getType(), true,
+        llvm::GlobalValue::ExternalLinkage, chars_data);
+
+    llvm::Constant* array_data =
+        llvm::ConstantStruct::get(array_struct_type, {length_data, glob_chars});
+
+    llvm::GlobalVariable* glob = new llvm::GlobalVariable(
+        helper->module, array_data->getType(), true,
+        llvm::GlobalValue::ExternalLinkage, array_data);
 
     return {glob, XSharp::getArrayType(Types::get("char"), 1)};
 }

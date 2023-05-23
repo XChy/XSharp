@@ -1,17 +1,5 @@
-class String{
-    char[] data;
-    i64 size;
-
-    void init(){
-        self.data = new char[](1024);
-        self.size = 1024;
-        return;
-    }
-}
-
 i32 main(){
-    char[] str = new char[](10);
-    str = "123\n\t123\n";
-    print(str);
+    char[] a = "123123";
+    print(a);
     return 0;
 }

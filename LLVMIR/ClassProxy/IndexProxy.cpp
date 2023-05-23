@@ -15,6 +15,7 @@ ValueAndType CodeGenProxy<IndexNode>::codeGen(IndexNode *ast,
                                               const Generator &generator)
 {
     auto [index, index_type] = generator(ast->index());
+
     auto [indexed, indexed_type] =
         deReference(generator(ast->operand()), helper);
 
@@ -33,8 +34,17 @@ ValueAndType CodeGenProxy<IndexNode>::codeGen(IndexNode *ast,
         return {nullptr, nullptr};
     }
 
+    auto array_struct_type = indexed->getType()->getContainedType(0);
+
+    llvm::Value *element_ptr_ptr =
+        helper->llvm_builder.CreateStructGEP(array_struct_type, indexed, 1);
+
+    llvm::Value *element_ptr_head = helper->llvm_builder.CreateLoad(
+        element_ptr_ptr->getType()->getContainedType(0), element_ptr_ptr);
+
     llvm::Value *element = helper->llvm_builder.CreateInBoundsGEP(
-        castToLLVM(indexed_type->elementType(), helper->llvm_ctx), indexed,
+        element_ptr_head->getType()->getContainedType(0), element_ptr_head,
         index, ast->dump().toStdString());
+
     return {element, getReferenceType(indexed_type->elementType())};
 }

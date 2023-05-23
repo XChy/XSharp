@@ -1,10 +1,11 @@
 #pragma once
 #include <stdio.h>
 #include <stdbool.h>
+#include "array.h"
 
 // print scan related function
 extern "C" bool printChar(char16_t character);
-extern "C" bool printStr(char16_t* str);
+extern "C" bool printStr(xarray* char_array);
 extern "C" bool printI32(__int32_t x);
 extern "C" bool printI64(__int64_t x);
 extern "C" bool printFloat(float x);

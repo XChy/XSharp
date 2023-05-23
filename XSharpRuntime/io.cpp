@@ -39,19 +39,20 @@ bool printChar(char16_t character)
     return 0;
 }
 
-bool printStr(char16_t* str)
+bool printStr(xarray* char_array)
 {
+    char16_t* str = (char16_t*)char_array->elements;
     char buf[4];
 
-    while (*str) {
-        int len = UCS2toUTF8(*str, buf);
-        for (int i = 0; i < len; ++i) {
-            putchar(buf[i]);
+    for (int i = 0; i < char_array->length; ++i) {
+        int len = UCS2toUTF8(str[i], buf);
+        for (int j = 0; j < len; ++j) {
+            putchar(buf[j]);
         }
-        str++;
     }
     return 0;
 }
+
 bool printI32(__int32_t x) { return printf("%d\n", x); }
 bool printI64(__int64_t x) { return printf("%ld\n", x); }
 

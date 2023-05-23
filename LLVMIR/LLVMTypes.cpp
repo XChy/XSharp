@@ -3,7 +3,9 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
 #include <cstddef>
+#include <vector>
 #include "XSharp/Class/XClass.h"
+#include "XSharp/Types/TypeSystem.h"
 
 namespace XSharp {
 namespace LLVMCodeGen {
@@ -54,11 +56,18 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
                 llvmTypesForParams, false);
         }
 
-        case Type::Array:
+        case Type::Array: {
             // Allocate XSharp's array on heap
             // So the type of array is the pointer type of its element
-            return llvm::PointerType::get(
+            auto pointerToElements = llvm::PointerType::get(
                 castToLLVM(type->elementType(), context), 0);
+
+            auto structType = llvm::StructType::get(
+                context,
+                std::vector<llvm::Type*>{castToLLVM(getI64Type(), context),
+                                         pointerToElements});
+            return structType->getPointerTo();
+        }
 
         case Type::Class: {
             std::vector<llvm::Type*> llvmTypes;
