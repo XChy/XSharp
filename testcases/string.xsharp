@@ -1,4 +1,4 @@
-class string {
+class string extends A{
     char[] data;
  
 	new(char[] chars) {
@@ -22,8 +22,9 @@ class string {
 
 i32 main(){
     string a = new string("H,world!\n");
-    print("H,world!\n");
+    print("H,world!\n"[1]);
     print(a.getData());
+    a.getData()[3] = '$';
     print(a.charAt(3));
     return 0;
 }

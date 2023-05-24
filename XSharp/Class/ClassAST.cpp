@@ -9,17 +9,26 @@ using namespace XSharp;
 XString ClassNode::dump() const
 {
     std::vector<std::string> fieldDumps;
-    for (auto member : members) {
-        fieldDumps.push_back(fmt::format("field : {}", member->dump()));
-    }
-    for (auto method : methods) {
-        fieldDumps.push_back(fmt::format("field : {}", method->dump()));
-    }
+
     for (auto constructor : constructors) {
         fieldDumps.push_back(fmt::format("field : {}", constructor->dump()));
     }
 
-    return fmt::format("Class {}{{\n{}\n}}", name, fmt::join(fieldDumps, "\n"));
+    for (auto member : members) {
+        fieldDumps.push_back(fmt::format("field : {}", member->dump()));
+    }
+
+    for (auto method : methods) {
+        fieldDumps.push_back(fmt::format("field : {}", method->dump()));
+    }
+
+    std::string extendsDump;
+    if (superClass.size() > 0) {
+        extendsDump = fmt::format("extends {}", superClass);
+    }
+
+    return fmt::format("Class {} {}{{\n{}\n}}", name, extendsDump,
+                       fmt::join(fieldDumps, "\n"));
 }
 
 ClassNode::~ClassNode()

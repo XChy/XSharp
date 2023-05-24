@@ -26,8 +26,10 @@ class XSharp_EXPORT XClass
    public:
     XString name;
 
-    // TODO: trait table
     std::vector<Field> dataFields;
+    XClass* superClass;
+
+    // TODO: Interfaces table
 };
 
 }  // namespace XSharp

@@ -7,10 +7,10 @@
 namespace XSharp {
 
 static std::unordered_set<XString> keywords = {
-    "for",    "while",  "break",   "continue", "if",    "else",
-    "return", "switch", "default", "case",     "throw", "catch",
-    "try",    "class",  "const",   "static",   "enum",  "false",
-    "true",   "public", "private", "new",      "match", "as"};
+    "for",    "while",   "break", "continue", "if",    "else",   "return",
+    "switch", "default", "case",  "throw",    "catch", "try",    "class",
+    "const",  "static",  "enum",  "false",    "true",  "public", "private",
+    "new",    "match",   "as",    "extends"};
 
 bool isKeyword(const XString& keyword);
 

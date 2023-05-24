@@ -15,7 +15,9 @@ class XSharp_EXPORT ClassNode : public ASTNode
     ~ClassNode();
 
     XString name;
-    // TODO: Design specific Member/MemberMethod AST
+
+    XString superClass;
+
     std::vector<VariableNode*> members;
     std::vector<MemberMethodNode*> methods;
     std::vector<ConstructorNode*> constructors;

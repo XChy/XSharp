@@ -46,8 +46,16 @@ ClassNode* Parser::classDecl()
 
     if (!current->is(Identifier)) throw XSharpError("No name for class");
 
+    // get the name of class
     classNode->name = current->value;
     forward();
+
+    // [optional] superclass
+    if (current->isKeyword("extends")) {
+        forward();
+        if (current->is(Identifier)) classNode->superClass = current->value;
+        forward();
+    }
 
     // skip '{'
     if (current->is(OpenBrace))
