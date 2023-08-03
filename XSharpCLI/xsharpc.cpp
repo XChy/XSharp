@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     CLI::App app("The compiler of XSharp");
     app.add_flag("-L,--emit-llvm-ir", emitLLVMIR, "Emit LLVM-IR for the file");
     app.add_flag("-s", isAOT, "Compile XSharp into executable");
-    app.add_option("input", inputFiles);
+    app.add_option("Input files", inputFiles, "Input files to compile")->required();
     app.add_option("-o", defaultOutputName, "Where to put the executable");
 
     CLI11_PARSE(app, argc, argv);
@@ -41,13 +41,8 @@ int main(int argc, char *argv[])
         projectPath.subString(0, projectPath.lastSubStringIndex("/") + 1);
     projectPath.append("../");
 
-    int optionChar;
-    char *argumentStr;
-
-
-    if (isAOT) {
+    if (isAOT) 
         return compile(inputFiles[0].toStdString().c_str());
-    }
 
     return 0;
 }
@@ -84,15 +79,15 @@ int compile(const char *path)
     TypeAdapter::setLLVMBuilder(&helper.ctx.llvm_builder);
     TypeAdapter::setLLVMContext(&helper.ctx.llvm_ctx);
 
-    if(emitLLVMIR){
+    if (emitLLVMIR) {
         helper.generateTextIR(ast.get(), XString(path).append(".ll"));
         return 0;
+    } else {
+        helper.generateIR(ast.get(), XString(path).append(".bc"));
     }
 
-    helper.generateIR(ast.get(), XString(path).append(".bc"));
-
     if (!helper.ctx._errors.empty()) {
-        std::cout << "Semantic error:\n";
+        fmt::print("Semantic error in {}:\n", path);
         for (auto error : helper.ctx._errors)
             std::cout << error.errorInfo.toStdString() << "\n";
         return -1;
@@ -101,9 +96,8 @@ int compile(const char *path)
     auto object_path = XString(path).append(".o");
 
     auto error_code = emit_object_code(object_path, helper.ctx.module);
-    if (error_code.value() != 0) {
+    if (error_code.value() != 0) 
         std::cout << error_code.message();
-    }
 
     if (!hasDefaultOutputName) {
         if (XString(path).lastSubStringIndex("xsharp") ==
