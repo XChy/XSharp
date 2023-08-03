@@ -1,10 +1,10 @@
 #include "CodeGenProxy.h"
-#include <llvm-14/llvm/ADT/APFloat.h>
-#include <llvm-14/llvm/ADT/APInt.h>
-#include <llvm-14/llvm/IR/Constant.h>
-#include <llvm-14/llvm/IR/Constants.h>
-#include <llvm-14/llvm/IR/DerivedTypes.h>
-#include <llvm-14/llvm/IR/GlobalVariable.h>
+#include <llvm/ADT/APFloat.h>
+#include <llvm/ADT/APInt.h>
+#include <llvm/IR/Constant.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/GlobalVariable.h>
 #include "LLVMIR/LLVMTypes.h"
 #include "LLVMIR/Utils.h"
 #include "XSharp/ASTNodes.h"

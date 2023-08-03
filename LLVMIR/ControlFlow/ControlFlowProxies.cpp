@@ -1,6 +1,6 @@
 #include "ControlFlowProxies.h"
-#include <llvm-14/llvm/IR/BasicBlock.h>
-#include <llvm-14/llvm/IR/Type.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Type.h>
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/CodeGenProxy.h"
 #include "LLVMIR/Utils.h"

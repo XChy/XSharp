@@ -37,7 +37,7 @@ if(SUPPORT_LLVMIR)
   add_definitions(${LLVM_DEFINITIONS_LIST})
 
   execute_process(
-    COMMAND llvm-config --libs all
+    COMMAND llvm-config-15 --libs all
     OUTPUT_VARIABLE llvm_libs
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
@@ -91,9 +91,7 @@ endif()
 if(BUILD_TEST)
   add_subdirectory(test)
   enable_testing()
-  add_test(NAME test1 COMMAND $<TARGET_FILE:TEST_UTILS>)
-  add_test(NAME test2 COMMAND $<TARGET_FILE:TEST_LLVM>)
-  add_test(NAME test3 COMMAND $<TARGET_FILE:TEST_ALL>)
+  add_test(NAME test_utils COMMAND $<TARGET_FILE:TEST_UTILS>)
 endif()
 
 # Shared Library is necessary

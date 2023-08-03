@@ -1,5 +1,5 @@
 #include "MemberExprProxy.h"
-#include <llvm-14/llvm/IR/Value.h>
+#include <llvm/IR/Value.h>
 #include <llvm/ADT/APInt.h>
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/CodeGenProxy.h"

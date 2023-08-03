@@ -33,6 +33,7 @@ class CodeGenerator
     // generate LLVM-IR for the ast
     // error saved in LLVMHelper's errors
     std::vector<std::byte> generateIR(ASTNode* ast, const XString& filename);
+    std::vector<std::byte> generateTextIR(ASTNode* ast, const XString& filename);
     // universal code generation for XSharp's AST
     // return [LLVM-IR's Value, XSharp's Type]
     ValueAndType codegen(ASTNode* node);

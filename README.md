@@ -46,15 +46,21 @@ bin/xsharp xxx.xe          # execute the bytecode
 
 - ##### **LLVM** (**optional**)
 
-  XSharp can compile XSharp code into LLVM IR, which XSharp apply **LLVM14(or above)** to compile and optimize to generate binary
+  XSharp can compile XSharp code into LLVM IR, which
+  XSharp apply **LLVM14(or above)** to compile and optimize to generate binary.
 
 - ##### **FMT**
 
-  For format printing
+  For format printing.
+
+- ##### **CLI11**
+
+  For CLI argument parser.
+
 
 - ##### **Boehm GC** (**Temporary GC, I may develop a unique one for XSharp later**)
 
-  For garbage collection
+  For garbage collection.
 
 ### TODOs
 
@@ -120,12 +126,10 @@ void main(){
 ```
 --XSharp
  |
- |- XSharp      # Main code of XSharp (Lexer,Parser,Semantics)
- |- XSharpIR    # Impliment VM for X# AST with XSharp-IR
+ |- XSharp      # Main code of XSharp (Lexer, Parser)
  |- XSharpRuntime # Runtime for X#
- |- XSharpCLI   # Command-line Interface(xsharpc, xsharp)
+ |- XSharpCLI   # Command-line Interface (xsharpc)
  |-
- |- LLVMIR      # Impliment AOT for X# AST with LLVM-IR
- |- test        # Code to test correctness of XSharp's Builder
- |- testcases   # X# code for test
+ |- LLVMIR      # Impliment AOT for xsharpc
+ |- test        # Test driver
 ```

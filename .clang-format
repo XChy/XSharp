@@ -1,0 +1,16 @@
+BasedOnStyle: Google
+IndentWidth: 4
+IndentCaseLabels: true
+BraceWrapping:   
+    AfterClass:	true
+    AfterFunction: true
+    AfterNamespace:	false
+    AfterObjCDeclaration: false
+    AfterStruct: false
+    AfterUnion:	false
+    BeforeCatch: false
+    BeforeElse:	false
+    IndentBraces: false
+BreakBeforeBraces:	Custom
+IndentGotoLabels: false
+SortIncludes: false

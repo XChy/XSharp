@@ -1,5 +1,5 @@
 #include "IndexProxy.h"
-#include <llvm-14/llvm/IR/Value.h>
+#include <llvm/IR/Value.h>
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/LLVMTypes.h"
 #include "XSharp/ASTNodes.h"

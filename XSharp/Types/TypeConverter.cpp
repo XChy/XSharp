@@ -1,6 +1,6 @@
 #include "XSharp/Types/TypeConverter.h"
-#include <llvm-14/llvm/IR/Instruction.h>
-#include <llvm-14/llvm/IR/Type.h>
+#include <llvm/IR/Instruction.h>
+#include <llvm/IR/Type.h>
 #include "LLVMIR/LLVMTypes.h"
 
 using namespace XSharp;

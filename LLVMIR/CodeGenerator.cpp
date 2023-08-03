@@ -91,6 +91,23 @@ std::vector<std::byte> CodeGenerator::generateIR(ASTNode* ast,
     return bytecodes;
 }
 
+std::vector<std::byte> CodeGenerator::generateTextIR(ASTNode *ast,
+                                                     const XString &filename) {
+using namespace llvm;
+    std::vector<std::byte> bytecodes;
+
+    auto [val, type] = codegen(ast);
+    if (!type) return bytecodes;
+
+    ctx.optimizer.modulePassManager.run(ctx.module);
+
+    std::error_code code;
+    llvm::raw_fd_ostream out(filename.toStdString(), code);
+    ctx.module.print(out, nullptr);
+    return bytecodes;
+
+}
+
 ValueAndType CodeGenerator::codegen(ASTNode* node)
 {
     auto index = std::type_index(typeid(*node));

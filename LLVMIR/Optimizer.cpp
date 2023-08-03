@@ -56,7 +56,6 @@ Optimizer::Optimizer(llvm::Module* module) : functionPassManager(module)
     functionPassManager.doInitialization();
 
     modulePassManager.add(llvm::createFunctionInliningPass());
-    modulePassManager.add(llvm::createArgumentPromotionPass());
     modulePassManager.add(llvm::createVectorCombinePass());
     modulePassManager.add(llvm::createIPSCCPPass());
 }
