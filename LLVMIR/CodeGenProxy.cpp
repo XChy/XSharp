@@ -66,40 +66,33 @@ ValueAndType CodeGenProxy<CharNode>::codeGen(CharNode* ast,
 }
 
 ValueAndType CodeGenProxy<StringNode>::codeGen(StringNode* ast,
-                                               CodeGenContext* helper,
+                                               CodeGenContext* ctx,
                                                const Generator& generator)
 {
     auto x_array_type = XSharp::getArrayType(Types::get("char"), 1);
-    auto llvm_array_type = castToLLVM(x_array_type, helper->llvm_ctx);
-
-    llvm::StructType* array_struct_type =
-        (llvm::StructType*)llvm_array_type->getContainedType(0);
-
-    llvm::ArrayType* array_data_type = llvm::ArrayType::get(
-        castToLLVM(x_array_type->elementType(), helper->llvm_ctx),
-        ast->value().size());
+    auto eltTy = castToLLVM(x_array_type->elementType(), ctx->llvm_ctx);
 
     std::vector<llvm::Constant*> chars;
 
     for (int i = 0; i < ast->value().size(); ++i) {
-        chars.push_back(helper->llvm_builder.getInt(
-            llvm::APInt(16, ast->value()[i].value())));
+        chars.push_back(
+            ctx->llvm_builder.getInt(llvm::APInt(16, ast->value()[i].value())));
     }
 
     llvm::ConstantInt* length_data = llvm::ConstantInt::get(
-        helper->llvm_ctx, llvm::APInt(64, ast->value().size()));
+        ctx->llvm_ctx, llvm::APInt(64, ast->value().size()));
 
-    llvm::Constant* chars_data =
-        llvm::ConstantArray::get(array_data_type, chars);
+    llvm::Constant* chars_data = llvm::ConstantArray::get(
+        llvm::ArrayType::get(eltTy, chars.size()), chars);
     llvm::GlobalVariable* glob_chars = new llvm::GlobalVariable(
-        helper->module, chars_data->getType(), true,
+        ctx->module, chars_data->getType(), true,
         llvm::GlobalValue::ExternalLinkage, chars_data);
 
-    llvm::Constant* array_data =
-        llvm::ConstantStruct::get(array_struct_type, {length_data, glob_chars});
+    llvm::Constant* array_data = llvm::ConstantStruct::get(
+        structForArray(ctx->llvm_ctx), {length_data, glob_chars});
 
     llvm::GlobalVariable* glob = new llvm::GlobalVariable(
-        helper->module, array_data->getType(), true,
+        ctx->module, array_data->getType(), true,
         llvm::GlobalValue::ExternalLinkage, array_data);
 
     return {glob, XSharp::getArrayType(Types::get("char"), 1)};

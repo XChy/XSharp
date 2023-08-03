@@ -41,7 +41,7 @@ llvm::Value* genArrayMalloc(CodeGenContext* helper, XSharp::Type* type,
             castToLLVM(type->elementType(), context)->getPointerTo(),
             {llvm::Type::getInt64Ty(context)}, false));
 
-    auto array_struct_type = castToLLVM(type, context)->getContainedType(0);
+    auto array_struct_type = structForArray(helper->llvm_ctx);
 
     if (type->isArray()) {
         llvm::Value* sizeofElement = llvm::ConstantInt::get(

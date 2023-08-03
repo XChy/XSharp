@@ -1,4 +1,5 @@
 #include "IndexProxy.h"
+#include <llvm/IR/Constants.h>
 #include <llvm/IR/Value.h>
 #include "LLVMIR/CodeGenHelper.h"
 #include "LLVMIR/LLVMTypes.h"
@@ -11,40 +12,41 @@ using namespace XSharp::LLVMCodeGen;
 using namespace XSharp;
 
 ValueAndType CodeGenProxy<IndexNode>::codeGen(IndexNode *ast,
-                                              CodeGenContext *helper,
+                                              CodeGenContext *ctx,
                                               const Generator &generator)
 {
+    using llvm::ConstantInt;
     auto [index, index_type] = generator(ast->index());
 
     auto [indexed, indexed_type] =
-        deReference(generator(ast->operand()), helper);
+        deReference(generator(ast->operand()), ctx);
 
     if (!indexed_type->isArray()) {
-        helper->error("Cannot get the element of non-array");
+        ctx->error("Cannot get the element of non-array");
         return {nullptr, nullptr};
     }
 
     index = TypeAdapter::llvmConvert(index_type, Types::get("i64"), index);
 
     if (!index) {
-        helper->error("Cannot convert '{}' to '{}'", index_type->typeName(),
+        ctx->error("Cannot convert '{}' to '{}'", index_type->typeName(),
                       Types::get("i64")->typeName());
 
-        helper->error("Index must be an integer");
+        ctx->error("Index must be an integer");
         return {nullptr, nullptr};
     }
 
-    auto array_struct_type = indexed->getType()->getContainedType(0);
+    auto PtrTy = indexed->getType();
 
-    llvm::Value *element_ptr_ptr =
-        helper->llvm_builder.CreateStructGEP(array_struct_type, indexed, 1);
+    llvm::Value *element_ptr_ptr = ctx->llvm_builder.CreateStructGEP(
+        structForArray(ctx->llvm_ctx), indexed, 1);
 
-    llvm::Value *element_ptr_head = helper->llvm_builder.CreateLoad(
-        element_ptr_ptr->getType()->getContainedType(0), element_ptr_ptr);
+    llvm::Value *element_ptr_head =
+        ctx->llvm_builder.CreateLoad(PtrTy, element_ptr_ptr);
 
-    llvm::Value *element = helper->llvm_builder.CreateInBoundsGEP(
-        element_ptr_head->getType()->getContainedType(0), element_ptr_head,
-        index, ast->dump().toStdString());
+    llvm::Value *element = ctx->llvm_builder.CreateGEP(
+        castToLLVM(indexed_type->elementType(), ctx->llvm_ctx),
+        element_ptr_head, index, ast->dump().toStdString());
 
     return {element, getReferenceType(indexed_type->elementType())};
 }

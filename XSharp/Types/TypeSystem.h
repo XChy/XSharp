@@ -62,4 +62,5 @@ inline Type* getDoubleType() { return getBasicType(BasicType::Double); }
 inline Type* getBooleanType() { return getBasicType(BasicType::Boolean); }
 inline Type* getCharType() { return getBasicType(BasicType::Char); }
 
+inline Type* getArrayLenType(){ return getI64Type();}
 }  // namespace XSharp

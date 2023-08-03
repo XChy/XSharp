@@ -59,14 +59,7 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
         case Type::Array: {
             // Allocate XSharp's array on heap
             // So the type of array is the pointer type of its element
-            auto pointerToElements = llvm::PointerType::get(
-                castToLLVM(type->elementType(), context), 0);
-
-            auto structType = llvm::StructType::get(
-                context,
-                std::vector<llvm::Type*>{castToLLVM(getI64Type(), context),
-                                         pointerToElements});
-            return structType->getPointerTo();
+            return llvm::PointerType::get(context, 0);
         }
 
         case Type::Class: {
@@ -76,18 +69,17 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
             llvmTypes.push_back(
                 llvm::Type::getIntNTy(context, sizeof(uintptr_t) * 8));
 
-            for (auto fieid : type->getClassDecl()->dataFields) {
+            for (auto fieid : type->getClassDecl()->dataFields)
                 llvmTypes.push_back(castToLLVM(fieid.type, context));
-            }
+
             auto structType = llvm::StructType::get(context, llvmTypes);
             return structType;
         }
 
         case Type::Closure:
             break;
-
         case Type::Reference:
-            return castToLLVM(type->derefType(), context)->getPointerTo();
+            return llvm::PointerType::get(context, 0);
         default:
             return nullptr;
     }
@@ -95,5 +87,11 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
     return nullptr;
 }
 
+llvm::StructType* structForArray(llvm::LLVMContext& context)
+{
+    return llvm::StructType::get(context,
+                                 {castToLLVM(getArrayLenType(), context),
+                                  llvm::PointerType::get(context, 0)});
+}
 }  // namespace LLVMCodeGen
 }  // namespace XSharp

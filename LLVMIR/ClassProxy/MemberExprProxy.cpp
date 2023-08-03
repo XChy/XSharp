@@ -36,10 +36,10 @@ ValueAndType CodeGenProxy<MemberExprNode>::codeGen(MemberExprNode *ast,
     } else if (obj_type->isArray()) {
         if (ast->memberName() == "length") {
             llvm::Value *length_ptr = helper->llvm_builder.CreateStructGEP(
-                obj->getType()->getContainedType(0), obj, 0);
+                structForArray(helper->llvm_ctx), obj, 0);
 
             llvm::Value *length = helper->llvm_builder.CreateLoad(
-                length_ptr->getType()->getContainedType(0), length_ptr);
+                castToLLVM(getI64Type(), helper->llvm_ctx), length_ptr);
             return {deReference({length, XSharp::getI32Type()}, helper)};
         }
     }

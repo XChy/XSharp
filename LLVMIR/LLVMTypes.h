@@ -1,4 +1,5 @@
 #pragma once
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Function.h>
@@ -11,6 +12,8 @@ namespace XSharp {
 namespace LLVMCodeGen {
 
 llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context);
+
+llvm::StructType* structForArray(llvm::LLVMContext& context);
 
 }
 }  // namespace XSharp
