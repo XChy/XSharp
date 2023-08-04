@@ -16,10 +16,10 @@ bin_path = os.path.join(project_path, "bin")
 xsharpc_path = os.path.join(bin_path, "xsharpc")
 
 # update LLVM-IR
-path = os.path.join(project_path, "LLVMIR/test")
-files = os.listdir(path)
+llvm_test_path = os.path.join(project_path, "LLVMIR", "test")
+files = os.listdir(llvm_test_path)
 for file in files:
-    file_path = os.path.join(path, file)
+    file_path = os.path.join(llvm_test_path, file)
 
     if file.endswith(".xsharp"):
         os.popen(xsharpc_path + " --emit-llvm-ir " + file_path)

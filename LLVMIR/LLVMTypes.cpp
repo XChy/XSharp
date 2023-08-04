@@ -14,8 +14,8 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
 {
     std::byte a;
     using XSharp::BasicType;
-    // TODO complete XSharp's Type to Variable
     using XSharp::Type;
+    using llvm::SmallVector;
 
     switch (type->category) {
         case Type::Basic:
@@ -47,19 +47,13 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
             }
 
         case Type::Function: {
-            std::vector<llvm::Type*> llvmTypesForParams;
+            SmallVector<llvm::Type*> llvmTypesForParams;
             for (XSharp::Type* paramType : type->parameterTypes())
                 llvmTypesForParams.push_back(castToLLVM(paramType, context));
 
             return llvm::FunctionType::get(
                 castToLLVM(type->returnValueType(), context),
                 llvmTypesForParams, false);
-        }
-
-        case Type::Array: {
-            // Allocate XSharp's array on heap
-            // So the type of array is the pointer type of its element
-            return llvm::PointerType::get(context, 0);
         }
 
         case Type::Class: {
@@ -76,8 +70,8 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
             return structType;
         }
 
+        case Type::Array:
         case Type::Closure:
-            break;
         case Type::Reference:
             return llvm::PointerType::get(context, 0);
         default:
@@ -89,9 +83,13 @@ llvm::Type* castToLLVM(XSharp::Type* type, llvm::LLVMContext& context)
 
 llvm::StructType* structForArray(llvm::LLVMContext& context)
 {
+    // Allocate XSharp's array on heap
+    // So the type of array is the pointer type of its element
+
     return llvm::StructType::get(context,
                                  {castToLLVM(getArrayLenType(), context),
                                   llvm::PointerType::get(context, 0)});
 }
+
 }  // namespace LLVMCodeGen
 }  // namespace XSharp

@@ -115,7 +115,8 @@ ValueAndType CodeGenProxy<ContinueNode>::codeGen(ContinueNode* ast,
                                                  const Generator& generator)
 {
     using llvm::BasicBlock;
-    assertWithError(!ctx->loops.empty(), ctx->error, "No loop to continue", 0);
+    assertWithError(!ctx->loops.empty(), ctx->error,
+                    "Expected loop to continue", 0);
 
     if (!ctx->llvm_builder.GetInsertBlock()->getTerminator()) {
         ctx->llvm_builder.CreateBr(ctx->loops.top().cond);
@@ -133,10 +134,11 @@ ValueAndType CodeGenProxy<BreakNode>::codeGen(BreakNode* ast,
                                               const Generator& generator)
 {
     using llvm::BasicBlock;
-    assertWithError(!ctx->loops.empty(), ctx->error, "No loop to break", 0);
+    assertWithError(!ctx->loops.empty(), ctx->error, "Expected loop to break",
+                    0);
 
     if (!ctx->llvm_builder.GetInsertBlock()->getTerminator()) {
-        auto i = ctx->llvm_builder.CreateBr(ctx->loops.top().end);
+        ctx->llvm_builder.CreateBr(ctx->loops.top().end);
         BasicBlock* deadblock =
             BasicBlock::Create(ctx->llvm_ctx, "deadblock",
                                ctx->llvm_builder.GetInsertBlock()->getParent());
@@ -164,7 +166,9 @@ ValueAndType CodeGenProxy<ReturnNode>::codeGen(ReturnNode* ast,
                         ret_type->typeName(), ctx->retTypes.top()->typeName());
 
         return {builder.CreateRet(ret_val), XSharp::getVoidType()};
-    } else {
+    } else if (ctx->retTypes.top()->equals(Types::get("void"))) {
         return {builder.CreateRetVoid(), getVoidType()};
     }
+
+    return {nullptr, nullptr};
 }
