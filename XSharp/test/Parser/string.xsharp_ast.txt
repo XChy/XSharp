@@ -1,0 +1,28 @@
+Class string extends A{
+field : constructor(Var chars:Array<char, 1>){{
+[self.data] = [call Array<char, 1>(chars.length)]
+Var i:i64 = 0
+while([i] < [chars.length]){
+[i in self.data] = [i in chars]
+[i] = [[i] + [1]]
+}
+}}
+field : Var data:Array<char, 1>
+field : string::func [charAt](Var index:i64)->[char] {
+return index in self.data
+}
+field : string::func [getData]()->[Array<char, 1>] {
+call print(self.data.length)
+return self.data
+}
+}
+func [main]()->[i32] {
+Var a:string = call string("H,world!
+")
+call print(1 in "H,world!
+")
+call print(call a.getData())
+[3 in call a.getData()] = ['$']
+call print(call a.charAt(3))
+return 0
+}

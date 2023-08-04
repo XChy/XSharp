@@ -1,0 +1,9 @@
+func [fib](Var n:i32)->[i32] {
+If([n] <= [0])return -[3]
+If([[n] == [1]] || [[n] == [2]])return 1
+return [call fib([n] - [1])] + [call fib([n] - [2])]
+}
+func [main]()->[i32] {
+call print(call fib(call inputI32()))
+return 3
+}

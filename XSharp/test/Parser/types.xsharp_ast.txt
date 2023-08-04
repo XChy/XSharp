@@ -1,0 +1,10 @@
+func [add](Var a:i32,Var b:i32)->[i64] {
+return [a] + [b]
+}
+func [main]()->[i32] {
+call print(2)
+call print([2] + [1.100000])
+call print([2] / [1.100000])
+call print([[2] == [1.100000]] || [true])
+return 21
+}

@@ -1,0 +1,12 @@
+i64 add(i32 a,i32 b){
+    return a+b;
+}
+
+i32 main()
+{
+    print(2);
+    print(2+1.1);
+    print(2/1.1);
+    print((2==1.1)||true);
+    return 21;
+}

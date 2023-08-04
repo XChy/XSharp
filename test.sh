@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 ctest --output-on-failure
-./test/xsharp-test.py
+./test/xsharp-test.py -v

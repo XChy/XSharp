@@ -23,6 +23,7 @@ args = parser.parse_args()
 project_path = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 bin_path = os.path.join(project_path, "bin")
 xsharpc_path = os.path.join(bin_path, "xsharpc")
+astprint_path = os.path.join(bin_path, "astprint")
 
 total_test = 0
 failure_test = 0
@@ -42,7 +43,7 @@ for file in files:
         with open(source_path, mode="r") as source:
             os.makedirs(os.path.join(llvm_test_path, "temp"), exist_ok=True)
             temp_path = os.path.join(llvm_test_path, "temp", file + ".ll")
-            os.popen(xsharpc_path + " --emit-llvm-ir " + file_path + " -o " + temp_path)
+            code = os.system(xsharpc_path + " --emit-llvm-ir " + file_path + " -o " + temp_path)
 
         with open(temp_path, mode="r") as temp:
             temp_lines = temp.readlines()
@@ -58,6 +59,38 @@ for file in files:
                 print(''.join(list(difflib.ndiff(ir_lines, temp_lines))))
         else:
             print("[{}] Test passed {}:".format(total_test,source_path))
+
+# Test Parser
+parser_test_path = os.path.join(project_path, "XSharp/test/Parser")
+files = os.listdir(llvm_test_path)
+
+for file in files:
+    file_path = os.path.join(parser_test_path, file)
+
+    if file.endswith(".xsharp"):
+        source_path = file_path
+        ir_path = file_path + "_ast.txt"
+        total_test += 1
+
+        with open(source_path, mode="r") as source:
+            os.makedirs(os.path.join(parser_test_path, "temp"), exist_ok=True)
+            temp_path = os.path.join(parser_test_path, "temp", file + "_ast.txt")
+            code = os.system(astprint_path + " " + file_path + " -o " + temp_path)
+
+        with open(temp_path, mode="r") as temp:
+            temp_lines = temp.readlines()
+
+        with open(ir_path, mode="r") as ir:
+            ir_lines = ir.readlines()
+
+        if ir_lines != temp_lines:
+            failure_test += 1
+            print("[{}] [LLVM] Test failed at {}:".format(total_test,source_path))
+
+            if args.verbose:
+                print(''.join(list(difflib.ndiff(ir_lines, temp_lines))))
+        else:
+            print("[{}] [Parser] Test passed {}:".format(total_test,source_path))
 
 
 print("===================Test Completed=======================")
