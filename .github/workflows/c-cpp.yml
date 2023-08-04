@@ -13,7 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install LLVM
-        run: sudo apt remove llvm \
+        run: | 
+             sudo apt remove llvm 
              sudo apt install llvm-15
           
       - name: CMake Configure
