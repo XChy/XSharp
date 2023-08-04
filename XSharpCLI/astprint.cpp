@@ -1,16 +1,21 @@
 #include "XSharp/Lexer.h"
 #include "XSharp/Parser.h"
 #include <unistd.h>
+#include "CLI11.hpp"
+#include "fmt/core.h"
 #include <fcntl.h>
+#include <fstream>
+
+XString inputFile;
+XString OutputFilename;
 
 int main(int argc, char* argv[])
 {
-    if (argc <= 1) {
-        printf(
-            "Arguments and options missing, please enter '--help' to get "
-            "help\n");
-        return 1;
-    }
+    CLI::App app("The compiler of XSharp");
+    app.add_option("-o", OutputFilename, "Where to put the executable");
+    app.add_option("Input files", inputFile, "Input files to compile")
+        ->required();
+    CLI11_PARSE(app, argc, argv);
 
     char* path = argv[1];
     char buffer[10028];
@@ -22,10 +27,18 @@ int main(int argc, char* argv[])
     try {
         XSharp::Lexer lexer;
         XSharp::Parser parser;
-        auto ast = parser.parse(lexer.tokenize(buffer));
-        fmt::print("{}", ast->dump());
-        delete ast;
 
+        auto ast = parser.parse(lexer.tokenize(buffer));
+
+        if (OutputFilename.size() == 0) {
+            fmt::print("{}", ast->dump());
+        } else {
+            std::ofstream output(OutputFilename.toStdString());
+            output << ast->dump().toStdString();
+            output.close();
+        }
+
+        delete ast;
     } catch (XSharpError& e) {
         fmt::print("ERROR:{}\n", e.errorInfo);
     }

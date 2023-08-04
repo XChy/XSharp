@@ -1,0 +1,33 @@
+Class Foo {
+field : constructor(){{
+[self.age] = [0]
+}}
+field : constructor(Var a:i32){{
+[self.age] = [a]
+}}
+field : Var age:i32
+field : Foo::func [setAge](Var age:i32)->[void] {
+[self.age] = [age]
+}
+field : Foo::func [getAge]()->[i32] {
+return self.age
+}
+}
+func [main]()->[i32] {
+Var n:i64 = call inputI32()
+Var c:Array<Foo, 1> = call Array<Foo, 1>(n)
+Var i:i64 = n
+while([[i] - [1]] >= [0]){
+[[i] - [1] in c] = [call Foo(call inputI32())]
+[i] = [[i] - [1]]
+}
+Var sum:double = 0
+[i] = [n]
+while([[i] - [1]] >= [0]){
+[sum] = [[sum] + [call [i] - [1] in c.getAge()]]
+[i] = [[i] - [1]]
+}
+call print("Average age is:")
+call print([sum] / [n])
+return 0
+}

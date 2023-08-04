@@ -1,0 +1,19 @@
+func [isPrime](Var x:i32)->[boolean] {
+If([x] <= [1])return false
+Var i:i32 = 2
+while([[i] * [i]] <= [x]){
+If([[x] % [i]] == [0]){
+return false
+}
+[i] = [[i] + [1]]
+}
+return true
+}
+func [main]()->[i32] {
+Var a:boolean = true
+while(a){
+Var x:i32 = call inputI32()
+call print(call isPrime(x))
+}
+return 32
+}

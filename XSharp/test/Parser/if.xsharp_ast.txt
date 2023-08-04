@@ -1,0 +1,15 @@
+func [main]()->[i64] {
+Var i:i32 = call inputI32()
+If ([i] == [3]) {
+call print(0)
+If ([i] > [4]) {
+call print(2)
+} Else {
+call print(3)
+}
+} Else {
+call print(1)
+}
+call print(12)
+return 10
+}

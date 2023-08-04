@@ -1,0 +1,20 @@
+func [main]()->[void] {
+Var n:i32
+[n] = [call inputI32()]
+Var i:i32 = 0
+Var a:i32 = 1
+Var b:i32 = 1
+Var c:i32 = 1
+Var d:u8 = 0
+while([i] < [n]){
+[a] = [[c] = [[-[a]] + [[[b] * [c]] / [66]]]]
+[a] = [[[[[b] % [3]] / [2]] + [4]] + [[b] = [4]]]
+[b] = [c]
+[i] = [[i] + [1]]
+}
+call print(a)
+call print(b)
+call print(c)
+call print(-[c])
+call print(![[c] == [-[1]]])
+}
