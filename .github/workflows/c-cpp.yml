@@ -16,6 +16,8 @@ jobs:
         run: |
            sudo apt purge llvm
            sudo apt purge llvm-12
+           sudo apt purge llvm-13
+           sudo apt purge llvm-14
            sudo apt install llvm-15
 
       - name: CMake Configure
