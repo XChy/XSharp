@@ -24,68 +24,20 @@ ASTNode* Parser::parse(const std::vector<Token>& tokenList)
 DefinitionsNode* Parser::definitions()
 {
     DefinitionsNode* root = new DefinitionsNode;
-    while (current != end) {
-        if (current->isKeyword("class")) {
+    while (current != end)
+        if (current->isKeyword("class"))
             root->decls.push_back(classDecl());
-        } else if (isVariableDecl()) {
+        else if (isVariableDecl())
             root->decls.push_back(variableDecl({SentenceEnd}));
-        } else if (isFunctionDecl()) {
+        else if (isFunctionDecl())
             root->decls.push_back(functionDecl());
-        } else {
+        else
             throw XSharpError("Not a definition in global");
-        }
-    }
+
     return root;
 }
 
-ClassNode* Parser::classDecl()
-{
-    ClassNode* classNode = new ClassNode;
-    // skip 'class'
-    forward();
 
-    if (!current->is(Identifier)) throw XSharpError("No name for class");
-
-    // get the name of class
-    classNode->name = current->value;
-    forward();
-
-    // [optional] superclass
-    if (current->isKeyword("extends")) {
-        forward();
-        if (current->is(Identifier)) classNode->superClass = current->value;
-        forward();
-    }
-
-    // skip '{'
-    if (current->is(OpenBrace))
-        forward();
-    else
-        throw XSharpError("Expected '{' is missing");
-
-    while (!current->is(CloseBrace)) {
-        if (isVariableDecl()) {
-            auto var = variableDecl({SentenceEnd});
-            classNode->members.push_back(var);
-        } else if (isFunctionDecl()) {
-            auto func = memberMethodDecl();
-            func->selfClass = classNode;
-            classNode->methods.push_back(func);
-        } else if (current->isKeyword("new")) {
-            auto cons = constructor();
-            cons->selfClass = classNode;
-            classNode->constructors.push_back(cons);
-        } else {
-            throw XSharpError("Not a field in class");
-        }
-    }
-
-    // skip '}'
-    forward();
-
-    // analyze the class block
-    return classNode;
-}
 
 bool Parser::isFunctionDecl() const
 {
@@ -173,9 +125,9 @@ FunctionNode* Parser::functionDecl()
     forward();
 
     // start with '('
-    if (current->type != OpenParen) {
+    if (current->type != OpenParen) 
         throw XSharpError("No '(' matched");
-    }
+
     forward();
 
     root->setParams(parameters());
@@ -199,11 +151,10 @@ bool Parser::isVariableDecl() const
 
     while (localCurrent->is(OpenBracket)) {
         localCurrent++;
-        if (localCurrent->is(CloseBracket)) {
+        if (localCurrent->is(CloseBracket))
             localCurrent++;
-        } else {
+        else
             return false;
-        }
     }
 
     // <name>
@@ -219,9 +170,9 @@ bool Parser::isVariableDecl() const
     return false;
 }
 
-VariableNode* Parser::variableDecl(const std::vector<TokenType>& stopwords)
+VarDeclNode* Parser::variableDecl(const std::vector<TokenType>& stopwords)
 {
-    VariableNode* root = new VariableNode;
+    VarDeclNode* root = new VarDeclNode;
     root->setType(type());
 
     if (current->type == Identifier) {
@@ -231,12 +182,12 @@ VariableNode* Parser::variableDecl(const std::vector<TokenType>& stopwords)
         throw XSharpError("No name after a typename");
     }
 
-    if (isStopwords(current, stopwords)) {
-        root->setInitValue(nullptr);
+    if (shouldStopOn(current, stopwords)) {
+        root->setInit(nullptr);
         forward();
     } else if (current->isOperator("=")) {
         forward();
-        root->setInitValue(expression(stopwords));
+        root->setInit(expr(stopwords));
         forward();
     } else {
         throw XSharpError("variable defintion error");
@@ -244,9 +195,9 @@ VariableNode* Parser::variableDecl(const std::vector<TokenType>& stopwords)
     return root;
 }
 
-std::vector<VariableNode*> Parser::parameters()
+std::vector<VarDeclNode*> Parser::parameters()
 {
-    std::vector<VariableNode*> params;
+    std::vector<VarDeclNode*> params;
 
     // if no parameter in parentheses, then return empty paramsDef
     if (current->type == CloseParen) return params;
@@ -271,7 +222,7 @@ std::vector<ASTNode*> Parser::argsList()
     if (current->is(CloseParen)) return results;
 
     while (true) {
-        results.push_back(expression({CloseParen, Comma}));
+        results.push_back(expr({CloseParen, Comma}));
         if (current->is(CloseParen))
             break;
         else if (current->is(Comma))
@@ -314,14 +265,14 @@ ASTNode* Parser::statement()
                 stmt = variableDecl({SentenceEnd});
             } else if (current->value == "return") {
                 forward();
-                stmt = new ReturnNode(expression({SentenceEnd}));
+                stmt = new ReturnNode(expr({SentenceEnd}));
                 forward();
             } else if (current->value == "if") {
                 stmt = ifStatement();
             } else if (current->value == "while") {
                 stmt = whileStatement();
             } else if (current->value == "new") {
-                stmt = expression({SentenceEnd});
+                stmt = expr({SentenceEnd});
             } else if (current->value == "continue") {
                 stmt = new ContinueNode;
                 forward();
@@ -341,12 +292,12 @@ ASTNode* Parser::statement()
             } else if ((current + 1)->type == Identifier) {
                 stmt = variableDecl({SentenceEnd});
             } else {
-                stmt = expression({SentenceEnd});
+                stmt = expr({SentenceEnd});
                 forward();
             }
             break;
         default:
-            stmt = expression({SentenceEnd});
+            stmt = expr({SentenceEnd});
             forward();  // current is ";",need to forward
     }
     return stmt;
@@ -366,7 +317,7 @@ IfNode* Parser::ifStatement()
     // Condtion
     if (current->type == OpenParen) {
         forward();
-        condition = expression({CloseParen});
+        condition = expr({CloseParen});
         forward();
     } else {
         throw XSharpError(ParsingError, "No 'if' matched");
@@ -384,11 +335,10 @@ IfNode* Parser::ifStatement()
 
     while (current->isKeyword("else")) {
         forward();
-        if (current->type == OpenBrace) {
+        if (current->type == OpenBrace)
             ifNode->elseAst = block();
-        } else {
+        else
             ifNode->elseAst = statement();
-        }
     }
 
     return ifNode;
@@ -408,7 +358,7 @@ WhileNode* Parser::whileStatement()
     // Condtion
     if (current->type == OpenParen) {
         forward();
-        condition = expression({CloseParen});
+        condition = expr({CloseParen});
         forward();
     } else {
         throw XSharpError(ParsingError, "No 'while' matched");
@@ -416,18 +366,17 @@ WhileNode* Parser::whileStatement()
     }
 
     // Code Block
-    if (current->type == OpenBrace) {
+    if (current->type == OpenBrace)
         codeblock = block();
-    } else {
+    else
         codeblock = statement();
-    }
 
     return new WhileNode{condition, codeblock};
 }
 
-ASTNode* Parser::expression(std::vector<TokenType> stopwords, int ctxPriority)
+ASTNode* Parser::expr(std::vector<TokenType> stopwords, int ctxPriority)
 {
-    if (isStopwords(current, stopwords)) {
+    if (shouldStopOn(current, stopwords)) {
         // TODO: error?
         return nullptr;
     }
@@ -436,7 +385,7 @@ ASTNode* Parser::expression(std::vector<TokenType> stopwords, int ctxPriority)
     ASTNode* lhs = operand();
 
     while (true) {
-        if (isStopwords(current, stopwords)) return lhs;
+        if (shouldStopOn(current, stopwords)) return lhs;
 
         if (current->type != Operator && !current->isKeyword("new"))
             throw XSharpError("No operator matched after operand");
@@ -448,12 +397,12 @@ ASTNode* Parser::expression(std::vector<TokenType> stopwords, int ctxPriority)
         forward();
         auto right_binding_power =
             assoc(op) == LeftToRight ? priority(op) : priority(op) - 1;
-        auto rhs = expression(stopwords, right_binding_power);
+        auto rhs = expr(stopwords, right_binding_power);
 
         auto new_lhs = new BinaryOperatorNode;
-        new_lhs->setOperatorStr(op);
-        new_lhs->setLeft(lhs);
-        new_lhs->setRight(rhs);
+        new_lhs->setOpStr(op);
+        new_lhs->setLhs(lhs);
+        new_lhs->setRhs(rhs);
         lhs = new_lhs;
     }
 
@@ -462,13 +411,13 @@ ASTNode* Parser::expression(std::vector<TokenType> stopwords, int ctxPriority)
 
 ASTNode* Parser::operand()
 {
-    UnaryOperatorNode* before = nullptr;
-    UnaryOperatorNode* after = nullptr;
+    UnaryOpNode* before = nullptr;
+    UnaryOpNode* after = nullptr;
     ASTNode* operand = nullptr;
 
     if (current->type == Operator) {
-        before = new UnaryOperatorNode;
-        before->setOperatorStr(current->value);
+        before = new UnaryOpNode;
+        before->setOpStr(current->value);
         forward();
     }
 
@@ -481,25 +430,23 @@ ASTNode* Parser::operand()
                 MemberExprNode* member = new MemberExprNode(current->value);
                 member->setObject(operand);
                 operand = member;
-            } else {
+            } else 
                 throw XSharpError("No member matched with '.'");
-            }
 
         } else if (current->type == OpenParen) {
             current++;
-            FunctionCallNode* funcCall = new FunctionCallNode;
+            CallNode* funcCall = new CallNode;
             funcCall->setArgs(argsList());
             funcCall->setCallee(operand);
             operand = funcCall;
         } else if (current->type == OpenBracket) {
             current++;
             IndexNode* index = new IndexNode;
-            index->setOperand(operand);
-            index->setIndex(expression({CloseBracket}));
+            index->setIndexed(operand);
+            index->setIndex(expr({CloseBracket}));
             operand = index;
-        } else {
+        } else
             break;
-        }
         current++;
     }
 
@@ -543,7 +490,7 @@ ASTNode* Parser::factor()
     if (current->type == Integer) {
         factor = new IntegerNode(current->value.toInteger<int64_t>());
     } else if (current->type == Decimal) {
-        factor = new DecimalFractionNode(current->value.toDouble());
+        factor = new FPNode(current->value.toDouble());
     } else if (current->type == Boolean) {
         factor = new BooleanNode(current->value == "true");
     } else if (current->type == Char) {
@@ -552,9 +499,9 @@ ASTNode* Parser::factor()
         factor = new StringNode(current->value);
     } else if (current->type == OpenParen) {
         forward();
-        factor = expression({CloseParen});
+        factor = expr({CloseParen});
     } else if (current->type == Identifier) {
-        factor = new VariableExprNode(current->value);
+        factor = new VarExprNode(current->value);
     } else if (current->isKeyword("new")) {
         forward();
 
@@ -567,7 +514,7 @@ ASTNode* Parser::factor()
             current--;
         }
 
-        auto init_called = new FunctionCallNode;
+        auto init_called = new CallNode;
         init_called->setCallee(allocatedType);
         init_called->setArgs(args);
 
@@ -610,39 +557,38 @@ TypeNode* Parser::type()
     }
 
     // TODO: add decoration
-    if (arrayDimension == 0) {
+    if (arrayDimension == 0)
         return new IdentifierNode(baseName);
-    } else {
+    else
         return new ArrayNode(new IdentifierNode(baseName), arrayDimension);
-    }
 }
 
 int Parser::priority(const XString& op)
 {
-    return XSharp::binaryOperInfo[op].priority;
+    return XSharp::binOp[op].priority;
 }
 int Parser::priority(BinaryOperatorNode* oper)
 {
-    return XSharp::binaryOperInfo[oper->operatorStr()].priority;
+    return XSharp::binOp[oper->opStr()].priority;
 }
 
-int Parser::priority(UnaryOperatorNode* oper)
+int Parser::priority(UnaryOpNode* oper)
 {
-    return XSharp::unaryOperInfo[oper->operatorStr()].priority;
+    return XSharp::unaryOp[oper->opStr()].priority;
 }
 
 Assoc Parser::assoc(const XString& op)
 {
-    return XSharp::binaryOperInfo[op].assoc;
+    return XSharp::binOp[op].assoc;
 }
 
 Assoc Parser::assoc(BinaryOperatorNode* oper)
 {
-    return XSharp::binaryOperInfo[oper->operatorStr()].assoc;
+    return XSharp::binOp[oper->opStr()].assoc;
 }
 
-bool Parser::isStopwords(Iterator tokenIter,
-                         std::vector<TokenType> stopwords) const
+bool Parser::shouldStopOn(Iterator tokenIter,
+                          std::vector<TokenType> stopwords = {}) const
 {
     // TODO: complete the cornor case that token is end
     return (std::find(stopwords.begin(), stopwords.end(), tokenIter->type) !=

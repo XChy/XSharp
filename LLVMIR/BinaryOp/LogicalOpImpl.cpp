@@ -9,8 +9,8 @@ namespace LLVMCodeGen {
 ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                        const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
 
     passErrorIfNot(lhs_type);
     passErrorIfNot(rhs_type);
@@ -38,8 +38,8 @@ ValueAndType EqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                           const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
 
     passErrorIfNot(lhs_type);
     passErrorIfNot(rhs_type);
@@ -66,8 +66,8 @@ ValueAndType NotEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                          const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
 
     passErrorIfNot(lhs_type);
     passErrorIfNot(rhs_type);
@@ -98,8 +98,8 @@ ValueAndType GreaterImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                       const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
 
     passErrorIfNot(lhs_type);
     passErrorIfNot(rhs_type);
@@ -130,8 +130,8 @@ ValueAndType LessImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                                 const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
 
     passErrorIfNot(lhs_type);
     passErrorIfNot(rhs_type);
@@ -162,8 +162,8 @@ ValueAndType GreaterOrEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType LessOrEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                              const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
 
     passErrorIfNot(lhs_type);
     passErrorIfNot(rhs_type);
@@ -194,8 +194,8 @@ ValueAndType LessOrEqualImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType LogicalAndImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                             const Generator& generator)
 {
-    auto [lhs, lhs_type] = generator(op->left());
-    auto [rhs, rhs_type] = generator(op->right());
+    auto [lhs, lhs_type] = generator(op->lhs());
+    auto [rhs, rhs_type] = generator(op->rhs());
 
     passErrorIfNot(lhs_type);
     passErrorIfNot(rhs_type);
@@ -214,8 +214,8 @@ ValueAndType LogicalAndImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType LogicalOrImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                            const Generator& generator)
 {
-    auto [lhs, lhs_type] = generator(op->left());
-    auto [rhs, rhs_type] = generator(op->right());
+    auto [lhs, lhs_type] = generator(op->lhs());
+    auto [rhs, rhs_type] = generator(op->rhs());
 
     passErrorIfNot(lhs_type);
     passErrorIfNot(rhs_type);

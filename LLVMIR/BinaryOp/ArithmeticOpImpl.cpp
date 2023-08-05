@@ -9,8 +9,8 @@ namespace LLVMCodeGen {
 ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                         const Generator& generator)
 {
-    auto [lhs, lhs_type] = generator(op->left());
-    auto [rhs, rhs_type] = generator(op->right());
+    auto [lhs, lhs_type] = generator(op->lhs());
+    auto [rhs, rhs_type] = generator(op->rhs());
     if (!lhs_type || !rhs_type) return {nullptr, nullptr};
     // Only the reference can be assigned to value
     if (lhs_type->category != Type::Reference || lhs_type->isObject()) {
@@ -32,8 +32,8 @@ ValueAndType AssignImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
 
     if (!lhs_type || !rhs_type) return {nullptr, nullptr};
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
@@ -56,8 +56,8 @@ ValueAndType AddImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
     if (!lhs_type || !rhs_type) return {nullptr, nullptr};
 
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
@@ -77,8 +77,8 @@ ValueAndType SubImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
     if (!lhs_type || !rhs_type) return {nullptr, nullptr};
 
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
@@ -98,8 +98,8 @@ ValueAndType MulImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
     if (!lhs_type || !rhs_type) return {nullptr, nullptr};
 
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {
@@ -123,8 +123,8 @@ ValueAndType DivImpl(BinaryOperatorNode* op, CodeGenContext* helper,
 ValueAndType ModImpl(BinaryOperatorNode* op, CodeGenContext* helper,
                      const Generator& generator)
 {
-    auto [lhs, lhs_type] = deReference(generator(op->left()), helper);
-    auto [rhs, rhs_type] = deReference(generator(op->right()), helper);
+    auto [lhs, lhs_type] = deReference(generator(op->lhs()), helper);
+    auto [rhs, rhs_type] = deReference(generator(op->rhs()), helper);
     if (!lhs_type || !rhs_type) return {nullptr, nullptr};
 
     if (!(lhs_type->isNumber() && rhs_type->isNumber())) {

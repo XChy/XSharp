@@ -43,11 +43,11 @@ CodeGenerator::CodeGenerator()
     addProxy<CharNode>();
     addProxy<StringNode>();
     addProxy<BooleanNode>();
-    addProxy<DecimalFractionNode>();
-    addProxy<VariableExprNode>();
-    addProxy<VariableNode>();
+    addProxy<FPNode>();
+    addProxy<VarExprNode>();
+    addProxy<VarDeclNode>();
     addProxy<FunctionNode>();
-    addProxy<FunctionCallNode>();
+    addProxy<CallNode>();
     addProxy<BlockNode>();
     addProxy<IfNode>();
     addProxy<WhileNode>();
@@ -55,7 +55,7 @@ CodeGenerator::CodeGenerator()
     addProxy<BreakNode>();
     addProxy<ReturnNode>();
     addProxy<BinaryOperatorNode>();
-    addProxy<UnaryOperatorNode>();
+    addProxy<UnaryOpNode>();
     addProxy<ClassNode>();
     addProxy<MemberExprNode>();
     addProxy<MemberMethodNode>();

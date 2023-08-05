@@ -6,20 +6,20 @@
 namespace XSharp {
 namespace LLVMCodeGen {
 template <>
-class CodeGenProxy<VariableNode>
+class CodeGenProxy<VarDeclNode>
 {
    public:
-    ValueAndType codeGen(VariableNode* ast, CodeGenContext* helper,
+    ValueAndType codeGen(VarDeclNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
-ValueAndType genLocalVariable(VariableNode* ast, CodeGenContext* helper,
+ValueAndType genLocalVariable(VarDeclNode* ast, CodeGenContext* helper,
                               const Generator& generator);
 
-ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContext* helper,
+ValueAndType genGlobalVariable(VarDeclNode* ast, CodeGenContext* helper,
                                const Generator& generator);
 
-ValueAndType genDataMember(VariableNode* ast, CodeGenContext* helper,
+ValueAndType genDataMember(VarDeclNode* ast, CodeGenContext* helper,
                            const Generator& generator);
 
 }  // namespace LLVMCodeGen

@@ -26,11 +26,11 @@ CodeGenProxy<BinaryOperatorNode>::CodeGenProxy()
 ValueAndType CodeGenProxy<BinaryOperatorNode>::codeGen(
     BinaryOperatorNode* ast, CodeGenContext* helper, const Generator& generator)
 {
-    auto iter = processors.find(ast->operatorStr());
+    auto iter = processors.find(ast->opStr());
     if (iter != processors.end())
-        return processors[ast->operatorStr()](ast, helper, generator);
+        return processors[ast->opStr()](ast, helper, generator);
     else {
-        helper->error("Not support the operator '{}' yet", ast->operatorStr());
+        helper->error("Not support the operator '{}' yet", ast->opStr());
         return {nullptr, nullptr};
     }
 }

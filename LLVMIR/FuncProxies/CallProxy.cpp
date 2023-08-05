@@ -12,7 +12,7 @@
 using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
 
-ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(FunctionCallNode* ast,
+ValueAndType CodeGenProxy<CallNode>::codeGen(CallNode* ast,
                                                      CodeGenContext* helper,
                                                      const Generator& generator)
 {
@@ -25,8 +25,8 @@ ValueAndType CodeGenProxy<FunctionCallNode>::codeGen(FunctionCallNode* ast,
     using llvm::ConstantInt;
     using llvm::Function;
 
-    if (ast->callee()->is<VariableExprNode>()) {
-        XString calleeName = ast->callee()->to<VariableExprNode>()->name();
+    if (ast->callee()->is<VarExprNode>()) {
+        XString calleeName = ast->callee()->to<VarExprNode>()->name();
 
         std::vector<llvm::Value*> argumentValues;
         std::vector<Type*> argumentTypes;

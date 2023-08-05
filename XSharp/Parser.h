@@ -33,9 +33,9 @@ class XSharp_EXPORT Parser
 
     // end after the stopword
     // <type> <name> (( = <initial value> ))
-    VariableNode* variableDecl(const std::vector<TokenType>& stopwords);
+    VarDeclNode* variableDecl(const std::vector<TokenType>& stopwords);
 
-    std::vector<VariableNode*> parameters();
+    std::vector<VarDeclNode*> parameters();
 
     // end at the right parenthesis
     std::vector<ASTNode*> argsList();
@@ -47,7 +47,7 @@ class XSharp_EXPORT Parser
     WhileNode* whileStatement();
 
     // end at the pos of stopwords
-    ASTNode* expression(std::vector<TokenType> stopwords, int priority = 0);
+    ASTNode* expr(std::vector<TokenType> stopwords, int priority = 0);
     ASTNode* operand();
     ASTNode* factor();
 
@@ -55,11 +55,11 @@ class XSharp_EXPORT Parser
 
     static int priority(const XString& op);
     static int priority(BinaryOperatorNode* oper);
-    static int priority(UnaryOperatorNode* oper);
+    static int priority(UnaryOpNode* oper);
     static Assoc assoc(const XString& op);
     static Assoc assoc(BinaryOperatorNode* oper);
 
-    bool isStopwords(Iterator tokenIter,
+    bool shouldStopOn(Iterator tokenIter,
                      std::vector<TokenType> stopwords) const;
 
     void forward();

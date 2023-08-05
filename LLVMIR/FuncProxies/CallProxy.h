@@ -4,10 +4,10 @@ namespace XSharp {
 namespace LLVMCodeGen {
 
 template <>
-class CodeGenProxy<FunctionCallNode>
+class CodeGenProxy<CallNode>
 {
    public:
-    ValueAndType codeGen(FunctionCallNode* ast, CodeGenContext* helper,
+    ValueAndType codeGen(CallNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 

@@ -40,10 +40,10 @@ class XSharp_EXPORT IntegerNode : public ASTNode
     int64_t _value;
 };
 
-class XSharp_EXPORT DecimalFractionNode : public ASTNode
+class XSharp_EXPORT FPNode : public ASTNode
 {
    public:
-    DecimalFractionNode(double value = 0);
+    FPNode(double value = 0);
     XString dump() const;
 
     void setValue(double value);
@@ -94,28 +94,28 @@ class XSharp_EXPORT BinaryOperatorNode : public ASTNode
     BinaryOperatorNode();
     XString dump() const;
 
-    void setLeft(ASTNode* left);
-    ASTNode* left();
+    void setLhs(ASTNode* left);
+    ASTNode* lhs();
 
-    void setRight(ASTNode* right);
-    ASTNode* right();
+    void setRhs(ASTNode* right);
+    ASTNode* rhs();
 
     void setParent(BinaryOperatorNode* parent);
     BinaryOperatorNode* parent();
 
-    void setOperatorStr(const XString& operatorStr);
-    XString operatorStr() const;
+    void setOpStr(const XString& operatorStr);
+    XString opStr() const;
 
     ~BinaryOperatorNode();
 
    private:
-    ASTNode* _left;
-    ASTNode* _right;
+    ASTNode* _lhs;
+    ASTNode* _rhs;
     BinaryOperatorNode* _parent;
-    XString _operatorStr;
+    XString _opStr;
 };
 
-class XSharp_EXPORT UnaryOperatorNode : public ASTNode
+class XSharp_EXPORT UnaryOpNode : public ASTNode
 {
    public:
     XString dump() const;
@@ -123,14 +123,14 @@ class XSharp_EXPORT UnaryOperatorNode : public ASTNode
     void setOperand(ASTNode* operand);
     ASTNode* operand();
 
-    void setOperatorStr(const XString& operatorStr);
-    XString operatorStr() const;
+    void setOpStr(const XString& operatorStr);
+    XString opStr() const;
 
-    ~UnaryOperatorNode();
+    ~UnaryOpNode();
 
    private:
     ASTNode* _operand;
-    XString _operatorStr;
+    XString _opStr;
 };
 
 class XSharp_EXPORT BlockNode : public ASTNode
@@ -149,10 +149,10 @@ class XSharp_EXPORT BlockNode : public ASTNode
     std::vector<ASTNode*> _contents;
 };
 
-class XSharp_EXPORT VariableNode : public ASTNode
+class XSharp_EXPORT VarDeclNode : public ASTNode
 {
    public:
-    VariableNode();
+    VarDeclNode();
 
     XString dump() const;
 
@@ -162,15 +162,15 @@ class XSharp_EXPORT VariableNode : public ASTNode
     void setName(const XString& name);
     XString name() const;
 
-    void setInitValue(ASTNode* initValue);
-    ASTNode* initValue() const;
+    void setInit(ASTNode* init);
+    ASTNode* init() const;
 
-    ~VariableNode();
+    ~VarDeclNode();
 
    private:
     TypeNode* _type;
     XString _name;
-    ASTNode* _initValue;
+    ASTNode* _init;
 };
 
 class XSharp_EXPORT FunctionNode : public ASTNode
@@ -186,9 +186,9 @@ class XSharp_EXPORT FunctionNode : public ASTNode
     void setReturnType(TypeNode* returnType);
     TypeNode* returnType() const;
 
-    void setParams(std::vector<VariableNode*> params);
-    void addParam(VariableNode* param);
-    std::vector<VariableNode*> params();
+    void setParams(std::vector<VarDeclNode*> params);
+    void addParam(VarDeclNode* param);
+    std::vector<VarDeclNode*> params();
 
     BlockNode* impl() const;
     void setImpl(BlockNode* impl);
@@ -198,11 +198,11 @@ class XSharp_EXPORT FunctionNode : public ASTNode
    private:
     XString _name;
     TypeNode* _returnType;
-    std::vector<VariableNode*> _params;  // <type name,param name>
+    std::vector<VarDeclNode*> _params;  // <type name,param name>
     BlockNode* _impl;
 };
 
-class XSharp_EXPORT FunctionCallNode : public ASTNode
+class XSharp_EXPORT CallNode : public ASTNode
 {
    public:
     XString dump() const;
@@ -214,17 +214,17 @@ class XSharp_EXPORT FunctionCallNode : public ASTNode
     void addArg(ASTNode* arg);
     std::vector<ASTNode*> args() const;
 
-    ~FunctionCallNode();
+    ~CallNode();
 
    private:
     ASTNode* _callee;
     std::vector<ASTNode*> _args;
 };
 
-class XSharp_EXPORT VariableExprNode : public ASTNode
+class XSharp_EXPORT VarExprNode : public ASTNode
 {
    public:
-    VariableExprNode(const XString name);
+    VarExprNode(const XString name);
 
     XString dump() const;
 
@@ -261,14 +261,14 @@ class XSharp_EXPORT IndexNode : public ASTNode
     ~IndexNode();
     XString dump() const;
 
-    ASTNode* setOperand(ASTNode* operand);
+    ASTNode* setIndexed(ASTNode* indexed);
     ASTNode* operand();
 
     void setIndex(ASTNode* indexExpr);
     ASTNode* index();
 
    private:
-    ASTNode* _operand;
+    ASTNode* _indexed;
     ASTNode* _index;
 };
 

@@ -80,10 +80,10 @@ class CodeGenProxy<IntegerNode>
 };
 
 template <>
-class CodeGenProxy<DecimalFractionNode>
+class CodeGenProxy<FPNode>
 {
    public:
-    ValueAndType codeGen(DecimalFractionNode* ast, CodeGenContext* helper,
+    ValueAndType codeGen(FPNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 
@@ -119,10 +119,10 @@ class CodeGenProxy<BlockNode>
 };
 
 template <>
-class CodeGenProxy<VariableExprNode>
+class CodeGenProxy<VarExprNode>
 {
    public:
-    ValueAndType codeGen(VariableExprNode* ast, CodeGenContext* helper,
+    ValueAndType codeGen(VarExprNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 };
 

@@ -4,20 +4,20 @@
 using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
 
-CodeGenProxy<UnaryOperatorNode>::CodeGenProxy()
+CodeGenProxy<UnaryOpNode>::CodeGenProxy()
 {
     processors["+"] = PositiveImpl;
     processors["-"] = NegativeImpl;
     processors["!"] = NotImpl;
 }
 
-ValueAndType CodeGenProxy<UnaryOperatorNode>::codeGen(
-    UnaryOperatorNode* ast, CodeGenContext* helper, const Generator& generator)
+ValueAndType CodeGenProxy<UnaryOpNode>::codeGen(
+    UnaryOpNode* ast, CodeGenContext* helper, const Generator& generator)
 {
-    if (processors.contains(ast->operatorStr()))
-        return processors[ast->operatorStr()](ast, helper, generator);
+    if (processors.contains(ast->opStr()))
+        return processors[ast->opStr()](ast, helper, generator);
     else {
-        helper->error("Not support the unary operator {}", ast->operatorStr());
+        helper->error("Not support the unary operator {}", ast->opStr());
         return {nullptr, nullptr};
     }
 }

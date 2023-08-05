@@ -7,11 +7,11 @@
 namespace XSharp::LLVMCodeGen {
 
 template <>
-class CodeGenProxy<UnaryOperatorNode>
+class CodeGenProxy<UnaryOpNode>
 {
    public:
     CodeGenProxy();
-    ValueAndType codeGen(UnaryOperatorNode* ast, CodeGenContext* helper,
+    ValueAndType codeGen(UnaryOpNode* ast, CodeGenContext* helper,
                          const Generator& generator);
 
    private:

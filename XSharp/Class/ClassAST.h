@@ -18,7 +18,7 @@ class XSharp_EXPORT ClassNode : public ASTNode
 
     XString superClass;
 
-    std::vector<VariableNode*> members;
+    std::vector<VarDeclNode*> members;
     std::vector<MemberMethodNode*> methods;
     std::vector<ConstructorNode*> constructors;
 };
@@ -39,7 +39,7 @@ class XSharp_EXPORT ConstructorNode : public ASTNode
     ~ConstructorNode();
 
     ClassNode* selfClass;
-    std::vector<VariableNode*> parameters;
+    std::vector<VarDeclNode*> parameters;
     BlockNode* impl;
 };
 
@@ -50,7 +50,7 @@ class XSharp_EXPORT DefinitionsNode : public ASTNode
 
     void addClass(ClassNode* classDeclaration);
     void addFunction(FunctionNode* functionDeclaration);
-    void addVariable(VariableNode* variableDeclaration);
+    void addVariable(VarDeclNode* variableDeclaration);
 
     ~DefinitionsNode();
 

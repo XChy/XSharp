@@ -41,8 +41,8 @@ ValueAndType CodeGenProxy<IntegerNode>::codeGen(IntegerNode* ast,
     return {val, XSharp::getI64Type()};
 }
 
-ValueAndType CodeGenProxy<DecimalFractionNode>::codeGen(
-    DecimalFractionNode* ast, CodeGenContext* helper,
+ValueAndType CodeGenProxy<FPNode>::codeGen(
+    FPNode* ast, CodeGenContext* helper,
     const Generator& generator)
 {
     using llvm::APFloat;
@@ -120,7 +120,7 @@ ValueAndType CodeGenProxy<BlockNode>::codeGen(BlockNode* ast,
     return {nullptr, XSharp::getVoidType()};
 }
 
-ValueAndType CodeGenProxy<VariableExprNode>::codeGen(VariableExprNode* ast,
+ValueAndType CodeGenProxy<VarExprNode>::codeGen(VarExprNode* ast,
                                                      CodeGenContext* helper,
                                                      const Generator& generator)
 {

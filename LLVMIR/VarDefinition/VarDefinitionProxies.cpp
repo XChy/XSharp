@@ -9,7 +9,7 @@
 
 namespace XSharp::LLVMCodeGen {
 
-ValueAndType CodeGenProxy<VariableNode>::codeGen(VariableNode* ast,
+ValueAndType CodeGenProxy<VarDeclNode>::codeGen(VarDeclNode* ast,
                                                  CodeGenContext* helper,
                                                  const Generator& generator)
 {
@@ -20,7 +20,7 @@ ValueAndType CodeGenProxy<VariableNode>::codeGen(VariableNode* ast,
     }
 }
 
-ValueAndType genLocalVariable(VariableNode* ast, CodeGenContext* helper,
+ValueAndType genLocalVariable(VarDeclNode* ast, CodeGenContext* helper,
                               const Generator& generator)
 {
     using XSharp::TypeAdapter;
@@ -44,8 +44,8 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContext* helper,
         builder.CreateAlloca(castToLLVM(var_type->derefType(), context),
                              nullptr, ast->name().toStdString());
 
-    if (ast->initValue()) {
-        auto [init_val, init_type] = generator(ast->initValue());
+    if (ast->init()) {
+        auto [init_val, init_type] = generator(ast->init());
         // validate the initialization
         passErrorIfNot(init_type);
 
@@ -70,7 +70,7 @@ ValueAndType genLocalVariable(VariableNode* ast, CodeGenContext* helper,
     return {var_alloca, var_type};
 }
 
-ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContext* helper,
+ValueAndType genGlobalVariable(VarDeclNode* ast, CodeGenContext* helper,
                                const Generator& generator)
 {
     assertWithError(!helper->globalSymbols.hasSymbol(ast->name()),
@@ -100,7 +100,7 @@ ValueAndType genGlobalVariable(VariableNode* ast, CodeGenContext* helper,
     return {globalVar, var_type};
 }
 
-ValueAndType genDataMember(VariableNode* ast, CodeGenContext* helper,
+ValueAndType genDataMember(VarDeclNode* ast, CodeGenContext* helper,
                            const Generator& generator)
 {
     if (helper->currentSymbols->hasSymbol(ast->name())) {

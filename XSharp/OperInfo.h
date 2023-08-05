@@ -24,7 +24,7 @@ struct UnaryOperatorInfo {
 
 namespace XSharp {
 //{operator, {priority,associativity}}
-static std::unordered_map<XString, BinaryOperatorInfo> binaryOperInfo = {
+static std::unordered_map<XString, BinaryOperatorInfo> binOp = {
     {"+", {120, LeftToRight}},  {"-", {120, LeftToRight}},
     {"*", {130, LeftToRight}},  {"/", {130, LeftToRight}},
     {"^", {80, LeftToRight}},   {"&", {90, LeftToRight}},
@@ -43,7 +43,7 @@ static std::unordered_map<XString, BinaryOperatorInfo> binaryOperInfo = {
     {":", {60, LeftToRight}},
 };
 
-static std::unordered_map<XString, UnaryOperatorInfo> unaryOperInfo = {
+static std::unordered_map<XString, UnaryOperatorInfo> unaryOp = {
     {"+", {3, prefix, RightToLeft}},  //{operator,{priority,place,associativity}}
     {"-", {3, prefix, RightToLeft}}, {"++", {3, All, RightToLeft}},
     {"--", {3, All, RightToLeft}},   {"new", {10, prefix, RightToLeft}},

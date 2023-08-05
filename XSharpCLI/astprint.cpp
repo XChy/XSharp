@@ -11,7 +11,7 @@ XString OutputFilename;
 
 int main(int argc, char* argv[])
 {
-    CLI::App app("The compiler of XSharp");
+    CLI::App app("Print AST of XSharp");
     app.add_option("-o", OutputFilename, "Where to put the executable");
     app.add_option("Input files", inputFile, "Input files to compile")
         ->required();

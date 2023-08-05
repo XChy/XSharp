@@ -53,12 +53,12 @@ for file in files:
 
         if ir_lines != temp_lines:
             failure_test += 1
-            print("[{}] Test failed at {}:".format(total_test,source_path))
+            print("[{}] [LLVM] Test failed at {}:".format(total_test,source_path))
 
             if args.verbose:
                 print(''.join(list(difflib.ndiff(ir_lines, temp_lines))))
         else:
-            print("[{}] Test passed {}:".format(total_test,source_path))
+            print("[{}] [LLVM] Test passed {}:".format(total_test,source_path))
 
 # Test Parser
 parser_test_path = os.path.join(project_path, "XSharp/test/Parser")
@@ -85,7 +85,7 @@ for file in files:
 
         if ir_lines != temp_lines:
             failure_test += 1
-            print("[{}] [LLVM] Test failed at {}:".format(total_test,source_path))
+            print("[{}] [Parser] Test failed at {}:".format(total_test,source_path))
 
             if args.verbose:
                 print(''.join(list(difflib.ndiff(ir_lines, temp_lines))))

@@ -63,7 +63,7 @@ void DefinitionsNode::addFunction(FunctionNode* functionDeclaration)
     decls.push_back(functionDeclaration);
 }
 
-void DefinitionsNode::addVariable(VariableNode* variableDeclaration)
+void DefinitionsNode::addVariable(VarDeclNode* variableDeclaration)
 {
     decls.push_back(variableDeclaration);
 }
