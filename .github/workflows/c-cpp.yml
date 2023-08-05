@@ -13,9 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install LLVM
-        run: | 
-             sudo apt install llvm-15
-          
+        run: |
+           sudo apt purge llvm
+           sudo apt purge llvm-12
+           sudo apt install llvm-15
+
       - name: CMake Configure
         run: cmake .
       - name: Build
