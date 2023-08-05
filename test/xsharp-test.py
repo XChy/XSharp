@@ -43,7 +43,9 @@ for file in files:
         with open(source_path, mode="r") as source:
             os.makedirs(os.path.join(llvm_test_path, "temp"), exist_ok=True)
             temp_path = os.path.join(llvm_test_path, "temp", file + ".ll")
-            code = os.system(xsharpc_path + " --emit-llvm-ir " + file_path + " -o " + temp_path)
+            code = os.system(
+                xsharpc_path + " --emit-llvm-ir " + file_path + " -o " + temp_path
+            )
 
         with open(temp_path, mode="r") as temp:
             temp_lines = temp.readlines()
@@ -53,12 +55,12 @@ for file in files:
 
         if ir_lines != temp_lines:
             failure_test += 1
-            print("[{}] [LLVM] Test failed at {}:".format(total_test,source_path))
+            print("[{}] [LLVM] Test failed at {}:".format(total_test, source_path))
 
             if args.verbose:
-                print(''.join(list(difflib.ndiff(ir_lines, temp_lines))))
+                print("".join(list(difflib.ndiff(ir_lines, temp_lines))))
         else:
-            print("[{}] [LLVM] Test passed {}:".format(total_test,source_path))
+            print("[{}] [LLVM] Test passed {}:".format(total_test, source_path))
 
 # Test Parser
 parser_test_path = os.path.join(project_path, "XSharp/test/Parser")
@@ -85,12 +87,12 @@ for file in files:
 
         if ir_lines != temp_lines:
             failure_test += 1
-            print("[{}] [Parser] Test failed at {}:".format(total_test,source_path))
+            print("[{}] [Parser] Test failed at {}:".format(total_test, source_path))
 
             if args.verbose:
-                print(''.join(list(difflib.ndiff(ir_lines, temp_lines))))
+                print("".join(list(difflib.ndiff(ir_lines, temp_lines))))
         else:
-            print("[{}] [Parser] Test passed {}:".format(total_test,source_path))
+            print("[{}] [Parser] Test passed {}:".format(total_test, source_path))
 
 
 print("===================Test Completed=======================")

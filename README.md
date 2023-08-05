@@ -20,7 +20,7 @@ Input the command below in to build XSharp Compiler in your computer(**Only supp
 
 ```bash
 # Install LLVM dependencies for XSharp
-sudo apt install llvm-dev
+sudo apt install llvm-15
 
 # Install toolchain for compiling XSharp
 sudo apt install build-essential
@@ -47,7 +47,7 @@ bin/xsharp xxx.xe          # execute the bytecode
 - ##### **LLVM** (**optional**)
 
   XSharp can compile XSharp code into LLVM IR, which
-  XSharp apply **LLVM14(or above)** to compile and optimize to generate binary.
+  XSharp apply **LLVM15(or above)** to compile and optimize to generate binary.
 
 - ##### **FMT**
 
