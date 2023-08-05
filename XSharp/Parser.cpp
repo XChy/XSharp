@@ -37,8 +37,6 @@ DefinitionsNode* Parser::definitions()
     return root;
 }
 
-
-
 bool Parser::isFunctionDecl() const
 {
     auto localCurrent = current;
@@ -125,8 +123,7 @@ FunctionNode* Parser::functionDecl()
     forward();
 
     // start with '('
-    if (current->type != OpenParen) 
-        throw XSharpError("No '(' matched");
+    if (current->type != OpenParen) throw XSharpError("No '(' matched");
 
     forward();
 
@@ -430,7 +427,7 @@ ASTNode* Parser::operand()
                 MemberExprNode* member = new MemberExprNode(current->value);
                 member->setObject(operand);
                 operand = member;
-            } else 
+            } else
                 throw XSharpError("No member matched with '.'");
 
         } else if (current->type == OpenParen) {
@@ -563,10 +560,7 @@ TypeNode* Parser::type()
         return new ArrayNode(new IdentifierNode(baseName), arrayDimension);
 }
 
-int Parser::priority(const XString& op)
-{
-    return XSharp::binOp[op].priority;
-}
+int Parser::priority(const XString& op) { return XSharp::binOp[op].priority; }
 int Parser::priority(BinaryOperatorNode* oper)
 {
     return XSharp::binOp[oper->opStr()].priority;
@@ -577,10 +571,7 @@ int Parser::priority(UnaryOpNode* oper)
     return XSharp::unaryOp[oper->opStr()].priority;
 }
 
-Assoc Parser::assoc(const XString& op)
-{
-    return XSharp::binOp[op].assoc;
-}
+Assoc Parser::assoc(const XString& op) { return XSharp::binOp[op].assoc; }
 
 Assoc Parser::assoc(BinaryOperatorNode* oper)
 {

@@ -41,9 +41,8 @@ ValueAndType CodeGenProxy<IntegerNode>::codeGen(IntegerNode* ast,
     return {val, XSharp::getI64Type()};
 }
 
-ValueAndType CodeGenProxy<FPNode>::codeGen(
-    FPNode* ast, CodeGenContext* helper,
-    const Generator& generator)
+ValueAndType CodeGenProxy<FPNode>::codeGen(FPNode* ast, CodeGenContext* helper,
+                                           const Generator& generator)
 {
     using llvm::APFloat;
     using llvm::ConstantFP;
@@ -121,8 +120,8 @@ ValueAndType CodeGenProxy<BlockNode>::codeGen(BlockNode* ast,
 }
 
 ValueAndType CodeGenProxy<VarExprNode>::codeGen(VarExprNode* ast,
-                                                     CodeGenContext* helper,
-                                                     const Generator& generator)
+                                                CodeGenContext* helper,
+                                                const Generator& generator)
 {
     auto symbol = helper->currentSymbols->findVariable(ast->name());
     assertWithError(symbol.symbolType != SymbolType::NoneSymbol, helper->error,

@@ -10,8 +10,8 @@
 namespace XSharp::LLVMCodeGen {
 
 ValueAndType CodeGenProxy<VarDeclNode>::codeGen(VarDeclNode* ast,
-                                                 CodeGenContext* helper,
-                                                 const Generator& generator)
+                                                CodeGenContext* helper,
+                                                const Generator& generator)
 {
     if (helper->isGlobalScope()) {
         return genGlobalVariable(ast, helper, generator);

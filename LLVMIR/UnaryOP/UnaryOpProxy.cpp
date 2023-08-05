@@ -11,8 +11,9 @@ CodeGenProxy<UnaryOpNode>::CodeGenProxy()
     processors["!"] = NotImpl;
 }
 
-ValueAndType CodeGenProxy<UnaryOpNode>::codeGen(
-    UnaryOpNode* ast, CodeGenContext* helper, const Generator& generator)
+ValueAndType CodeGenProxy<UnaryOpNode>::codeGen(UnaryOpNode* ast,
+                                                CodeGenContext* helper,
+                                                const Generator& generator)
 {
     if (processors.contains(ast->opStr()))
         return processors[ast->opStr()](ast, helper, generator);

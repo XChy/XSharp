@@ -55,8 +55,7 @@ BinaryOperatorNode::BinaryOperatorNode()
 
 XString BinaryOperatorNode::dump() const
 {
-    return fmt::format("[{}] {} [{}]", _lhs->dump(), _opStr,
-                       _rhs->dump());
+    return fmt::format("[{}] {} [{}]", _lhs->dump(), _opStr, _rhs->dump());
 }
 
 void BinaryOperatorNode::setLhs(ASTNode* left)
@@ -241,10 +240,7 @@ void UnaryOpNode::setOperand(ASTNode* operand) { _operand = operand; }
 
 ASTNode* UnaryOpNode::operand() { return _operand; }
 
-void UnaryOpNode::setOpStr(const XString& operatorStr)
-{
-    _opStr = operatorStr;
-}
+void UnaryOpNode::setOpStr(const XString& operatorStr) { _opStr = operatorStr; }
 
 XString UnaryOpNode::opStr() const { return _opStr; }
 

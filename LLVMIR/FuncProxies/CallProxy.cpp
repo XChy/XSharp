@@ -13,8 +13,8 @@ using namespace XSharp;
 using namespace XSharp::LLVMCodeGen;
 
 ValueAndType CodeGenProxy<CallNode>::codeGen(CallNode* ast,
-                                                     CodeGenContext* helper,
-                                                     const Generator& generator)
+                                             CodeGenContext* helper,
+                                             const Generator& generator)
 {
     using llvm::BasicBlock;
     auto& builder = helper->llvm_builder;

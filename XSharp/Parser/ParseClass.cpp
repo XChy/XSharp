@@ -52,4 +52,3 @@ ClassNode* Parser::classDecl()
     // analyze the class block
     return classNode;
 }
-
