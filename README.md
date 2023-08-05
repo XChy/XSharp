@@ -70,7 +70,7 @@ bin/xsharp xxx.xe          # execute the bytecode
 - ##### module
 - ##### match pattern
 
-### Grammar
+### Syntax 
 
 - #### Variable Declaration
 
@@ -84,9 +84,9 @@ i32 a = 2333;
 i32 abs(i32 a)
 {
     if(a >= 0)
-       return a;
-	else
-       return -a;
+        return a
+    else
+        return -a;
 }
 ```
 
