@@ -1,0 +1,30 @@
+class string extends A{
+    char[] data;
+ 
+	new(char[] chars) {
+        self.data = new char[](chars.length);
+        i64 i = 0;
+        while(i < chars.length) {
+            self.data[i] = chars[i];
+            i = i + 1;
+        }
+	}
+	
+	char charAt(i64 index) {
+		return self.data[index];
+	}
+	
+	char[] getData(){
+        print(self.data.length);
+        return self.data;
+    }
+}
+
+i32 main(){
+    string a = new string("H,world!\n");
+    print("H,world!\n"[1]);
+    print(a.getData());
+    a.getData()[3] = '$';
+    print(a.charAt(3));
+    return 0;
+}

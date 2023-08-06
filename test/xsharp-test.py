@@ -24,6 +24,7 @@ project_path = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 bin_path = os.path.join(project_path, "bin")
 xsharpc_path = os.path.join(bin_path, "xsharpc")
 astprint_path = os.path.join(bin_path, "astprint")
+tokenize_path = os.path.join(bin_path, "tokenize")
 
 total_test = 0
 failure_test = 0
@@ -93,6 +94,39 @@ for file in files:
                 print("".join(list(difflib.ndiff(ir_lines, temp_lines))))
         else:
             print("[{}] [Parser] Test passed {}:".format(total_test, source_path))
+
+# Test Lexer
+lexer_test_path = os.path.join(project_path, "XSharp/test/Lexer")
+files = os.listdir(llvm_test_path)
+
+for file in files:
+    file_path = os.path.join(lexer_test_path, file)
+
+    if file.endswith(".xsharp"):
+        source_path = file_path
+        ir_path = file_path + "_tokens.txt"
+        total_test += 1
+
+        with open(source_path, mode="r") as source:
+            os.makedirs(os.path.join(lexer_test_path, "temp"), exist_ok=True)
+            temp_path = os.path.join(lexer_test_path, "temp", file + "_tokens.txt")
+            code = os.system(tokenize_path + " " + file_path + " -o " + temp_path)
+
+        with open(temp_path, mode="r") as temp:
+            temp_lines = temp.readlines()
+
+        with open(ir_path, mode="r") as ir:
+            ir_lines = ir.readlines()
+
+        if ir_lines != temp_lines:
+            failure_test += 1
+            print("[{}] [Lexer] Test failed at {}:".format(total_test, source_path))
+
+            if args.verbose:
+                print("".join(list(difflib.ndiff(ir_lines, temp_lines))))
+        else:
+            print("[{}] [Lexer] Test passed {}:".format(total_test, source_path))
+
 
 
 print("===================Test Completed=======================")

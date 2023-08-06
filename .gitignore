@@ -66,3 +66,4 @@ testcases/string.xsharp.bc
 testcases/string.xsharp.o
 LLVMIR/test/temp
 XSharp/test/Parser/temp
+XSharp/test/Lexer/temp

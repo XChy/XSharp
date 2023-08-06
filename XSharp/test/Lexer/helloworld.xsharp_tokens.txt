@@ -1,0 +1,11 @@
+1:5 Identifier:'void', 
+1:10 Identifier:'main', 
+1:10 OpenParenthesis:'(', 
+1:11 CloseParenthesis:')', 
+1:12 OpenBrace:'{', 
+2:10 Identifier:'print', 
+2:10 OpenParenthesis:'(', 
+2:25 String:'Hello,World!', 
+2:25 CloseParenthesis:')', 
+2:26 SentenceEnd:';', 
+3:1 CloseBrace:'}'
