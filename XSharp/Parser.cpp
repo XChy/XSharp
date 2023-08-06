@@ -24,7 +24,7 @@ ASTNode* Parser::parse(const std::vector<Token>& tokenList)
 DefinitionsNode* Parser::definitions()
 {
     DefinitionsNode* root = new DefinitionsNode;
-    while (current != end)
+    while (!shouldStopOn(current))
         if (current->isKeyword("class"))
             root->decls.push_back(classDecl());
         else if (isVariableDecl())
@@ -237,7 +237,7 @@ BlockNode* Parser::block()
         while (current->type != CloseBrace) {
             if (current->type == OpenBrace) {
                 root->addContent(block());
-            } else if (current == end) {
+            } else if (shouldStopOn(current)) {
                 throw XSharpError("No '}' matched");
             } else {
                 ASTNode* stmt = statement();
@@ -579,12 +579,12 @@ Assoc Parser::assoc(BinaryOperatorNode* oper)
 }
 
 bool Parser::shouldStopOn(Iterator tokenIter,
-                          std::vector<TokenType> stopwords = {}) const
+                          std::vector<TokenType> stopwords) const
 {
     // TODO: complete the cornor case that token is end
     return (std::find(stopwords.begin(), stopwords.end(), tokenIter->type) !=
-            stopwords.end()) &&
-           (tokenIter != this->end);
+            stopwords.end()) ||
+           (tokenIter->type == TokenType::Eof);
 }
 
 void Parser::forward()

@@ -60,7 +60,7 @@ class XSharp_EXPORT Parser
     static Assoc assoc(BinaryOperatorNode* oper);
 
     bool shouldStopOn(Iterator tokenIter,
-                      std::vector<TokenType> stopwords) const;
+                      std::vector<TokenType> stopwords = {}) const;
 
     void forward();
     void backward();
