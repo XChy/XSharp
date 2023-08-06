@@ -9,6 +9,8 @@ XString Span::wholeDump() const
     return fmt::format("'{}' {}", filename, dump());
 }
 
+Token::Token(TokenType type) : type(type) {}
+
 Token::Token(TokenType type, const XString &value) : type(type), value(value) {}
 
 Token::Token(TokenType type, const XString &value, const Span &span)
@@ -78,8 +80,11 @@ XString Token::dump() const
         case TokenType::Keyword:
             result.append("Keyword:");
             break;
+        case Eof:
+            result.append("Eof:");
+            break;
         default:
-            result.append("Unknown");
+            result.append("Unknown:");
             break;
     }
     result.append(fmt::format("'{}'", value));
@@ -114,7 +119,7 @@ bool XSharp::isOperator(const XString &oper)
         return operators.contains(oper);
 }
 
-bool XSharp::isOperator(XChar oper)
+bool XSharp::isOp(XChar oper)
 {
     for (auto operStr : operators) {
         if (operStr.contains(oper)) return true;
@@ -122,7 +127,7 @@ bool XSharp::isOperator(XChar oper)
     return false;
 }
 
-bool XSharp::operatorContains(const XString &part)
+bool XSharp::opContains(const XString &part)
 {
     for (auto operStr : operators) {
         if (operStr.subStringIndex(part) != -1) return true;

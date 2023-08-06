@@ -14,28 +14,36 @@ static std::unordered_map<XChar, XChar> transferMap = {
 
 class XSharp_EXPORT Lexer
 {
+    typedef XString::const_iterator CharIter;
+
    public:
     Lexer();
     std::vector<Token> tokenize(const XString& source);
 
+    void setSource(const XString& source);
+    bool peekIs(TokenType type);
+    Token peekToken();
+    bool consumeIs(TokenType type);
+    void consume();
+
    private:
-    XString hex();  // Hexadecimal
-    XString bin();  // Binary
-    Token dec();    // Decimal
-
-    bool next();
-    bool isEof();
-    XChar peek() const;
-    XChar cur() const;
-
-    Span currentSpan() const;
+    static Token fetchFrom(CharIter& iter, Span& span);
+    static XString hex(CharIter& iter, Span& span);       // Hexadecimal
+    static XString binary(CharIter& iter, Span& span);    // Binary
+    static Token floatPoint(CharIter& iter, Span& span);  // Floating-point
 
     // the iterator to current Character
-    XString::const_iterator currentIter;
-
-    // Span information
-    XString filename;
-    uint row;
-    uint col;
+    CharIter currentIter;
 };
+
+// Implements consume/peek
+class XSharp_EXPORT TokenReader
+{
+   public:
+    TokenReader(Lexer lexer);
+
+   private:
+    Lexer* _lexer;
+};
+
 }  // namespace XSharp

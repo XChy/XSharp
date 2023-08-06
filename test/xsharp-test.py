@@ -128,8 +128,12 @@ for file in files:
             print("[{}] [Lexer] Test passed {}:".format(total_test, source_path))
 
 
-
 print("===================Test Completed=======================")
 print("Total {} tests".format(total_test))
 print("Passed {} tests".format(total_test - failure_test))
 print("Failed {} tests".format(failure_test))
+
+if failure_test > 0:
+    exit(-1)
+else:
+    exit(0)

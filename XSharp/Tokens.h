@@ -21,9 +21,9 @@ static std::unordered_set<XString> operators = {
 };
 
 bool isOperator(const XString& oper);
-bool isOperator(XChar oper);
+bool isOp(XChar oper);
 
-bool operatorContains(const XString& part);
+bool opContains(const XString& part);
 
 }  // namespace XSharp
 
@@ -63,6 +63,7 @@ class XSharp_EXPORT Token
 {
    public:
     Token() = default;
+    Token(TokenType type);
     Token(TokenType type, const XString& value);
     Token(TokenType type, const XString& value, const Span& span);
 
