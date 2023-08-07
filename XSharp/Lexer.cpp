@@ -30,6 +30,7 @@ Token Lexer::fetchFrom(XString::const_iterator& iter, Span& span)
     while (cur().isSpace() || cur() == '\n') {
         if (cur() == '\n') {
             span.row++;
+            span.col = 0;
         }
         next();
     }

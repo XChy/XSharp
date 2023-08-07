@@ -3,10 +3,10 @@
 1:10 OpenParenthesis:'(', 
 1:11 CloseParenthesis:')', 
 1:12 OpenBrace:'{', 
-2:18 Identifier:'print', 
-2:23 OpenParenthesis:'(', 
-2:24 String:'Hello,World!', 
-2:38 CloseParenthesis:')', 
-2:39 SentenceEnd:';', 
-3:41 CloseBrace:'}', 
-6:45 Eof:'Eof'
+2:5 Identifier:'print', 
+2:10 OpenParenthesis:'(', 
+2:11 String:'Hello,World!', 
+2:25 CloseParenthesis:')', 
+2:26 SentenceEnd:';', 
+3:1 CloseBrace:'}', 
+6:1 Eof:'Eof'
