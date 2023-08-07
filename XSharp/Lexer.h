@@ -26,14 +26,12 @@ class XSharp_EXPORT Lexer
     bool consumeIs(TokenType type);
     void consume();
 
-   private:
     static Token fetchFrom(CharIter& iter, Span& span);
     static XString hex(CharIter& iter, Span& span);       // Hexadecimal
     static XString binary(CharIter& iter, Span& span);    // Binary
-    static Token floatPoint(CharIter& iter, Span& span);  // Floating-point
+    static XString floatPoint(CharIter& iter, Span& span, bool& isFP);  // Floating-point
 
     // the iterator to current Character
-    CharIter currentIter;
 };
 
 // Implements consume/peek

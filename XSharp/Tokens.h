@@ -21,15 +21,15 @@ static std::unordered_set<XString> operators = {
 };
 
 bool isOperator(const XString& oper);
-bool isOp(XChar oper);
+bool isInOp(XChar oper);
 
-bool opContains(const XString& part);
+bool isParialOp(const XString& part);
 
 }  // namespace XSharp
 
 enum TokenType {
     Integer,
-    Decimal,
+    FloatingPoint,
     Boolean,
     Char,
     String,

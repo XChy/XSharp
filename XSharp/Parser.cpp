@@ -486,7 +486,7 @@ ASTNode* Parser::factor()
     ASTNode* factor;
     if (current->type == Integer) {
         factor = new IntegerNode(current->value.toInteger<int64_t>());
-    } else if (current->type == Decimal) {
+    } else if (current->type == FloatingPoint) {
         factor = new FPNode(current->value.toDouble());
     } else if (current->type == Boolean) {
         factor = new BooleanNode(current->value == "true");
