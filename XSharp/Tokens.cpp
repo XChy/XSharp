@@ -26,8 +26,8 @@ XString Token::dump() const
         case TokenType::Integer:
             result.append("Integer:");
             break;
-        case TokenType::Decimal:
-            result.append("DecimalFraction:");
+        case TokenType::FloatingPoint:
+            result.append("FloatingPoint:");
             break;
         case TokenType::Char:
             result.append("Char:");
@@ -119,18 +119,16 @@ bool XSharp::isOperator(const XString &oper)
         return operators.contains(oper);
 }
 
-bool XSharp::isOp(XChar oper)
+bool XSharp::isInOp(XChar oper)
 {
-    for (auto operStr : operators) {
+    for (auto operStr : operators)
         if (operStr.contains(oper)) return true;
-    }
     return false;
 }
 
-bool XSharp::opContains(const XString &part)
+bool XSharp::isParialOp(const XString &part)
 {
-    for (auto operStr : operators) {
-        if (operStr.subStringIndex(part) != -1) return true;
-    }
+    for (auto operStr : operators)
+        if (operStr.subStringIndex(part) != 0) return true;
     return false;
 }

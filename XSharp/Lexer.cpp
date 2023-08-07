@@ -10,30 +10,32 @@ Lexer::Lexer() {}
 std::vector<Token> Lexer::tokenize(const XString& source)
 {
     std::vector<Token> tokens;
-    currentIter = source.begin();
+    auto beginIter = source.begin();
     Token t;
     Span span{.row = 1, .col = 1};
-    while ((t = fetchFrom(currentIter, span)).type != Eof) tokens.push_back(t);
+    while ((t = fetchFrom(beginIter, span)).type != Eof) tokens.push_back(t);
     tokens.push_back({Eof, "Eof", span});
     return tokens;
 }
 
 Token Lexer::fetchFrom(XString::const_iterator& iter, Span& span)
 {
-    auto cur = [&iter]() { return *iter; };
-    auto peek = [&iter]() { return *(iter + 1); };
-    auto next = [&iter]() { return *(++iter); };
+    auto cur = [&]() { return *iter; };
+    auto peek = [&]() { return *(iter + 1); };
+    auto next = [&]() {
+        span.col++;
+        return *(++iter);
+    };
 
     while (cur().isSpace() || cur() == '\n') {
         if (cur() == '\n') {
-            span.col = 1;
             span.row++;
-        } else {
-            span.col++;
         }
-        iter++;
+        next();
     }
     if (cur() == '\0') return {Eof};
+
+    Span spanTemp = span;
 
     if (iter->isDigit()) {  // number
         XString value;
@@ -43,26 +45,36 @@ Token Lexer::fetchFrom(XString::const_iterator& iter, Span& span)
                 next();
                 next();
                 // needn't analyze '0x' part
-                return Token(Integer, hex(iter, span), span);
+                return Token(Integer, hex(iter, span), spanTemp);
             } else if (peek() == 'b' || peek() == 'B') {
                 next();
                 next();
-                return Token(Integer, binary(iter, span), span);
+                return Token(Integer, binary(iter, span), spanTemp);
             } else {
-                return floatPoint(iter, span);
+                bool isFP;
+                XString result = floatPoint(iter, span, isFP);
+                if (isFP)
+                    return Token(FloatingPoint, result, spanTemp);
+                else
+                    return Token(Integer, result, spanTemp);
             }
         } else {
-            return floatPoint(iter, span);
+            bool isFP;
+            XString result = floatPoint(iter, span, isFP);
+            if (isFP)
+                return Token(FloatingPoint, result, spanTemp);
+            else
+                return Token(Integer, result, spanTemp);
         }
-    } else if (XSharp::isOp(cur())) {
+    } else if (XSharp::isInOp(cur())) {
         XString value;
         value.append(cur());
         next();
-        while (XSharp::isOp(cur()) && XSharp::opContains(value + cur())) {
+        while (XSharp::isInOp(cur()) && XSharp::isParialOp(value + cur())) {
             value.append(cur());
             next();
         }
-        return Token(Operator, value, span);
+        return Token(Operator, value, spanTemp);
     } else if (cur().isLetter() || cur() == '_') {
         XString value;
         value.append(cur());
@@ -72,40 +84,40 @@ Token Lexer::fetchFrom(XString::const_iterator& iter, Span& span)
             next();
         }
         if (value == "true")
-            return Token(Boolean, value, span);
+            return Token(Boolean, value, spanTemp);
         else if (value == "false")
-            return Token(Boolean, value, span);
+            return Token(Boolean, value, spanTemp);
         else if (value == "null")
-            return Token(Null, value, span);
+            return Token(Null, value, spanTemp);
         else if (XSharp::isKeyword(value))
-            return Token(Keyword, value, span);
+            return Token(Keyword, value, spanTemp);
         else
-            return Token(Identifier, value, span);
+            return Token(Identifier, value, spanTemp);
 
     } else if (cur() == ';') {
         next();
-        return Token(SentenceEnd, ";", span);
+        return Token(SentenceEnd, ";", spanTemp);
     } else if (cur() == '(') {
         next();
-        return Token(OpenParen, "(", span);
+        return Token(OpenParen, "(", spanTemp);
     } else if (cur() == ')') {
         next();
-        return Token(CloseParen, ")", span);
+        return Token(CloseParen, ")", spanTemp);
     } else if (cur() == '[') {
         next();
-        return Token(OpenBracket, "[", span);
+        return Token(OpenBracket, "[", spanTemp);
     } else if (cur() == ']') {
         next();
-        return Token(CloseBracket, "]", span);
+        return Token(CloseBracket, "]", spanTemp);
     } else if (cur() == '{') {
         next();
-        return Token(OpenBrace, "{", span);
+        return Token(OpenBrace, "{", spanTemp);
     } else if (cur() == '}') {
         next();
-        return Token(CloseBrace, "}", span);
+        return Token(CloseBrace, "}", spanTemp);
     } else if (cur() == ',') {
         next();
-        return Token(Comma, ",", span);
+        return Token(Comma, ",", spanTemp);
     } else if (cur() == '\'') {
         next();
         XString value;
@@ -126,7 +138,7 @@ Token Lexer::fetchFrom(XString::const_iterator& iter, Span& span)
             // TODO: Error?
         }
         // TODO: check count of char
-        return (Token(Char, value, span));
+        return (Token(Char, value, spanTemp));
     } else if (cur() == '\"') {
         next();
         XString value;
@@ -147,19 +159,13 @@ Token Lexer::fetchFrom(XString::const_iterator& iter, Span& span)
             // TODO: Error?
         }
 
-        return Token(String, value, span);
+        return Token(String, value, spanTemp);
     } else if (cur() == '.') {
         next();
-        return Token(Dot, ".", span);
+        return Token(Dot, ".", spanTemp);
     } else if (cur() == ':') {
         next();
-        return Token(Colon, ":", span);
-    } else if (cur() == '\n' || cur() == '\r') {
-        next();
-        span.row++;
-        span.col = 1;
-    } else if (cur().isSpace()) {
-        next();
+        return Token(Colon, ":", spanTemp);
     } else {
         throw XSharpError(XString("Unknown char:").append(cur()));
     }
@@ -182,9 +188,12 @@ XString Lexer::hex(CharIter& iter, Span& span)
 
 XString Lexer::binary(CharIter& iter, Span& span)
 {
-    auto cur = [&iter]() { return *iter; };
-    auto peek = [&iter]() { return *(iter + 1); };
-    auto next = [&iter]() { return *(++iter); };
+    auto cur = [&]() { return *iter; };
+    auto peek = [&]() { return *(iter + 1); };
+    auto next = [&]() {
+        span.col++;
+        return *(++iter);
+    };
 
     XString result;
     while (cur().isDigit()) {
@@ -194,24 +203,24 @@ XString Lexer::binary(CharIter& iter, Span& span)
     return XString::fromInterger(result.toInteger<int64_t>(2), 10);
 }
 
-Token Lexer::floatPoint(CharIter& iter, Span& span)
+XString Lexer::floatPoint(CharIter& iter, Span& span, bool& isFP)
 {
-    auto cur = [&iter]() { return *iter; };
-    auto peek = [&iter]() { return *(iter + 1); };
-    auto next = [&iter]() { return *(++iter); };
+    auto cur = [&]() { return *iter; };
+    auto peek = [&]() { return *(iter + 1); };
+    auto next = [&]() {
+        span.col++;
+        return *(++iter);
+    };
 
     XString result;
-    bool isDecimal = false;
+    isFP = false;
 
     while (cur().isDigit() || cur() == '.') {
-        if (cur() == '.') isDecimal = true;
+        if (cur() == '.') isFP = true;
 
         result.append(cur());
         next();
     }
 
-    if (isDecimal)
-        return Token(Decimal, result, span);
-    else
-        return Token(Integer, result, span);
+    return result;
 }
